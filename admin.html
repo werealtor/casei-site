@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>后台配置 - Case&i</title>
+</head>
+<body>
+  <h1>后台配置</h1>
+  <p>在这里修改配置并下载 config.json</p>
+  <button id="downloadBtn">下载 config.json</button>
+<script>
+let config = {};
+async function load(){
+  try{const res=await fetch('config.json',{cache:'no-store'});config=await res.json();}
+  catch(e){config={products:[]};}
+}
+document.getElementById('downloadBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify(config,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='config.json';a.click();
+});
+load();
+</script>
+</body>
+</html>
