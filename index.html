@@ -20,7 +20,7 @@
         .section { padding: 2rem; max-width: 1200px; margin: 0 auto; text-align: center; background: #fff; }
         .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
         .product-card { background: #f5f5f5; border: 1px solid #eee; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .product-card img { max-width: 100%; border-radius: 8px; }
+        .product-placeholder { background-color: #f0f0f0; height: 250px; border-radius: 8px; }
         .product-card h3 { margin: 0.5rem 0; }
         .custom-form { max-width: 500px; margin: 1rem auto; display: flex; flex-direction: column; gap: 1rem; background: #f5f5f5; padding: 1rem; border: 1px solid #eee; border-radius: 8px; }
         .custom-form input[type="file"] { border: 1px solid #ddd; padding: 0.5rem; background: #fff; }
@@ -47,19 +47,19 @@
         <h2>我们的产品</h2>
         <div class="products-grid">
             <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1561154464-82e9adf32764?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" alt="经典款手机壳">
+                <div class="product-placeholder"></div>
                 <h3>经典款</h3>
                 <p>轻薄 耐划</p>
                 <p>¥99</p>
             </div>
             <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1581493943529-ce3a2145a8ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" alt="时尚款手机壳">
+                <div class="product-placeholder"></div>
                 <h3>时尚款</h3>
                 <p>潮流图案 防指纹</p>
                 <p>¥129</p>
             </div>
             <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1606890658317-7d14490dcb4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" alt="商务款手机壳">
+                <div class="product-placeholder"></div>
                 <h3>商务款</h3>
                 <p>高端质感 抗震</p>
                 <p>¥149</p>
