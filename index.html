@@ -1,130 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
-  <meta name="description" content="Case&i by AIXX Inc · Minimal design, premium quality, and personal customization.">
+  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <style>
-    body {font-family: Arial, Helvetica, sans-serif; margin:0; padding:0; line-height:1.6; color:#111; background:#fff;}
-    header {background:#fff; border-bottom:1px solid #eee; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0;}
-    header .brand {font-weight:bold; font-size:20px;}
-    nav a {margin-left:20px; text-decoration:none; color:#111; font-weight:500;}
-    nav a:hover {color:#0b66ff;}
-
-    .hero {text-align:center; padding:40px 20px; background:#f5f7fa;}
-    .hero video {width:100%; border-radius:22px; max-width:900px;}
-    #soundBtn {margin-top:12px; padding:10px 18px; border:none; border-radius:8px; background:#0b66ff; color:#fff; font-weight:bold; cursor:pointer;}
-    #soundBtn:hover {opacity:0.9;}
-
-    .cta {margin-top:20px;}
-    .btn {display:inline-block; padding:10px 20px; margin:5px; border-radius:6px; border:1px solid #0b66ff; text-decoration:none; font-weight:bold;}
-    .btn.primary {background:#0b66ff; color:#fff;}
-    .btn:hover {opacity:0.85;}
-
-    section {padding:40px 20px; max-width:1000px; margin:0 auto;}
-    .grid {display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px;}
-    .card {border:1px solid #eee; border-radius:10px; padding:20px; background:#fff; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.05);}
-    .card h3 {margin:10px 0;}
-    .price {font-size:18px; font-weight:bold; margin-top:10px;}
-    footer {background:#fafafa; text-align:center; padding:20px; border-top:1px solid #eee; color:#666; font-size:14px;}
+    :root{--bg:#fff;--text:#111;--muted:#666;--line:#eaeaea;--tone:#f6f7fb;--brand:#0b66ff;--max:1100px;--shadow:0 2px 10px rgba(0,0,0,.06)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+    a{color:inherit}
+    .container{max-width:var(--max);margin:0 auto;padding:0 20px}
+    header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+    .bar{display:flex;align-items:center;gap:16px;padding:14px 0}
+    .brand{font-weight:700}
+    nav{display:flex;gap:18px}
+    nav a{padding:8px 10px;border-radius:10px;text-decoration:none}
+    nav a:hover{background:#f3f4f7}
+    .hero{padding:44px 0 28px}
+    .media-wrap{border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);background:var(--tone)}
+    .media{width:100%;aspect-ratio:16/9;display:block;object-fit:cover}
+    .hero h1{font-size:clamp(26px,4.8vw,40px);text-align:center;margin:16px 0 6px}
+    .sub{color:var(--muted);text-align:center}
+    .cta{display:flex;gap:12px;justify-content:center;margin-top:14px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:600;text-decoration:none}
+    .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+    section{padding:36px 0}
+    .title{font-size:22px;text-align:center;margin-bottom:16px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    .card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;text-align:center}
+    .card .ph{height:160px;background:linear-gradient(120deg,#f6f7fb,#eef0f7);display:grid;place-items:center;color:#9aa;letter-spacing:.12em;font-weight:600}
+    .card .body{padding:14px 16px}
+    .pillrow{display:flex;gap:8px;justify-content:center;margin:6px 0;flex-wrap:wrap}
+    .pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px}
+    .price{font-weight:700;margin-top:4px}
+    form{display:grid;gap:12px;max-width:520px;margin:0 auto}
+    input,textarea,button{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit}
+    button{background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
+    button:hover{opacity:.95}
+    footer{border-top:1px solid var(--line);padding:18px 0 28px;color:var(--muted);text-align:center}
   </style>
 </head>
 <body>
   <header>
-    <div class="brand">Case&amp;i</div>
-    <nav>
-      <a href="#products">Products</a>
-      <a href="#custom">Customize</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </nav>
+    <div class="container bar" role="navigation" aria-label="Main">
+      <div class="brand">Case&amp;i</div>
+      <nav>
+        <a href="#products">Products</a>
+        <a href="#custom">Customize</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
   </header>
 
-  <!-- Hero -->
-  <section class="hero" id="home">
-    <video id="heroVideo" autoplay muted loop playsinline>
-      <source src="assets/videos/hero.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <button id="soundBtn">🔊 Unmute</button>
-    <h1>Minimal · Premium · Personal</h1>
-    <p>Case&amp;i by <strong>AIXX Inc</strong></p>
-    <div class="cta">
-      <a class="btn primary" href="#products">Shop Products</a>
-      <a class="btn" href="#custom">Customize Now</a>
-    </div>
-  </section>
-
-  <!-- Products -->
-  <section id="products">
-    <h2 style="text-align:center;">Our Products</h2>
-    <div class="grid">
-      <div class="card">
-        <h3>Classic</h3>
-        <p>Slim &amp; Scratch-resistant</p>
-        <p>Lightweight · Durable</p>
-        <div class="price">$19</div>
+  <main>
+    <!-- Hero (autoplay muted loop, no sound controls) -->
+    <section class="hero" id="home">
+      <div class="container">
+        <figure class="media-wrap">
+          <video class="media" autoplay muted loop playsinline aria-label="Case&i hero video">
+            <source src="assets/videos/hero.mp4" type="video/mp4" />
+          </video>
+        </figure>
+        <h1>Minimal · Premium · Personal</h1>
+        <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
+        <div class="cta">
+          <a class="btn primary" href="#products">Shop Products</a>
+          <a class="btn" href="#custom">Customize Now</a>
+        </div>
       </div>
-      <div class="card">
-        <h3>Fashion</h3>
-        <p>Trendy design &amp; Anti-fingerprint</p>
-        <p>Trendy · Easy to Clean</p>
-        <div class="price">$25</div>
+    </section>
+
+    <!-- Products -->
+    <section id="products" aria-labelledby="prod-title">
+      <div class="container">
+        <h2 class="title" id="prod-title">Our Products</h2>
+        <div class="grid">
+          <article class="card">
+            <div class="ph">Classic</div>
+            <div class="body">
+              <h3>Classic</h3>
+              <p class="sub">Slim &amp; scratch-resistant</p>
+              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
+              <div class="price">$19</div>
+            </div>
+          </article>
+          <article class="card">
+            <div class="ph">Fashion</div>
+            <div class="body">
+              <h3>Fashion</h3>
+              <p class="sub">Trendy design &amp; anti-fingerprint</p>
+              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
+              <div class="price">$25</div>
+            </div>
+          </article>
+          <article class="card">
+            <div class="ph">Business</div>
+            <div class="body">
+              <h3>Business</h3>
+              <p class="sub">Premium touch &amp; shockproof</p>
+              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
+              <div class="price">$29</div>
+            </div>
+          </article>
+        </div>
       </div>
-      <div class="card">
-        <h3>Business</h3>
-        <p>Premium touch &amp; Shockproof</p>
-        <p>Professional · Shock Resistant</p>
-        <div class="price">$29</div>
+    </section>
+
+    <!-- Customize -->
+    <section id="custom">
+      <div class="container">
+        <h2 class="title">Customize Your Case</h2>
+        <form id="uForm">
+          <input type="file" id="file" accept="image/png,image/jpeg" aria-label="Choose image" />
+          <button type="submit">Upload &amp; Preview</button>
+          <p class="sub" style="text-align:center">Supports PNG/JPG, up to 5MB.</p>
+          <img id="preview" alt="Preview" style="display:none;max-width:100%;border-radius:12px;border:1px solid var(--line)" />
+        </form>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Customize -->
-  <section id="custom">
-    <h2 style="text-align:center;">Customize Your Case</h2>
-    <form>
-      <input type="file" accept="image/png, image/jpeg">
-      <button type="submit">Upload &amp; Preview</button>
-      <p style="text-align:center;color:#666;font-size:14px;">Supports PNG/JPG, up to 5MB.</p>
-    </form>
-  </section>
+    <!-- About -->
+    <section id="about">
+      <div class="container">
+        <h2 class="title">About Us</h2>
+        <p style="text-align:center;max-width:820px;margin:0 auto;">
+          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
+          Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
+        </p>
+      </div>
+    </section>
 
-  <!-- About -->
-  <section id="about">
-    <h2 style="text-align:center;">About Us</h2>
-    <p style="text-align:center;max-width:800px;margin:0 auto;">
-      Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
-      Visit <a href="https://xxkit.com" target="_blank">xxkit.com</a> to learn more.
-    </p>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact">
-    <h2 style="text-align:center;">Contact Us</h2>
-    <form onsubmit="event.preventDefault(); alert('Form submitted! (demo)');">
-      <input type="text" name="name" placeholder="Name" required>
-      <input type="email" name="email" placeholder="Email" required>
-      <textarea name="message" rows="4" placeholder="Message"></textarea>
-      <button type="submit">Send</button>
-    </form>
-  </section>
+    <!-- Contact -->
+    <section id="contact">
+      <div class="container">
+        <h2 class="title">Contact Us</h2>
+        <form onsubmit="event.preventDefault();alert('Submitted (demo)');">
+          <input type="text" name="name" placeholder="Name" required />
+          <input type="email" name="email" placeholder="Email" required />
+          <textarea name="message" rows="4" placeholder="Message"></textarea>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
 
   <footer>
-    © 2025 AIXX Inc · All rights reserved · xxkit.com
+    <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
+  <!-- upload preview (kept) -->
   <script>
-    const v = document.getElementById('heroVideo');
-    const b = document.getElementById('soundBtn');
-    v.play(); // autoplay muted
-
-    b.addEventListener('click', () => {
-      v.muted = false; // unmute when user clicks
-      v.play();
-      b.style.display = 'none'; // hide button after enabling sound
-    });
+    (function(){
+      const form=document.getElementById('uForm'), file=document.getElementById('file'), preview=document.getElementById('preview');
+      if(!form||!file||!preview) return;
+      form.addEventListener('submit',e=>{
+        e.preventDefault();
+        const f=file.files?.[0]; if(!f) return alert('Please choose an image.');
+        if(!/image\/(png|jpe?g)/.test(f.type) || f.size>5*1024*1024) return alert('Upload PNG/JPG under 5MB.');
+        const r=new FileReader(); r.onload=ev=>{ preview.src=ev.target.result; preview.style.display='block'; }; r.readAsDataURL(f);
+      });
+    })();
   </script>
 </body>
 </html>
