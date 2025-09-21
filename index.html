@@ -1,63 +1,101 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Case&i - 极简高端手机壳</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Case&i by aixx inc - 提供时尚耐用的手机壳，保护您的设备，展现个性风格。">
+    <meta name="keywords" content="手机壳, Case&i, aixx inc, 保护壳, 时尚配件, 定制服务">
+    <meta name="robots" content="index, follow">
+    <title>Case&i - 高品质手机壳 | xxkit.com</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="brand">Case&i</div>
-    <nav class="nav">
-      <a href="#">首页</a>
-      <a href="#products">产品</a>
-      <a href="#custom">定制</a>
-      <a href="#about">关于</a>
-      <a href="#contact">联系</a>
+    <header>
+        <h1>Case&i</h1>
+        <p>高品质手机壳 - 保护与风格兼得</p>
+    </header>
+
+    <nav>
+        <ul class="nav-list">
+            <li><a href="#home">首页</a></li>
+            <li><a href="#products">产品</a></li>
+            <li><a href="#custom">定制服务</a></li>
+            <li><a href="#about">关于我们</a></li>
+            <li><a href="#contact">联系我们</a></li>
+        </ul>
     </nav>
-  </header>
 
-  <section class="hero">
-    <h1>极简 · 高端 · 专属</h1>
-    <p>Case&i by AIXX Inc · 让手机壳成为你的风格宣言</p>
-    <div class="buttons">
-      <a href="#products" class="btn">选购产品</a>
-      <a href="#custom" class="btn primary">立即定制</a>
-    </div>
-  </section>
+    <section class="hero" id="home">
+        <h2>Case&i - 打造您的专属手机壳</h2>
+    </section>
 
-  <!-- 🔹 产品区 -->
-  <section id="products">
-    <h2>我们的产品</h2>
-    <div class="products-grid">
+    <section class="products" id="products">
+        <h2>我们的产品</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="https://via.placeholder.com/250x250?text=Case+1" alt="经典款手机壳" loading="lazy">
+                <h3>经典款</h3>
+                <p>简约设计，完美保护</p>
+                <p>¥99</p>
+            </div>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/250x250?text=Case+2" alt="时尚款手机壳" loading="lazy">
+                <h3>时尚款</h3>
+                <p>潮流图案，彰显个性</p>
+                <p>¥129</p>
+            </div>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/250x250?text=Case+3" alt="商务款手机壳" loading="lazy">
+                <h3>商务款</h3>
+                <p>高端质感，商务首选</p>
+                <p>¥149</p>
+            </div>
+        </div>
+    </section>
 
-      <div class="product">
-        <img src="https://via.placeholder.com/300x400?text=时尚款" alt="时尚款手机壳">
-        <h3>时尚款</h3>
-        <p>减震防摔 · 防指纹</p>
-        <p class="price">¥129</p>
-      </div>
+    <section class="custom" id="custom">
+        <h2>定制服务</h2>
+        <p>想要独特的手机壳？通过我们的定制服务，您可以上传个人设计或图片，打造专属风格！</p>
+        <form id="custom-form" enctype="multipart/form-data">
+            <input type="file" id="custom-image" accept="image/*" required aria-label="上传设计图片">
+            <textarea placeholder="请输入您的定制需求（如颜色、图案等）" rows="5" required aria-label="定制需求"></textarea>
+            <button type="submit">提交定制请求</button>
+        </form>
+        <p>提交后，我们会尽快联系您确认详情。请确保提供有效的联系方式。</p>
+    </section>
 
-      <div class="product">
-        <img src="https://via.placeholder.com/300x400?text=商务款" alt="商务款手机壳">
-        <h3>商务款</h3>
-        <p>高端质感 · 抗震</p>
-        <p class="price">¥149</p>
-      </div>
+    <section class="about" id="about">
+        <h2>关于我们</h2>
+        <p>Case&i 由 aixx inc 创立，致力于为用户提供高品质、时尚的手机壳产品。我们注重设计与功能的结合，让每款手机壳都能完美保护您的设备，同时展现独特个性。访问 <a href="https://xxkit.com">xxkit.com</a> 了解更多。</p>
+    </section>
 
-      <div class="product">
-        <img src="https://via.placeholder.com/300x400?text=透明款" alt="透明款手机壳">
-        <h3>透明款</h3>
-        <p>清透不黄 · 亲肤手感</p>
-        <p class="price">¥109</p>
-      </div>
+    <section class="contact" id="contact">
+        <h2>联系我们</h2>
+        <form id="contact-form">
+            <input type="text" placeholder="请输入姓名" required aria-label="姓名">
+            <input type="email" placeholder="请输入邮箱" required aria-label="邮箱">
+            <textarea placeholder="请输入您的消息" rows="5" required aria-label="消息"></textarea>
+            <button type="submit">发送</button>
+        </form>
+    </section>
 
-    </div>
-  </section>
+    <footer>
+        <p>&copy; 2025 aixx inc. All rights reserved. | <a href="https://xxkit.com" style="color: #fff;">xxkit.com</a></p>
+    </footer>
 
-  <footer>
-    <p>© 2025 Case&i by AIXX Inc · All Rights Reserved.</p>
-  </footer>
+    <script src="script.js" defer></script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Case&i",
+            "url": "https://xxkit.com",
+            "sameAs": [
+                "https://github.com/werealtor/aixx"
+            ],
+            "description": "Case&i 由 aixx inc 创立，提供高品质时尚手机壳及定制服务。",
+            "logo": "https://via.placeholder.com/200x50?text=Case&i+Logo"
+        }
+    </script>
 </body>
 </html>
