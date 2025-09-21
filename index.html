@@ -2,103 +2,57 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- 页面标题 -->
-  <title>Case&i - 极简高端手机壳 | xxkit.com</title>
-
-  <!-- 基础 SEO -->
-  <meta name="description" content="Case&i by AIXX Inc - 极简 · 高端 · 专属的手机壳定制品牌，让手机壳成为你的风格宣言。">
-  <meta name="keywords" content="Case&i, 手机壳, 定制手机壳, 极简设计, 高端配件, AIXX Inc, xxkit.com">
-  <meta name="author" content="AIXX Inc">
-
-  <!-- Favicon 图标 -->
-  <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48" type="image/x-icon">
-  <link rel="icon" href="images/favicon-512x512.png" sizes="512x512" type="image/png">
-
-  <!-- 社交媒体分享优化 (Open Graph / Twitter Card) -->
-  <meta property="og:title" content="Case&i - 极简 · 高端 · 专属 手机壳定制">
-  <meta property="og:description" content="Case&i by AIXX Inc —— 让手机壳成为你的风格宣言。">
-  <meta property="og:image" content="https://xxkit.com/images/favicon-512x512.png">
-  <meta property="og:url" content="https://xxkit.com">
-  <meta name="twitter:card" content="summary_large_image">
-
-  <!-- 样式表 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Case&i 手机壳定制服务，个性化设计，高端品质">
+  <title>Case&i - 个性化手机壳定制</title>
+  <!-- 这里确保加载了 CSS -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <div class="brand">Case&amp;i</div>
-      <nav class="nav">
-        <a href="#home">首页</a>
-        <a href="#products">产品</a>
-        <a href="#custom">定制</a>
-        <a href="#about">关于</a>
-        <a href="#contact">联系</a>
-      </nav>
-    </div>
+  <header>
+    <div class="logo">Case&i</div>
+    <nav>
+      <a href="#home">首页</a>
+      <a href="#products">产品</a>
+      <a href="#custom">定制</a>
+      <a href="#about">关于</a>
+      <a href="#contact">联系</a>
+    </nav>
   </header>
 
-  <main id="home">
-    <section class="hero">
-      <div class="container hero-content">
-        <img src="images/logo-hero.png" alt="Case&i 品牌主视觉" class="hero-image">
-        <h1>极简 · 高端 · 专属</h1>
-        <p class="tagline">Case&amp;i by AIXX Inc · 让手机壳成为你的风格宣言</p>
-        <div class="hero-buttons">
-          <a href="#products" class="btn">选购产品</a>
-          <a href="#custom" class="btn btn-outline">立即定制</a>
-        </div>
-      </div>
-    </section>
+  <section id="home" class="hero">
+    <h1>极简 · 高端 · 专属</h1>
+    <p>Case&i by AIXX Inc · 让手机壳成为你的风格宣言</p>
+    <a href="#products" class="cta">选购产品</a>
+    <a href="#custom" class="cta">立即定制</a>
+  </section>
 
-    <section id="products" class="products container">
-      <h2>我们的产品</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>时尚款</h3>
-          <p class="features">减震防摔 · 防指纹</p>
-          <div class="price">¥129</div>
-        </article>
-        <article class="card">
-          <h3>商务款</h3>
-          <p class="features">高端质感 · 抗震</p>
-          <div class="price">¥149</div>
-        </article>
-        <article class="card">
-          <h3>透明款</h3>
-          <p class="features">清透不黄 · 亲肤手感</p>
-          <div class="price">¥109</div>
-        </article>
-      </div>
-    </section>
-
-    <section id="custom" class="custom container">
-      <h2>个性化定制</h2>
-      <p>上传你的图片 / 文字，预览你的专属手机壳。支持 iPhone / Galaxy 主流机型。</p>
-      <p class="hint">（后续可接入在线定制器，这里先保留占位。）</p>
-    </section>
-
-    <section id="about" class="about container">
-      <h2>关于 Case&amp;i</h2>
-      <p>由 AIXX Inc 打造的极简高端手机配件品牌。我们坚持材质与工艺，设计表达你的日常风格。</p>
-    </section>
-
-    <section id="contact" class="contact container">
-      <h2>联系我们</h2>
-      <p>商务合作：contact@xxkit.com</p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <small>© <span id="year"></span> AIXX Inc · Case&amp;i. All rights reserved.</small>
+  <section id="products">
+    <h2>我们的产品</h2>
+    <div class="product">
+      <h3>时尚款</h3>
+      <p>减震防摔 · 防指纹</p>
+      <p>¥129</p>
     </div>
-  </footer>
+    <div class="product">
+      <h3>商务款</h3>
+      <p>高端质感 · 抗震</p>
+      <p>¥149</p>
+    </div>
+    <div class="product">
+      <h3>透明款</h3>
+      <p>清透不黄 · 亲肤手感</p>
+      <p>¥109</p>
+    </div>
+  </section>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  <section id="custom">
+    <h2>个性化定制</h2>
+    <p>上传你的图片 / 文字，预览你的专属手机壳。支持 iPhone / Galaxy 主流机型。</p>
+  </section>
+
+  <footer>
+    <p>© 2025 Case&i by AIXX Inc</p>
+  </footer>
 </body>
 </html>
