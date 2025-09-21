@@ -3,17 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Case&i by aixx inc - 提供时尚耐用的手机壳，保护您的设备，展现个性风格，包括定制服务。">
-    <meta name="keywords" content="手机壳, Case&i, aixx inc, 保护壳, 时尚配件, 定制手机壳">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Case&i - 高品质手机壳">
-    <meta property="og:description" content="保护与风格兼得，提供定制服务。">
-    <meta property="og:image" content="https://via.placeholder.com/1200x630?text=Case&i+OG+Image">
-    <meta property="og:url" content="https://xxkit.com">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
-    <link rel="icon" href="favicon.ico">
-    <link rel="manifest" href="manifest.json">
     <title>Case&i - 高品质手机壳 | xxkit.com</title>
+    <meta name="description" content="Case&i by aixx inc - 提供时尚耐用的手机壳，保护您的设备，展现个性风格。">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -23,11 +14,9 @@
     </header>
 
     <nav>
-        <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
         <ul class="nav-list">
             <li><a href="#home">首页</a></li>
             <li><a href="#products">产品</a></li>
-            <li><a href="#custom">定制服务</a></li>
             <li><a href="#about">关于我们</a></li>
             <li><a href="#contact">联系我们</a></li>
         </ul>
@@ -40,37 +29,25 @@
     <section class="products" id="products">
         <h2>我们的产品</h2>
         <div class="product-grid">
-            <article class="product-card">
-                <img src="https://via.placeholder.com/250x250?text=Case+1" srcset="https://via.placeholder.com/500x500?text=Case+1 2x" alt="经典款手机壳" loading="lazy">
+            <div class="product-card">
+                <img src="assets/case1.jpg" alt="经典款手机壳" loading="lazy">
                 <h3>经典款</h3>
                 <p>简约设计，完美保护</p>
                 <p>¥99</p>
-            </article>
-            <article class="product-card">
-                <img src="https://via.placeholder.com/250x250?text=Case+2" srcset="https://via.placeholder.com/500x500?text=Case+2 2x" alt="时尚款手机壳" loading="lazy">
+            </div>
+            <div class="product-card">
+                <img src="assets/case2.jpg" alt="时尚款手机壳" loading="lazy">
                 <h3>时尚款</h3>
                 <p>潮流图案，彰显个性</p>
                 <p>¥129</p>
-            </article>
-            <article class="product-card">
-                <img src="https://via.placeholder.com/250x250?text=Case+3" srcset="https://via.placeholder.com/500x500?text=Case+3 2x" alt="商务款手机壳" loading="lazy">
+            </div>
+            <div class="product-card">
+                <img src="assets/case3.jpg" alt="商务款手机壳" loading="lazy">
                 <h3>商务款</h3>
                 <p>高端质感，商务首选</p>
                 <p>¥149</p>
-            </article>
+            </div>
         </div>
-    </section>
-
-    <section class="custom" id="custom">
-        <h2>定制服务</h2>
-        <p>想要独特的手机壳？上传您的设计或图片，打造专属风格！</p>
-        <form id="custom-form" enctype="multipart/form-data">
-            <input type="file" id="custom-image" accept="image/*" required aria-label="上传设计图片">
-            <div id="preview-container"></div>
-            <textarea placeholder="请输入您的定制需求（如颜色、图案等）" rows="5" required aria-label="定制需求"></textarea>
-            <button type="submit">提交定制请求</button>
-        </form>
-        <p>提交后，我们会尽快联系您确认详情。请确保提供有效的联系方式。</p>
     </section>
 
     <section class="about" id="about">
@@ -81,9 +58,9 @@
     <section class="contact" id="contact">
         <h2>联系我们</h2>
         <form id="contact-form">
-            <input type="text" placeholder="请输入姓名" required aria-label="姓名">
-            <input type="email" placeholder="请输入邮箱" required aria-label="邮箱">
-            <textarea placeholder="请输入您的消息" rows="5" required aria-label="消息"></textarea>
+            <input type="text" placeholder="请输入姓名" required>
+            <input type="email" placeholder="请输入邮箱" required>
+            <textarea placeholder="请输入您的消息" rows="5" required></textarea>
             <button type="submit">发送</button>
         </form>
     </section>
@@ -93,23 +70,5 @@
     </footer>
 
     <script src="script.js" defer></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX-X"></script> <!-- Google Analytics 占位 -->
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'UA-XXXXX-X'); // 替换为实际跟踪ID
-    </script>
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "Case&i",
-            "url": "https://xxkit.com",
-            "sameAs": ["https://github.com/werealtor/aixx"],
-            "description": "Case&i 由 aixx inc 创立，提供高品质时尚手机壳及定制服务。",
-            "logo": "https://via.placeholder.com/200x50?text=Case&i+Logo"
-        }
-    </script>
 </body>
 </html>
