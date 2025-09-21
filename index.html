@@ -3,30 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Case&i by AIXX Inc - 让手机壳成为你的风格宣言，提供极简、高端、专属定制服务。">
-    <meta name="keywords" content="手机壳, Case&i, AIXX Inc, 极简设计, 高端质感, 定制手机壳">
-    <title>Case&i - 极简 · 高端 · 专属 | xxkit.com</title>
+    <meta name="description" content="Case&i by AIXX Inc - 极简高端手机壳，展现个人风格。">
+    <meta name="keywords" content="手机壳, Case&i, AIXX Inc, 极简设计, 定制手机壳">
+    <title>Case&i - 极简 · 高端 · 专属</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { line-height: 1.6; color: #333; background: #f9f9f9; }
-        header { background: #000; color: #fff; padding: 2rem; text-align: center; }
-        header h1 { font-size: 2.5rem; }
-        header p { font-size: 1.2rem; margin-top: 0.5rem; }
-        .hero { background: url('https://images.unsplash.com/photo-1580915411954-282cb1b0d780?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80') no-repeat center/cover; height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.7); }
-        .hero h2 { font-size: 2rem; }
-        .buttons { margin-top: 1rem; }
-        .btn { background: #007bff; color: #fff; padding: 0.75rem 1.5rem; margin: 0.5rem; border-radius: 4px; text-decoration: none; font-weight: bold; }
-        .btn:hover { background: #0056b3; }
-        .section { padding: 2rem; max-width: 1200px; margin: 0 auto; text-align: center; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
-        .product-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        body { background: #fff; color: #333; line-height: 1.6; }
+        header { padding: 2rem 1rem; text-align: center; background: #fff; }
+        header h1 { font-size: 2.5rem; font-weight: 300; }
+        header p { font-size: 1rem; color: #666; margin-top: 0.5rem; }
+        .hero { height: 60vh; background: url('https://images.unsplash.com/photo-1580915411954-282cb1b0d780?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80') no-repeat center/cover; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .hero h2 { font-size: 2rem; font-weight: 300; }
+        .nav { display: flex; justify-content: center; padding: 1rem 0; background: #f5f5f5; }
+        .nav a { text-decoration: none; color: #333; margin: 0 1.5rem; font-weight: 500; }
+        .nav a:hover { color: #007bff; }
+        .section { padding: 4rem 1rem; max-width: 1200px; margin: 0 auto; text-align: center; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .product-card { background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-5px); }
         .product-card img { max-width: 100%; border-radius: 8px; }
-        .product-card h3 { margin: 0.5rem 0; }
-        .custom-form { max-width: 500px; margin: 1rem auto; display: flex; flex-direction: column; gap: 1rem; }
-        .custom-form input[type="file"] { border: 1px solid #ddd; padding: 0.5rem; }
-        #preview { max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 4px; }
+        .product-card h3 { font-size: 1.2rem; margin: 0.5rem 0; font-weight: 500; }
+        .product-card p { font-size: 0.9rem; color: #666; }
+        .custom-form { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+        .custom-form input[type="file"] { padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; }
+        #preview { max-width: 100%; max-height: 300px; border: 1px solid #ddd; border-radius: 4px; margin-top: 1rem; }
+        .custom-form button { padding: 0.75rem; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; }
+        .custom-form button:hover { background: #333; }
         footer { background: #000; color: #fff; text-align: center; padding: 1rem; font-size: 0.9rem; }
-        @media (max-width: 768px) { .hero { height: 300px; } header h1 { font-size: 2rem; } .hero h2 { font-size: 1.5rem; } }
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .hero { height: 50vh; }
+            .hero h2 { font-size: 1.5rem; }
+            .nav { flex-direction: column; }
+            .nav a { margin: 0.5rem 0; }
+        }
     </style>
 </head>
 <body>
@@ -35,99 +45,12 @@
         <p>极简 · 高端 · 专属</p>
     </header>
 
-    <section class="hero">
+    <div class="hero">
         <h2>Case&i by AIXX Inc · 让手机壳成为你的风格宣言</h2>
-        <div class="buttons">
-            <a href="#products" class="btn">选购产品</a>
-            <a href="#custom" class="btn">立即定制</a>
-        </div>
-    </section>
+    </div>
 
-    <section class="section products" id="products">
-        <h2>我们的产品</h2>
-        <div class="products-grid">
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1561154464-82e9adf32764?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" alt="经典款手机壳">
-                <h3>经典款</h3>
-                <p>轻薄 耐划</p>
-                <p>¥99</p>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1581493943529-ce3a2145a8ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" alt="时尚款手机壳">
-                <h3>时尚款</h3>
-                <p>潮流图案 防指纹</p>
-                <p>¥129</p>
-            </div>
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1606890658317-7d14490dcb4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=250&q=80" alt="商务款手机壳">
-                <h3>商务款</h3>
-                <p>高端质感 抗震</p>
-                <p>¥149</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="section custom" id="custom">
-        <h2>定制你的专属手机壳</h2>
-        <form class="custom-form">
-            <input type="file" id="custom-file" accept="image/png, image/jpeg" required>
-            <img id="preview" src="" alt="预览" style="display: none;">
-            <p>上传并预览 支持 PNG/JPG，建议小于 5MB。</p>
-            <button type="submit">提交</button>
-        </form>
-    </section>
-
-    <section class="section about" id="about">
-        <h2>关于我们</h2>
-        <p>Case&i 由 AIXX Inc 创立。我们坚持极简设计哲学，追求更好的质感与耐用。访问 <a href="https://xxkit.com">xxkit.com</a> 了解更多。</p>
-    </section>
-
-    <section class="section contact" id="contact">
-        <h2>联系我们</h2>
-        <form class="custom-form">
-            <input type="text" placeholder="姓名" required>
-            <input type="email" placeholder="邮箱" required>
-            <textarea placeholder="您的消息" rows="5" required></textarea>
-            <button type="submit">发送</button>
-        </form>
-    </section>
-
-    <footer>
-        <p>© 2025 AIXX Inc · All rights reserved · xxkit.com</p>
-    </footer>
-
-    <script>
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
-            });
-        });
-
-        // 定制图片预览
-        document.getElementById('custom-file').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file && file.size < 5 * 1024 * 1024 && (file.type === 'image/png' || file.type === 'image/jpeg')) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const preview = document.getElementById('preview');
-                    preview.src = event.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                alert('请上传 PNG/JPG 格式文件，且大小小于 5MB。');
-            }
-        });
-
-        // 表单提交提示
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('提交成功！我们会尽快处理。');
-            });
-        });
-    </script>
-</body>
-</html>
+    <nav class="nav">
+        <a href="#products">选购产品</a>
+        <a href="#custom">立即定制</a>
+        <a href="#about">关于我们</a>
+        <a href
