@@ -1,0 +1,8 @@
+.ph-img{
+  width:100%;
+  height:160px;           /* 统一卡片视觉高度 */
+  object-fit:cover;       /* 等比裁切，居中 */
+  display:block;
+  border-bottom:1px solid var(--line);
+  background:#f0f2f5;     /* 加载前浅灰底 */
+}
