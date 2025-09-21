@@ -6,16 +6,19 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <style>
-    :root{--bg:#fff;--text:#111;--muted:#666;--line:#eaeaea;--tone:#f6f7fb;--brand:#0b66ff;--max:1100px;--shadow:0 2px 10px rgba(0,0,0,.06)}
+    :root{
+      --bg:#fff;--text:#111;--muted:#666;--line:#eaeaea;--tone:#f6f7fb;
+      --brand:#0b66ff;--max:1100px;--shadow:0 2px 10px rgba(0,0,0,.06)
+    }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
-    a{color:inherit}
+    a{color:inherit;text-decoration:none}
     .container{max-width:var(--max);margin:0 auto;padding:0 20px}
     header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
     .bar{display:flex;align-items:center;gap:16px;padding:14px 0}
     .brand{font-weight:700}
     nav{display:flex;gap:18px}
-    nav a{padding:8px 10px;border-radius:10px;text-decoration:none}
+    nav a{padding:8px 10px;border-radius:10px}
     nav a:hover{background:#f3f4f7}
     .hero{padding:44px 0 28px}
     .media-wrap{border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);background:var(--tone)}
@@ -23,13 +26,13 @@
     .hero h1{font-size:clamp(26px,4.8vw,40px);text-align:center;margin:16px 0 6px}
     .sub{color:var(--muted);text-align:center}
     .cta{display:flex;gap:12px;justify-content:center;margin-top:14px}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:600;text-decoration:none}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:600}
     .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
     section{padding:36px 0}
     .title{font-size:22px;text-align:center;margin-bottom:16px}
     .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
     .card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;text-align:center}
-    .card .ph{height:160px;background:linear-gradient(120deg,#f6f7fb,#eef0f7);display:grid;place-items:center;color:#9aa;letter-spacing:.12em;font-weight:600}
+    .card img{width:100%;height:160px;object-fit:cover;display:block}
     .card .body{padding:14px 16px}
     .pillrow{display:flex;gap:8px;justify-content:center;margin:6px 0;flex-wrap:wrap}
     .pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px}
@@ -43,7 +46,7 @@
 </head>
 <body>
   <header>
-    <div class="container bar" role="navigation" aria-label="Main">
+    <div class="container bar">
       <div class="brand">Case&amp;i</div>
       <nav>
         <a href="#products">Products</a>
@@ -55,7 +58,7 @@
   </header>
 
   <main>
-    <!-- Hero (autoplay muted loop, no sound controls) -->
+    <!-- Hero -->
     <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
@@ -73,12 +76,12 @@
     </section>
 
     <!-- Products -->
-    <section id="products" aria-labelledby="prod-title">
+    <section id="products">
       <div class="container">
-        <h2 class="title" id="prod-title">Our Products</h2>
+        <h2 class="title">Our Products</h2>
         <div class="grid">
           <article class="card">
-            <div class="ph">Classic</div>
+            <img src="assets/images/classic.jpg" alt="Classic Case" />
             <div class="body">
               <h3>Classic</h3>
               <p class="sub">Slim &amp; scratch-resistant</p>
@@ -87,7 +90,7 @@
             </div>
           </article>
           <article class="card">
-            <div class="ph">Fashion</div>
+            <img src="assets/images/fashion.jpg" alt="Fashion Case" />
             <div class="body">
               <h3>Fashion</h3>
               <p class="sub">Trendy design &amp; anti-fingerprint</p>
@@ -96,7 +99,7 @@
             </div>
           </article>
           <article class="card">
-            <div class="ph">Business</div>
+            <img src="assets/images/business.jpg" alt="Business Case" />
             <div class="body">
               <h3>Business</h3>
               <p class="sub">Premium touch &amp; shockproof</p>
@@ -113,7 +116,7 @@
       <div class="container">
         <h2 class="title">Customize Your Case</h2>
         <form id="uForm">
-          <input type="file" id="file" accept="image/png,image/jpeg" aria-label="Choose image" />
+          <input type="file" id="file" accept="image/png,image/jpeg" />
           <button type="submit">Upload &amp; Preview</button>
           <p class="sub" style="text-align:center">Supports PNG/JPG, up to 5MB.</p>
           <img id="preview" alt="Preview" style="display:none;max-width:100%;border-radius:12px;border:1px solid var(--line)" />
@@ -150,16 +153,21 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- upload preview (kept) -->
+  <!-- Upload Preview -->
   <script>
     (function(){
-      const form=document.getElementById('uForm'), file=document.getElementById('file'), preview=document.getElementById('preview');
+      const form=document.getElementById('uForm'),
+            file=document.getElementById('file'),
+            preview=document.getElementById('preview');
       if(!form||!file||!preview) return;
       form.addEventListener('submit',e=>{
         e.preventDefault();
         const f=file.files?.[0]; if(!f) return alert('Please choose an image.');
-        if(!/image\/(png|jpe?g)/.test(f.type) || f.size>5*1024*1024) return alert('Upload PNG/JPG under 5MB.');
-        const r=new FileReader(); r.onload=ev=>{ preview.src=ev.target.result; preview.style.display='block'; }; r.readAsDataURL(f);
+        if(!/image\/(png|jpe?g)/.test(f.type) || f.size>5*1024*1024)
+          return alert('Upload PNG/JPG under 5MB.');
+        const r=new FileReader();
+        r.onload=ev=>{ preview.src=ev.target.result; preview.style.display='block'; };
+        r.readAsDataURL(f);
       });
     })();
   </script>
