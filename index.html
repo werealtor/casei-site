@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Meta -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
   <meta name="color-scheme" content="light" />
-
-  <!-- Styles -->
   <style>
     :root{
       --bg:#fff; --text:#111; --muted:#666; --line:#eaeaea; --tone:#f6f7fb;
@@ -34,7 +31,7 @@
     nav a{padding:8px 10px;border-radius:10px;text-decoration:none}
     nav a:hover{background:#f3f4f7}
 
-    /* Hero (supports image/video) */
+    /* Hero (video/image) */
     .hero{padding:44px 0 28px}
     .media-wrap{
       border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);background:var(--tone)
@@ -72,7 +69,6 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header>
     <div class="container bar" role="navigation" aria-label="Main">
       <div class="brand">Case&amp;i</div>
@@ -90,7 +86,7 @@
     <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
-          <!-- If you have a hero video, keep this <video>. Otherwise replace with <img class="media" src="assets/images/hero.jpg" alt="Case&i hero"> -->
+          <!-- Keep video, or replace with an <img class="media" src="assets/images/hero.jpg" alt="Case&i hero"> -->
           <video class="media" autoplay muted loop playsinline aria-label="Case&i hero video">
             <source src="assets/videos/hero.mp4" type="video/mp4" />
           </video>
@@ -99,8 +95,8 @@
         <h1>Minimal · Premium · Personal</h1>
         <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
         <div class="cta">
-          <a class="btn primary" href="#products">Shop Now</a>
-          <a class="btn" href="#custom">Customize</a>
+          <a class="btn primary" href="#products">Shop Products</a>
+          <a class="btn" href="#custom">Customize Now</a>
         </div>
       </div>
     </section>
@@ -194,13 +190,12 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- Small enhancements -->
   <script>
-    // Smooth scroll (safe degrade)
+    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click',e=>{
-        const id=a.getAttribute('href'); const el=id && document.querySelector(id);
-        if(!el) return; e.preventDefault(); el.scrollIntoView({behavior:'smooth',block:'start'});
+        const el=document.querySelector(a.getAttribute('href')); if(!el) return;
+        e.preventDefault(); el.scrollIntoView({behavior:'smooth'});
       });
     });
 
@@ -210,8 +205,7 @@
       if(!form||!file||!preview) return;
       form.addEventListener('submit',e=>{
         e.preventDefault();
-        const f=file.files && file.files[0];
-        if(!f) return alert('Please choose an image.');
+        const f=file.files?.[0]; if(!f) return alert('Please choose an image.');
         if(!/image\/(png|jpe?g)/.test(f.type) || f.size>5*1024*1024) return alert('Upload PNG/JPG under 5MB.');
         const r=new FileReader(); r.onload=ev=>{ preview.src=ev.target.result; preview.style.display='block'; }; r.readAsDataURL(f);
       });
