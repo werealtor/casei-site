@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Case&i — Minimalist · Premium · Exclusive</title>
-  <meta name="description" content="Case&i by AIXX Inc">
+  <title>Case&i — Minimal · Premium · Exclusive</title>
+  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and exclusive customization for your phone case.">
   <meta name="theme-color" content="#ffffff">
   <meta name="color-scheme" content="light">
   <meta name="format-detection" content="telephone=no, email=no, address=no">
@@ -35,14 +35,17 @@
     .menu{border:1px solid var(--line);padding:6px 10px;border-radius:10px;background:#fff}
     @media (min-width:760px){ .menu{display:none} .nav{display:flex} }
 
-    /* Hero */
+    /* Hero (built-in gradients as background to avoid external failures) */
     .hero{position:relative;overflow:hidden}
     .hero .container{padding:36px 20px 18px}
-    .hero-box{border:1px solid var(--line);background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+    .hero-box{
+      border:1px solid var(--line); background:#fff; border-radius:22px; overflow:hidden;
+      box-shadow:var(--shadow)
+    }
     .hero-media{
-      width:100%;aspect-ratio:16/9;display:block;background:#eef1f6;
-      background-image:radial-gradient(1200px 600px at 70% -10%, #eaf1ff 0%, transparent 60%),
-                       conic-gradient(from 210deg at 30% 120%, #f8f8fb 0 65%, #edf0f7 65% 100%);
+      width:100%; aspect-ratio:16/9; display:block; background:#eef1f6;
+      background-image: radial-gradient(1200px 600px at 70% -10%, #eaf1ff 0%, transparent 60%),
+                        conic-gradient(from 210deg at 30% 120%, #f8f8fb 0 65%, #edf0f7 65% 100%);
     }
     .hero h1{font-size:clamp(26px,5vw,38px);text-align:center;margin:16px 0 6px}
     .sub{color:var(--muted);text-align:center}
@@ -51,7 +54,7 @@
     .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
     .btn:hover{background:#f5f6fa}
 
-    /* Section */
+    /* Sections */
     .section{padding:28px 0}
     .title{font-size:22px;text-align:center;margin-bottom:16px}
 
@@ -79,6 +82,7 @@
     .form input,.form textarea{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit}
     footer{border-top:1px solid var(--line);padding:20px 0 40px;color:var(--muted);text-align:center}
 
+    /* Reduced motion */
     @media (prefers-reduced-motion:reduce){ html:focus-within{scroll-behavior:auto}}
   </style>
 </head>
@@ -87,7 +91,7 @@
     <div class="container">
       <div class="brand">Case&amp;i</div>
       <div class="spacer"></div>
-      <button class="menu" id="mBtn" aria-label="Open Menu">Menu</button>
+      <button class="menu" id="mBtn" aria-label="Open menu">Menu</button>
       <nav class="nav" id="nav">
         <a href="#products">Products</a>
         <a href="#custom">Customize</a>
@@ -102,10 +106,10 @@
     <section class="hero" id="home">
       <div class="container">
         <div class="hero-box">
-          <div class="hero-media" aria-label="Brand Visual"></div>
+          <div class="hero-media" aria-label="Brand visual"></div>
         </div>
-        <h1>Minimalist · Premium · Exclusive</h1>
-        <p class="sub">Case&amp;i by <strong>AIXX Inc</strong> · Make your phone case a style statement</p>
+        <h1>Minimal · Premium · Exclusive</h1>
+        <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
         <div class="cta">
           <a class="btn primary" href="#products">Shop Products</a>
           <a class="btn" href="#custom">Customize Now</a>
@@ -117,12 +121,13 @@
     <section class="section" id="products">
       <div class="container">
         <h2 class="title">Our Products</h2>
+
         <div class="grid">
           <article class="card">
             <div class="ph">Classic</div>
             <div class="body">
               <h3>Classic</h3>
-              <p>Slim design, reliable protection</p>
+              <p class="muted">Slim design, reliable protection</p>
               <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Scratch-resistant</span></div>
               <div class="price">$39</div>
             </div>
@@ -132,8 +137,8 @@
             <div class="ph">Fashion</div>
             <div class="body">
               <h3>Fashion</h3>
-              <p>Trendy patterns, express yourself</p>
-              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Anti-Fingerprint</span></div>
+              <p class="muted">Trendy patterns, express yourself</p>
+              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Anti-fingerprint</span></div>
               <div class="price">$69</div>
             </div>
           </article>
@@ -142,8 +147,8 @@
             <div class="ph">Business</div>
             <div class="body">
               <h3>Business</h3>
-              <p>Premium feel, professional style</p>
-              <div class="pillrow"><span class="pill">Premium Texture</span><span class="pill">Shock-Resistant</span></div>
+              <p class="muted">Premium texture, professional feel</p>
+              <div class="pillrow"><span class="pill">Premium Texture</span><span class="pill">Shock-resistant</span></div>
               <div class="price">$89</div>
             </div>
           </article>
@@ -155,14 +160,14 @@
     <section class="section" id="custom">
       <div class="container">
         <h2 class="title">Customize Your Exclusive Case</h2>
-        <form class="up" id="uForm" aria-label="Upload Preview">
+        <form class="up" id="uForm" aria-label="Upload preview">
           <div class="row">
             <label class="btn file" for="file">Choose Image</label>
             <input id="file" type="file" accept="image/png,image/jpeg" hidden>
             <span class="fname" id="fname">No file selected</span>
             <button class="btn primary" type="submit">Upload & Preview</button>
           </div>
-          <p class="tip">Supports PNG/JPG, recommended under 5MB.</p>
+          <p class="tip">Supports PNG/JPG. Recommended under 5&nbsp;MB.</p>
           <div class="phone">
             <div class="frame"></div>
             <img id="preview" class="preview" alt="Preview">
@@ -200,39 +205,45 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <noscript>JavaScript is required for the upload preview function.</noscript>
+  <noscript>JavaScript is required for the upload preview feature.</noscript>
 
   <script>
-    // Mobile menu
-    const mBtn=document.getElementById('mBtn');
-    const nav=document.getElementById('nav');
-    if(mBtn){ mBtn.addEventListener('click',()=>{ nav.style.display=(nav.style.display==='flex'?'none':'flex'); }); }
+    // Mobile menu (small screens only)
+    const mBtn = document.getElementById('mBtn');
+    const nav = document.getElementById('nav');
+    if (mBtn) { mBtn.addEventListener('click', () => {
+      nav.style.display = (nav.style.display === 'flex' ? 'none' : 'flex');
+    }); }
 
-    // Smooth scrolling
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click',e=>{
-        const id=a.getAttribute('href'); if(!id||id==='#') return;
-        const t=document.querySelector(id); if(!t) return;
-        e.preventDefault(); t.scrollIntoView({behavior:'smooth',block:'start'});
+    // Smooth scroll (safe fallback)
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href'); if (!id || id === '#') return;
+        const target = document.querySelector(id); if (!target) return;
+        e.preventDefault(); target.scrollIntoView({ behavior:'smooth', block:'start' });
       });
     });
 
-    // Image upload preview
-    const form=document.getElementById('uForm');
-    const input=document.getElementById('file');
-    const nameEl=document.getElementById('fname');
-    const preview=document.getElementById('preview');
-    input.addEventListener('change',()=>{ nameEl.textContent=input.files?.[0]?.name||'No file selected'; });
-    form.addEventListener('submit',e=>{
+    // Image upload preview (frontend only, no backend)
+    const form = document.getElementById('uForm');
+    const input = document.getElementById('file');
+    const nameEl = document.getElementById('fname');
+    const preview = document.getElementById('preview');
+
+    input.addEventListener('change', () => {
+      nameEl.textContent = input.files?.[0]?.name || 'No file selected';
+    });
+
+    form.addEventListener('submit', e => {
       e.preventDefault();
-      const f=input.files?.[0];
-      if(!f){ alert('Please select an image'); return; }
-      if(!/image\\/(png|jpe?g)/.test(f.type)||f.size>5*1024*1024){
-        alert('Please upload PNG/JPG under 5MB'); return;
+      const f = input.files?.[0];
+      if (!f) { alert('Please select an image'); return; }
+      if (!/image\/(png|jpe?g)/.test(f.type) || f.size > 5 * 1024 * 1024) {
+        alert('Please upload PNG/JPG under 5 MB'); return;
       }
-      const r=new FileReader();
-      r.onload=ev=>{ preview.src=ev.target.result; preview.style.display='block'; };
-      r.readAsDataURL(f);
+      const reader = new FileReader();
+      reader.onload = ev => { preview.src = ev.target.result; preview.style.display = 'block'; };
+      reader.readAsDataURL(f);
     });
   </script>
 </body>
