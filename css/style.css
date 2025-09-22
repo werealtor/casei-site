@@ -38,6 +38,13 @@
   min-width:160px;   /* 按钮统一宽度 */
   text-align:center;
 }
-
+.floating-toggle{
+  position: fixed; right:20px; bottom:20px;
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid var(--line);
+  background:var(--bg); color:var(--text);
+  font-size:1.3rem; box-shadow:var(--shadow);
+  z-index: 9999;             /* 关键 */
+}
 
 
