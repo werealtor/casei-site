@@ -1,98 +1,181 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-  <!-- BUILD 2025-09-22-14:20 -->
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Minimal Toggle Test</title>
-
-<!-- 跟随系统的主题元信息（非必需） -->
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
-
-<style>
-  /* ====== 最小样式，内联，避免路径问题 ====== */
-  :root{
-    --bg:#ffffff; --text:#111; --line:#eaeaea;
-  }
-  html[data-theme="dark"]{
-    --bg:#0b0b0b; --text:#f5f5f5; --line:#333;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;height:100%}
-  body{
-    display:flex;align-items:center;justify-content:center;
-    background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    transition:background .2s,color .2s;
-  }
-  h1{font-size:20px;font-weight:600;margin:0 12px;text-align:center}
-
-  /* 悬浮按钮（正式样式） */
-  .floating-toggle{
-    position:fixed; right:20px; bottom:20px;
-    width:48px; height:48px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    background:var(--bg); color:var(--text);
-    border:1px solid var(--line);
-    box-shadow:0 6px 18px rgba(0,0,0,.15);
-    font-size:22px; cursor:pointer;
-    z-index:9999; transition:transform .18s ease;
-  }
-  .floating-toggle:hover{ transform:scale(1.08) }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Case&i — Minimal · Premium · Personal</title>
+  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <h1>最小测试页（应显示右下角 🌙/☀️ 按钮）</h1>
+  <!-- Header -->
+  <header id="site-header">
+    <div class="container bar">
+      <div class="brand">Case&amp;i</div>
 
-  <!-- 悬浮按钮（正式） -->
-  <button id="themeToggle" class="floating-toggle" aria-label="Toggle theme" title="切换浅/深色">🌙</button>
+      <!-- 汉堡按钮（移动端显示） -->
+      <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
+        <span class="menu-icon" aria-hidden="true"></span>
+      </button>
 
-<script>
-/* ====== 主题切换逻辑（记忆选择） ====== */
-(function(){
-  const btn = document.getElementById('themeToggle');
-  if(!btn) return;
+      <nav id="primary-nav" aria-label="Primary navigation">
+        <a href="#products">Products</a>
+        <a href="#custom">Customize</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-  const saved = localStorage.getItem('theme');
-  const setIcon = m => btn.textContent = (m==='dark' ? '☀️' : '🌙');
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="home">
+      <div class="container">
+        <figure class="media-wrap">
+          <video class="media" autoplay muted loop playsinline aria-label="Case&i hero video">
+            <source src="assets/videos/hero.mp4" type="video/mp4" />
+          </video>
+        </figure>
+        <h1>Minimal · Premium · Personal</h1>
+        <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
 
-  if(saved){
-    document.documentElement.setAttribute('data-theme', saved);
-    setIcon(saved);
-  }else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
-    document.documentElement.setAttribute('data-theme','dark'); setIcon('dark');
-  }else{
-    setIcon('light');
-  }
+        <div class="cta">
+          <a class="btn primary" href="#products">Shop Products</a>
+          <a class="btn" href="#custom">Customize Now</a>
+        </div>
+      </div>
+    </section>
 
-  btn.addEventListener('click', ()=>{
-    const cur = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-    setIcon(next);
-  });
-})();
+    <!-- Products -->
+    <section id="products">
+      <div class="container">
+        <h2 class="title">Our Products</h2>
+        <div class="grid">
+          <article class="card">
+            <img src="assets/images/classic.jpg" alt="Classic Case" loading="lazy" />
+            <div class="body">
+              <h3>Classic</h3>
+              <p class="sub">Slim &amp; scratch-resistant</p>
+              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
+              <div class="price">$19</div>
+            </div>
+          </article>
 
-/* ====== DEBUG 强制出现按钮（如果上面按钮没被渲染/被删） ======
-   这段会在找不到 #themeToggle 时，注入一个红黄大按钮，确保你一定能“看见东西”。
-*/
-(function(){
-  if(document.getElementById('themeToggle')) return; // 已存在就不插
-  const btn = document.createElement('button');
-  btn.id = 'themeToggle';
-  btn.textContent = '🌙';
-  Object.assign(btn.style, {
-    position:'fixed',right:'20px',bottom:'20px',width:'80px',height:'80px',
-    borderRadius:'12px',background:'red',color:'#fff',fontSize:'36px',
-    fontWeight:'700',border:'4px solid yellow',boxShadow:'0 10px 30px rgba(0,0,0,.25)',
-    zIndex:'2147483647',cursor:'pointer'
-  });
-  document.body.appendChild(btn);
-})();
-</script>
+          <article class="card">
+            <img src="assets/images/fashion.jpg" alt="Fashion Case" loading="lazy" />
+            <div class="body">
+              <h3>Fashion</h3>
+              <p class="sub">Trendy design &amp; anti-fingerprint</p>
+              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
+              <div class="price">$25</div>
+            </div>
+          </article>
 
-<!-- BUILD MARK: 2025-09-22-minimal-test -->
+          <article class="card">
+            <img src="assets/images/business.jpg" alt="Business Case" loading="lazy" />
+            <div class="body">
+              <h3>Business</h3>
+              <p class="sub">Premium touch &amp; shockproof</p>
+              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
+              <div class="price">$29</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customize -->
+    <section id="custom">
+      <div class="container">
+        <h2 class="title">Customize Your Case</h2>
+        <form id="uForm">
+          <input type="file" id="file" accept="image/png,image/jpeg" />
+          <button type="submit">Upload &amp; Preview</button>
+          <p id="uErr" class="sub err"></p>
+          <img id="preview" alt="Preview" style="display:none;max-width:100%;border-radius:12px;border:1px solid var(--line)" />
+        </form>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+      <div class="container">
+        <h2 class="title">About Us</h2>
+        <p class="about-text">
+          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
+          Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="container">
+        <h2 class="title">Contact Us</h2>
+        <form onsubmit="event.preventDefault();alert('Submitted (demo)');">
+          <input type="text" name="name" placeholder="Name" required />
+          <input type="email" name="email" placeholder="Email" required />
+          <textarea name="message" rows="4" placeholder="Message"></textarea>
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // 上传预览 + 错误提示
+    (function(){
+      const form=document.getElementById('uForm'),
+            file=document.getElementById('file'),
+            preview=document.getElementById('preview'),
+            err=document.getElementById('uErr');
+      if(!form||!file||!preview) return;
+      form.addEventListener('submit',e=>{
+        e.preventDefault();
+        err.textContent='';
+        const f=file.files?.[0];
+        if(!f){ err.textContent='Please choose an image.'; return; }
+        if(!/image\/(png|jpe?g)/.test(f.type) || f.size>5*1024*1024){
+          err.textContent='Upload PNG/JPG under 5MB.'; return;
+        }
+        const r=new FileReader();
+        r.onload=ev=>{ preview.src=ev.target.result; preview.style.display='block'; };
+        r.readAsDataURL(f);
+      });
+    })();
+
+    // 极简汉堡菜单
+    (function(){
+      const header = document.getElementById('site-header');
+      const btn = header.querySelector('.menu-toggle');
+      const nav = header.querySelector('#primary-nav');
+      if(!btn || !nav) return;
+      btn.addEventListener('click', ()=>{
+        const open = header.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      });
+      nav.addEventListener('click', (e)=>{
+        if(e.target.tagName === 'A' && header.classList.contains('open')){
+          header.classList.remove('open');
+          btn.setAttribute('aria-expanded','false');
+          btn.setAttribute('aria-label','Open menu');
+        }
+      });
+    })();
+
+    // 注册 Service Worker（根目录 sw.js，找不到再试 /js/sw.js）
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/sw.js').catch(()=>{
+        return navigator.serviceWorker.register('/js/sw.js').catch(()=>{});
+      });
+    }
+  </script>
 </body>
 </html>
