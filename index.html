@@ -6,67 +6,39 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
 
-  <!-- SEO / Social -->
-  <link rel="canonical" href="https://xxkit.com/">
-  <meta name="theme-color" content="#0b66ff">
-  <meta property="og:title" content="Case&i — Minimal · Premium · Personal">
-  <meta property="og:description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/images/og-cover.jpg">
-  <meta property="og:url" content="https://xxkit.com/">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="assets/images/favicon.ico">
-  <link rel="manifest" href="manifest.webmanifest">
-
-  <!-- 可选但推荐：严格 CSP（静态站友好） -->
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    img-src 'self' data:;
-    media-src 'self';
-    style-src 'self' 'unsafe-inline';
-    script-src 'self';
-    connect-src 'self';
-    base-uri 'self';
-    form-action 'self'
-  ">
-
+  <!-- 基础样式（保持极简） -->
   <style>
     :root{
-      --bg:#fff;--text:#111;--muted:#666;--line:#eaeaea;--tone:#f6f7fb;
+      --bg:#111;--text:#f5f5f5;--muted:#9aa0a6;--line:#222;--tone:#141414;
       --brand:#0b66ff;--max:1100px;--shadow:0 2px 10px rgba(0,0,0,.06)
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
     a{color:inherit;text-decoration:none}
     .container{max-width:var(--max);margin:0 auto;padding:0 20px}
-    header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
-    .bar{display:flex;align-items:center;gap:16px;padding:14px 0}
+
+    header{background:#0f0f0f;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+    .bar{display:flex;align-items:center;gap:16px;padding:14px 0;justify-content:space-between}
     .brand{font-weight:700}
+
     nav{display:flex;gap:18px}
     nav a{padding:8px 10px;border-radius:10px}
-    nav a:hover{background:#f3f4f7}
+    nav a:hover{background:#161616}
 
-    /* === 极简汉堡按钮 === */
+    /* 汉堡按钮 */
     .menu-toggle{
-      margin-left:auto;
-      display:none; /* 桌面端隐藏 */
-      width:40px;height:40px;border:1px solid var(--line);border-radius:10px;
-      background:#fff;cursor:pointer;align-items:center;justify-content:center;
+      display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:10px;
+      background:#0f0f0f;cursor:pointer;align-items:center;justify-content:center;position:relative;z-index:51
     }
-    .menu-toggle:focus{outline:2px solid var(--brand);outline-offset:2px}
-    .menu-icon{position:relative;width:18px;height:2px;background:#111;border-radius:2px}
-    .menu-icon::before,.menu-icon::after{
-      content:"";position:absolute;left:0;width:18px;height:2px;background:#111;border-radius:2px
-    }
-    .menu-icon::before{top:-6px}
-    .menu-icon::after{top:6px}
+    .menu-icon{position:relative;width:18px;height:2px;background:#fff;border-radius:2px}
+    .menu-icon::before,.menu-icon::after{content:"";position:absolute;left:0;width:18px;height:2px;background:#fff;border-radius:2px}
+    .menu-icon::before{top:-6px}.menu-icon::after{top:6px}
 
-    /* 移动端导航（默认收起） */
-    @media (max-width: 768px){
+    /* 移动端（默认收起） */
+    @media (max-width:768px){
+      .menu-toggle{display:inline-flex}
       nav{display:none;flex-direction:column;gap:0;width:100%}
       nav a{padding:12px 10px;border-radius:0;border-top:1px solid var(--line)}
-      .menu-toggle{display:inline-flex}
-      .bar{justify-content:space-between}
       header.open nav{display:flex}
       header.open .menu-icon{background:transparent}
       header.open .menu-icon::before{transform:translateY(6px) rotate(45deg)}
@@ -80,32 +52,28 @@
     .hero h1{font-size:clamp(26px,4.8vw,40px);text-align:center;margin:16px 0 6px}
     .sub{color:var(--muted);text-align:center}
     .cta{display:flex;gap:12px;justify-content:center;margin-top:14px}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:600}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#0f0f0f;font-weight:600}
     .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
     section{padding:36px 0}
     .title{font-size:22px;text-align:center;margin-bottom:16px}
     .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-    .card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;text-align:center}
-    .card img{width:100%;height:160px;object-fit:cover;display:block}
+    .card{background:#0f0f0f;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;text-align:center}
+    .card img{width:100%;height:160px;object-fit:cover;display:block;background:#161616}
     .card .body{padding:14px 16px}
     .pillrow{display:flex;gap:8px;justify-content:center;margin:6px 0;flex-wrap:wrap}
     .pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px}
     .price{font-weight:700;margin-top:4px}
     form{display:grid;gap:12px;max-width:520px;margin:0 auto}
-    input,textarea,button{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit}
+    input,textarea,button{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;background:#0f0f0f;color:var(--text)}
     button{background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
     button:hover{opacity:.95}
     footer{border-top:1px solid var(--line);padding:18px 0 28px;color:var(--muted);text-align:center}
 
-    /* 可选：深色模式 */
-    @media (prefers-color-scheme: dark){
-      :root{ --bg:#0b0b0b; --text:#f5f5f5; --line:#222; --tone:#141414; }
-      body{ background:var(--bg); color:var(--text); }
-      header, footer{ background:#0f0f0f; }
-      nav a:hover{ background:#161616; }
-      .card{ background:#0f0f0f; border-color:#222; }
-      .media-wrap{ background:#121212; border-color:#222; }
+    /* 遮罩（紧跟 header 放一个 .overlay） */
+    .overlay{
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:40;
     }
+    header.open + .overlay{ display:block; }
   </style>
 </head>
 <body>
@@ -113,7 +81,6 @@
     <div class="container bar">
       <div class="brand">Case&amp;i</div>
 
-      <!-- 汉堡按钮（移动端显示） -->
       <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
         <span class="menu-icon" aria-hidden="true"></span>
       </button>
@@ -123,9 +90,11 @@
         <a href="#custom">Customize</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
-      </nav><div class="overlay"></div>
+      </nav>
     </div>
   </header>
+  <!-- 紧跟 header 的遮罩 -->
+  <div class="overlay"></div>
 
   <main>
     <!-- Hero -->
@@ -134,7 +103,6 @@
         <figure class="media-wrap">
           <video class="media" preload="metadata" autoplay muted loop playsinline poster="assets/images/hero-poster.jpg" aria-label="Case&i hero video">
             <source src="assets/videos/hero.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
           </video>
         </figure>
         <h1>Minimal · Premium · Personal</h1>
@@ -190,7 +158,7 @@
           <input type="file" id="file" accept="image/png,image/jpeg" />
           <button type="submit" class="btn">Upload &amp; Preview</button>
           <p class="sub" style="text-align:center">Supports PNG/JPG, up to 5MB.</p>
-          <p id="uErr" class="error" aria-live="polite" style="text-align:center;color:#c00;"></p>
+          <p id="uErr" class="error" aria-live="polite" style="text-align:center;color:#e66;"></p>
           <img id="preview" alt="Preview" style="display:none;max-width:100%;border-radius:12px;border:1px solid var(--line)" />
         </form>
       </div>
@@ -225,8 +193,7 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- ========= 脚本区（放在 </body> 之前） ========= -->
-  
-<script src="js/script.js" defer></script>
+  <!-- 外链脚本（避免 CSP 拦截内联脚本） -->
+  <script src="js/script.js?v=4" defer></script>
 </body>
 </html>
