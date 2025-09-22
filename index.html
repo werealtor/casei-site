@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-  <!-- BUILD 2025-09-22-12:45 -->
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
 
-  <!-- 自适应系统主题色（地址栏/状态栏） -->
+  <!-- 系统主题适配（地址栏/状态栏跟随模式） -->
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
 
-  <!-- 外链样式（注意路径） -->
-  <link rel="stylesheet" href="css/style.css?v=1.0">
+  <!-- 外部 CSS。若你的样式在 /css 目录，保持这一行；若在根目录，改成 href="style.css?v=..." -->
+  <link rel="stylesheet" href="css/style.css?v=20250922">
+
+  <!-- 标记：BUILD 2025-09-22-DEBUG1（用于你“查看源代码”确认是否已更新到这份文件） -->
 </head>
 
 <body>
-  <!-- Header / 导航 -->
+  <!-- Header -->
   <header class="site-header" role="banner">
     <div class="container nav-wrap">
       <div class="logo" aria-label="Case&i">Case&i</div>
@@ -30,10 +31,10 @@
     </div>
   </header>
 
-  <!-- Hero / 头图 -->
+  <!-- Hero -->
   <section class="hero" id="home">
     <div class="container">
-      <!-- 替换为你自己的图片文件 -->
+      <!-- 替换为你的头图：确保文件名与路径正确（如 /hero.jpg 或 /images/hero.jpg） -->
       <img class="hero-media" src="hero.jpg" alt="Case&i showcase" />
       <h1 class="hero-title">Minimal · Premium · Personal</h1>
       <p class="hero-sub">Case&i by <strong>AIXX Inc</strong></p>
@@ -44,12 +45,11 @@
     </div>
   </section>
 
-  <!-- Products / 示例区 -->
+  <!-- Products -->
   <section class="section" id="products" aria-labelledby="products-title">
     <div class="container">
       <h2 id="products-title" class="section-title">Our Products</h2>
       <div class="grid">
-        <!-- 示例卡片（你可以替换为真实内容或删掉） -->
         <article class="card">
           <img src="product-1.jpg" alt="Clear Case" />
           <h3>Clear Case</h3>
@@ -69,7 +69,7 @@
     </div>
   </section>
 
-  <!-- Customize / 定制区 -->
+  <!-- Customize -->
   <section class="section" id="customize" aria-labelledby="customize-title">
     <div class="container">
       <h2 id="customize-title" class="section-title">Customize</h2>
@@ -100,14 +100,15 @@
   <!-- 悬浮主题切换按钮（右下角） -->
   <button id="themeToggle" class="floating-toggle" aria-label="Toggle theme" title="Toggle Light/Dark">🌙</button>
 
-  <!-- 最小脚本：主题切换 & 定制预览 -->
+  <!-- 主题切换 & 预览脚本（最小可用版） -->
   <script>
     // ===== Theme Toggle =====
     (function () {
       const btn = document.getElementById('themeToggle');
+      if (!btn) return;
       const saved = localStorage.getItem('theme');
 
-      function setIcon(mode){ btn.textContent = mode === 'dark' ? '☀️' : '🌙'; }
+      const setIcon = (mode) => { btn.textContent = (mode === 'dark' ? '☀️' : '🌙'); };
 
       if (saved) {
         document.documentElement.setAttribute('data-theme', saved);
@@ -128,7 +129,7 @@
       });
     })();
 
-    // ===== Simple Preview =====
+    // ===== Simple Preview（上传即预览） =====
     (function () {
       const input = document.getElementById('image-upload');
       const img = document.getElementById('preview-image');
@@ -142,51 +143,37 @@
       });
     })();
   </script>
-  <!-- DEBUG: force floating theme button -->
-<script>
-(function () {
-  // 已存在就不重复插
-  if (document.getElementById('themeToggle')) return;
 
-  const btn = document.createElement('button');
-  btn.id = 'themeToggle';
-  btn.setAttribute('aria-label','Toggle theme');
-  btn.textContent = '🌙';
-
-  // 直接内联超显眼样式（不依赖外部 CSS）
-  Object.assign(btn.style, {
-    position: 'fixed',
-    right: '20px',
-    bottom: '20px',
-    width: '60px',
-    height: '60px',
-    borderRadius: '12px',
-    background: 'red',
-    color: '#fff',
-    fontSize: '32px',
-    fontWeight: '700',
-    border: '3px solid yellow',
-    boxShadow: '0 8px 24px rgba(0,0,0,.25)',
-    zIndex: '2147483647', // 顶层
-    cursor: 'pointer'
-  });
-
-  document.body.appendChild(btn);
-
-  // 点一下能切换主题（顺便验证脚本是否执行）
-  const setIcon = (m) => btn.textContent = (m === 'dark' ? '☀️' : '🌙');
-  const init = localStorage.getItem('theme');
-  if (init) { document.documentElement.setAttribute('data-theme', init); setIcon(init); }
-  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); setIcon('dark'); }
-
-  btn.onclick = () => {
-    const cur = document.documentElement.getAttribute('data-theme');
-    const next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-    setIcon(next);
-  };
-})();
-</script>
+  <!-- ============ DEBUG 强制按钮：若看不到悬浮按钮，临时启用下方脚本 ============ -->
+  <!--
+  <script>
+  (function () {
+    if (document.getElementById('themeToggle')) return; // 已有按钮就不重复插入
+    const btn = document.createElement('button');
+    btn.id = 'themeToggle';
+    btn.setAttribute('aria-label','Toggle theme');
+    btn.textContent = '🌙';
+    Object.assign(btn.style, {
+      position:'fixed', right:'20px', bottom:'20px', width:'60px', height:'60px',
+      borderRadius:'12px', background:'red', color:'#fff', fontSize:'32px',
+      fontWeight:'700', border:'3px solid yellow', boxShadow:'0 8px 24px rgba(0,0,0,.25)',
+      zIndex:'2147483647', cursor:'pointer'
+    });
+    document.body.appendChild(btn);
+    const setIcon = m => btn.textContent = m === 'dark' ? '☀️' : '🌙';
+    const saved = localStorage.getItem('theme');
+    if (saved) { document.documentElement.setAttribute('data-theme', saved); setIcon(saved); }
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme','dark'); setIcon('dark'); }
+    btn.onclick = () => {
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      setIcon(next);
+    };
+  })();
+  </script>
+  -->
+  <!-- ============ /DEBUG ============ -->
 </body>
 </html>
