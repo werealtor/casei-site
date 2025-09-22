@@ -1,3 +1,7 @@
+import re
+
+# HTML 源代码字符串（替换为您的实际 HTML 内容，或从文件读取）
+html_content = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -173,3 +177,66 @@
   </script>
 </body>
 </html>
+"""
+
+# Markdown 模板字符串（替换为您的实际 Markdown 内容，或从文件读取）
+markdown_template = """
+# Case&i
+
+极简 · 高端 · 专属
+
+## 我们的产品
+
+经典款手机壳
+
+### 经典款
+
+轻薄 耐划
+
+{price_classic}
+
+时尚款手机壳
+
+### 时尚款
+
+潮流图案 防指纹
+
+{price_fashion}
+
+商务款手机壳
+
+### 商务款
+
+高端质感 抗震
+
+{price_business}
+
+## 定制你的专属手机壳
+
+上传并预览 支持 PNG/JPG，建议小于 5MB。
+
+## 关于我们
+
+Case&i 由 AIXX Inc 创立。我们坚持极简设计哲学，追求更好的质感与耐用。访问 xxkit.com 了解更多。
+
+
+</DOCUMENT>
+"""
+
+# 使用正则表达式从 HTML 中提取价格（假设顺序：Classic, Fashion, Business）
+prices = re.findall(r'<div class="price">(\$[\d]+)</div>', html_content)
+if len(prices) != 3:
+    print("Error: Expected 3 prices in HTML, found", len(prices))
+else:
+    price_classic, price_fashion, price_business = prices
+    # 更新 Markdown
+    updated_markdown = markdown_template.format(
+        price_classic=price_classic,
+        price_fashion=price_fashion,
+        price_business=price_business
+    )
+    # 输出或保存到文件
+    print(updated_markdown)
+    # 可选：写入文件
+    # with open('updated_document.md', 'w', encoding='utf-8') as f:
+    #     f.write(updated_markdown)
