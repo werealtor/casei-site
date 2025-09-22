@@ -1,4 +1,4 @@
-/* ========= 基础变量（默认浅色） ========= */
+/* ========== 变量：默认浅色 ========== */
 :root{
   --bg:#ffffff;
   --text:#111111;
@@ -10,8 +10,8 @@
   --max:1100px;
 }
 
-/* ========= 深色模式（通过 data-theme 切换） ========= */
-[data-theme="dark"]{
+/* ========== 深色模式（通过 html[data-theme="dark"] 切换） ========== */
+html[data-theme="dark"]{
   --bg:#0b0b0b;
   --text:#f5f5f5;
   --muted:#aaaaaa;
@@ -21,7 +21,7 @@
   --shadow:0 2px 10px rgba(0,0,0,.4);
 }
 
-/* ========= Reset & Base ========= */
+/* ========== Reset & Base ========== */
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 body{
@@ -32,12 +32,80 @@ body{
   -webkit-font-smoothing:antialiased;
   transition: background .25s ease, color .25s ease;
 }
-
 img{ display:block; max-width:100%; height:auto; }
 a{ color:inherit; text-decoration:none; }
-
 .container{ width:100%; max-width:var(--max); margin:0 auto; padding:0 16px; }
 
-/* ========= Header ========= */
+/* ========== Header ========== */
 .site-header{
-  position:sticky; top:0; z
+  position:sticky; top:0; z-index:100;
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+}
+.nav-wrap{
+  height:60px; display:flex; align-items:center; justify-content:space-between;
+}
+.logo{ font-weight:600; font-size:1.2rem; }
+.site-nav a{ margin-left:1.2rem; font-weight:500; color:var(--text); }
+
+/* ========== Hero ========== */
+.hero{ padding:24px 0 16px; }
+.hero-media{
+  width:100%; border-radius:12px; box-shadow:var(--shadow);
+  background:var(--tone);
+}
+.hero-title{ font-size:2rem; margin:16px 0 8px; text-align:center; }
+.hero-sub{ color:var(--muted); text-align:center; }
+.hero-actions{ display:flex; justify-content:center; gap:12px; margin-top:12px; }
+
+/* Buttons */
+.btn{
+  display:inline-block; padding:12px 18px; border-radius:8px;
+  font-weight:600; box-shadow:var(--shadow);
+}
+.btn-primary{ background:var(--brand); color:#fff; }
+.btn-outline{ background:transparent; color:var(--brand); border:1px solid var(--brand); }
+
+/* ========== Sections ========== */
+.section{ padding:40px 0; border-top:1px solid var(--line); }
+.section-title{ font-size:1.4rem; margin-bottom:16px; }
+.muted{ color:var(--muted); }
+
+/* Grid */
+.grid{
+  display:grid; gap:16px;
+  grid-template-columns:repeat(3,1fr);
+}
+@media (max-width:900px){
+  .grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:600px){
+  .grid{ grid-template-columns:1fr; }
+}
+
+/* Cards */
+.card{
+  border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  background:var(--bg); box-shadow:var(--shadow);
+  padding-bottom:12px;
+}
+.card img{ width:100%; aspect-ratio:4/3; object-fit:cover; background:var(--tone); }
+.card h3{ font-size:1.05rem; margin:10px 12px 6px; }
+.card p{ color:var(--muted); margin:0 12px; }
+
+/* ========== 悬浮主题切换按钮（右下角） ========== */
+.floating-toggle{
+  position:fixed; right:20px; bottom:20px;
+  width:46px; height:46px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg); color:var(--text);
+  border:1px solid var(--line);
+  box-shadow:0 6px 24px rgba(0,0,0,.18);
+  font-size:1.3rem; cursor:pointer;
+  z-index:9999;
+  transition:transform .18s ease, background .2s, color .2s, border-color .2s;
+}
+.floating-toggle:hover{ transform:scale(1.08); }
+
+/* 预览图占位隐藏，上传后显示 */
+.preview{ display:none; margin-top:12px; border:1px dashed var(--line); border-radius:8px; }
