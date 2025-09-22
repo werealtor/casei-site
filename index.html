@@ -1,192 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Case&i — Minimal · Premium · Personal</title>
-  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Minimal Toggle Test</title>
 
-  <!-- 系统主题适配（地址栏/状态栏跟随模式） -->
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
-  <meta name="color-scheme" content="light dark">
+<!-- 跟随系统的主题元信息（非必需） -->
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
 
-  <!-- 外部 CSS。若你的样式在 /css 目录，保持这一行；若在根目录，改成 href="style.css?v=..." -->
-  <link rel="stylesheet" href="css/style.css?v=20250922">
-
-  <!-- 标记：BUILD 2025-09-22-DEBUG1（用于你“查看源代码”确认是否已更新到这份文件） -->
-  <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0b66ff">
-</head>
-
-<body>
-  <!-- Header -->
-  <header class="site-header" role="banner">
-    <div class="container nav-wrap">
-      <div class="logo" aria-label="Case&i">Case&i</div>
-      <nav class="site-nav" role="navigation" aria-label="Primary">
-        <a href="#products">Products</a>
-        <a href="#customize">Customize</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section class="hero" id="home">
-    <div class="container">
-      <!-- 替换为你的头图：确保文件名与路径正确（如 /hero.jpg 或 /images/hero.jpg） -->
-      <img class="hero-media" src="hero.jpg" alt="Case&i showcase" />
-      <h1 class="hero-title">Minimal · Premium · Personal</h1>
-      <p class="hero-sub">Case&i by <strong>AIXX Inc</strong></p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#products">Shop Products</a>
-        <a class="btn btn-outline" href="#customize">Customize Now</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Products -->
-  <section class="section" id="products" aria-labelledby="products-title">
-    <div class="container">
-      <h2 id="products-title" class="section-title">Our Products</h2>
-      <div class="grid">
-        <article class="card">
-          <img src="product-1.jpg" alt="Clear Case" />
-          <h3>Clear Case</h3>
-          <p>Minimal protection with premium clarity.</p>
-        </article>
-        <article class="card">
-          <img src="product-2.jpg" alt="MagSafe Case" />
-          <h3>MagSafe Case</h3>
-          <p>Snaps perfectly, guards beautifully.</p>
-        </article>
-        <article class="card">
-          <img src="product-3.jpg" alt="Leather Case" />
-          <h3>Leather Case</h3>
-          <p>Elegant texture, timeless style.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- Customize -->
-  <section class="section" id="customize" aria-labelledby="customize-title">
-    <div class="container">
-      <h2 id="customize-title" class="section-title">Customize</h2>
-      <p class="muted">Upload your image to preview a personalized case.</p>
-      <form class="customize-form" id="custom-form">
-        <input type="file" id="image-upload" accept="image/*" />
-        <img id="preview-image" class="preview" alt="Preview will appear here" />
-      </form>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section class="section" id="about" aria-labelledby="about-title">
-    <div class="container">
-      <h2 id="about-title" class="section-title">About</h2>
-      <p>Case&i focuses on minimal aesthetics and premium quality, proudly based in California, USA.</p>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section class="section" id="contact" aria-labelledby="contact-title">
-    <div class="container">
-      <h2 id="contact-title" class="section-title">Contact</h2>
-      <p>Email: hello@xxkit.com</p>
-    </div>
-  </section>
-
-  <!-- 悬浮主题切换按钮（右下角） -->
-  <button id="themeToggle" class="floating-toggle" aria-label="Toggle theme" title="Toggle Light/Dark">🌙</button>
-
-  <!-- 主题切换 & 预览脚本（最小可用版） -->
-  <script>
-    // ===== Theme Toggle =====
-    (function () {
-      const btn = document.getElementById('themeToggle');
-      if (!btn) return;
-      const saved = localStorage.getItem('theme');
-
-      const setIcon = (mode) => { btn.textContent = (mode === 'dark' ? '☀️' : '🌙'); };
-
-      if (saved) {
-        document.documentElement.setAttribute('data-theme', saved);
-        setIcon(saved);
-      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        setIcon('dark');
-      } else {
-        setIcon('light');
-      }
-
-      btn.addEventListener('click', () => {
-        const cur = document.documentElement.getAttribute('data-theme');
-        const next = cur === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('theme', next);
-        setIcon(next);
-      });
-    })();
-
-    // ===== Simple Preview（上传即预览） =====
-    (function () {
-      const input = document.getElementById('image-upload');
-      const img = document.getElementById('preview-image');
-      if (!input || !img) return;
-      input.addEventListener('change', function () {
-        const file = this.files && this.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => { img.src = e.target.result; img.style.display = 'block'; };
-        reader.readAsDataURL(file);
-      });
-    })();
-  </script>
-
-  <!-- ============ DEBUG 强制按钮：若看不到悬浮按钮，临时启用下方脚本 ============ -->
-  <!--
-  <script>
-  (function () {
-    if (document.getElementById('themeToggle')) return; // 已有按钮就不重复插入
-    const btn = document.createElement('button');
-    btn.id = 'themeToggle';
-    btn.setAttribute('aria-label','Toggle theme');
-    btn.textContent = '🌙';
-    Object.assign(btn.style, {
-      position:'fixed', right:'20px', bottom:'20px', width:'60px', height:'60px',
-      borderRadius:'12px', background:'red', color:'#fff', fontSize:'32px',
-      fontWeight:'700', border:'3px solid yellow', boxShadow:'0 8px 24px rgba(0,0,0,.25)',
-      zIndex:'2147483647', cursor:'pointer'
-    });
-    document.body.appendChild(btn);
-    const setIcon = m => btn.textContent = m === 'dark' ? '☀️' : '🌙';
-    const saved = localStorage.getItem('theme');
-    if (saved) { document.documentElement.setAttribute('data-theme', saved); setIcon(saved); }
-    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme','dark'); setIcon('dark'); }
-    btn.onclick = () => {
-      const cur = document.documentElement.getAttribute('data-theme');
-      const next = cur === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      setIcon(next);
-    };
-  })();
-  </script>
-  -->
-  <!-- ============ /DEBUG ============ -->
-  <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((reg) => console.log("✅ SW registered:", reg.scope))
-        .catch((err) => console.error("❌ SW failed:", err));
-    });
+<style>
+  /* ====== 最小样式，内联，避免路径问题 ====== */
+  :root{
+    --bg:#ffffff; --text:#111; --line:#eaeaea;
   }
+  html[data-theme="dark"]{
+    --bg:#0b0b0b; --text:#f5f5f5; --line:#333;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    transition:background .2s,color .2s;
+  }
+  h1{font-size:20px;font-weight:600;margin:0 12px;text-align:center}
+
+  /* 悬浮按钮（正式样式） */
+  .floating-toggle{
+    position:fixed; right:20px; bottom:20px;
+    width:48px; height:48px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--bg); color:var(--text);
+    border:1px solid var(--line);
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+    font-size:22px; cursor:pointer;
+    z-index:9999; transition:transform .18s ease;
+  }
+  .floating-toggle:hover{ transform:scale(1.08) }
+</style>
+</head>
+<body>
+  <h1>最小测试页（应显示右下角 🌙/☀️ 按钮）</h1>
+
+  <!-- 悬浮按钮（正式） -->
+  <button id="themeToggle" class="floating-toggle" aria-label="Toggle theme" title="切换浅/深色">🌙</button>
+
+<script>
+/* ====== 主题切换逻辑（记忆选择） ====== */
+(function(){
+  const btn = document.getElementById('themeToggle');
+  if(!btn) return;
+
+  const saved = localStorage.getItem('theme');
+  const setIcon = m => btn.textContent = (m==='dark' ? '☀️' : '🌙');
+
+  if(saved){
+    document.documentElement.setAttribute('data-theme', saved);
+    setIcon(saved);
+  }else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+    document.documentElement.setAttribute('data-theme','dark'); setIcon('dark');
+  }else{
+    setIcon('light');
+  }
+
+  btn.addEventListener('click', ()=>{
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    setIcon(next);
+  });
+})();
+
+/* ====== DEBUG 强制出现按钮（如果上面按钮没被渲染/被删） ======
+   这段会在找不到 #themeToggle 时，注入一个红黄大按钮，确保你一定能“看见东西”。
+*/
+(function(){
+  if(document.getElementById('themeToggle')) return; // 已存在就不插
+  const btn = document.createElement('button');
+  btn.id = 'themeToggle';
+  btn.textContent = '🌙';
+  Object.assign(btn.style, {
+    position:'fixed',right:'20px',bottom:'20px',width:'80px',height:'80px',
+    borderRadius:'12px',background:'red',color:'#fff',fontSize:'36px',
+    fontWeight:'700',border:'4px solid yellow',boxShadow:'0 10px 30px rgba(0,0,0,.25)',
+    zIndex:'2147483647',cursor:'pointer'
+  });
+  document.body.appendChild(btn);
+})();
 </script>
-<button id="themeToggle" class="floating-toggle" aria-label="Toggle theme">🌙</button>
+
+<!-- BUILD MARK: 2025-09-22-minimal-test -->
 </body>
 </html>
