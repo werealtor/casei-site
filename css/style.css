@@ -10,3 +10,4 @@
   nav{display:none;}
   header.open nav{display:flex;} /* 点击后通过 JS 给 header 加 .open */
 }
+body{font-family:sans-serif;}
