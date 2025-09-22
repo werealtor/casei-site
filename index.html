@@ -6,39 +6,56 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
 
-  <!-- 基础样式（保持极简） -->
+  <!-- 浏览器地址栏颜色（初始浅色，JS 会自动更新深浅模式） -->
+  <meta name="theme-color" content="#ffffff">
+
   <style>
     :root{
-      --bg:#111;--text:#f5f5f5;--muted:#9aa0a6;--line:#222;--tone:#141414;
-      --brand:#0b66ff;--max:1100px;--shadow:0 2px 10px rgba(0,0,0,.06)
+      --bg:#fff;
+      --text:#111;
+      --muted:#666;
+      --line:#eaeaea;
+      --tone:#f6f7fb;
+      --brand:#0b66ff;
+      --max:1100px;
+      --shadow:0 2px 10px rgba(0,0,0,.06);
     }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.6;
+    }
     a{color:inherit;text-decoration:none}
     .container{max-width:var(--max);margin:0 auto;padding:0 20px}
-
-    header{background:#0f0f0f;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
-    .bar{display:flex;align-items:center;gap:16px;padding:14px 0;justify-content:space-between}
+    header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+    .bar{display:flex;align-items:center;gap:16px;padding:14px 0}
     .brand{font-weight:700}
-
     nav{display:flex;gap:18px}
     nav a{padding:8px 10px;border-radius:10px}
-    nav a:hover{background:#161616}
+    nav a:hover{background:#f3f4f7}
 
     /* 汉堡按钮 */
     .menu-toggle{
-      display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:10px;
-      background:#0f0f0f;cursor:pointer;align-items:center;justify-content:center;position:relative;z-index:51
+      margin-left:auto;display:none;width:40px;height:40px;
+      border:1px solid var(--line);border-radius:10px;
+      background:#fff;cursor:pointer;
+      align-items:center;justify-content:center;
     }
-    .menu-icon{position:relative;width:18px;height:2px;background:#fff;border-radius:2px}
-    .menu-icon::before,.menu-icon::after{content:"";position:absolute;left:0;width:18px;height:2px;background:#fff;border-radius:2px}
-    .menu-icon::before{top:-6px}.menu-icon::after{top:6px}
+    .menu-toggle:focus{outline:2px solid var(--brand);outline-offset:2px}
+    .menu-icon{position:relative;width:18px;height:2px;background:#111;border-radius:2px}
+    .menu-icon::before,.menu-icon::after{
+      content:"";position:absolute;left:0;width:18px;height:2px;background:#111;border-radius:2px
+    }
+    .menu-icon::before{top:-6px}
+    .menu-icon::after{top:6px}
 
-    /* 移动端（默认收起） */
     @media (max-width:768px){
-      .menu-toggle{display:inline-flex}
       nav{display:none;flex-direction:column;gap:0;width:100%}
       nav a{padding:12px 10px;border-radius:0;border-top:1px solid var(--line)}
+      .menu-toggle{display:inline-flex}
+      .bar{justify-content:space-between}
       header.open nav{display:flex}
       header.open .menu-icon{background:transparent}
       header.open .menu-icon::before{transform:translateY(6px) rotate(45deg)}
@@ -46,36 +63,70 @@
       .menu-icon,.menu-icon::before,.menu-icon::after{transition:transform .2s ease, background .2s ease}
     }
 
+    /* 遮罩 */
+    .overlay{
+      display:none;position:fixed;inset:0;
+      background:rgba(0,0,0,0.4);z-index:40;
+    }
+    header.open + .overlay{display:block}
+
     .hero{padding:44px 0 28px}
     .media-wrap{border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);background:var(--tone)}
     .media{width:100%;aspect-ratio:16/9;display:block;object-fit:cover}
     .hero h1{font-size:clamp(26px,4.8vw,40px);text-align:center;margin:16px 0 6px}
     .sub{color:var(--muted);text-align:center}
     .cta{display:flex;gap:12px;justify-content:center;margin-top:14px}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#0f0f0f;font-weight:600}
+
+    /* 按钮 */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:10px 16px;border-radius:12px;
+      border:1px solid var(--line);background:#fff;
+      font-weight:600;cursor:pointer;color:var(--text);
+    }
     .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .btn.secondary{background:transparent;color:var(--text);border-color:var(--line)}
+    .btn.secondary:hover{background:rgba(0,0,0,.05)}
+
+    /* 深色模式自动适配 */
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg:#0b0b0b;
+        --text:#f5f5f5;
+        --muted:#9aa0a6;
+        --line:#222;
+        --tone:#141414;
+      }
+      body{background:var(--bg);color:var(--text);}
+      header, footer{background:#0f0f0f;border-color:#222;}
+      nav a:hover{background:#161616;}
+      .media-wrap{background:var(--tone);border-color:#222;}
+      .card{background:#0f0f0f;border-color:#222;}
+      .card img{background:#141414;}
+      .btn{background:#0f0f0f;border-color:#333;color:var(--text);}
+      .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;}
+      .btn.secondary{background:transparent;border-color:#333;color:#fff;}
+      .btn.secondary:hover{background:rgba(255,255,255,.08);}
+      input,textarea{background:#0f0f0f;color:var(--text);border-color:#333;}
+    }
+
     section{padding:36px 0}
     .title{font-size:22px;text-align:center;margin-bottom:16px}
     .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-    .card{background:#0f0f0f;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;text-align:center}
-    .card img{width:100%;height:160px;object-fit:cover;display:block;background:#161616}
+    .card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;text-align:center}
+    .card img{width:100%;height:160px;object-fit:cover;display:block}
     .card .body{padding:14px 16px}
     .pillrow{display:flex;gap:8px;justify-content:center;margin:6px 0;flex-wrap:wrap}
     .pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px}
     .price{font-weight:700;margin-top:4px}
     form{display:grid;gap:12px;max-width:520px;margin:0 auto}
-    input,textarea,button{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;background:#0f0f0f;color:var(--text)}
+    input,textarea,button{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit}
     button{background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
     button:hover{opacity:.95}
     footer{border-top:1px solid var(--line);padding:18px 0 28px;color:var(--muted);text-align:center}
-
-    /* 遮罩（紧跟 header 放一个 .overlay） */
-    .overlay{
-      display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:40;
-    }
-    header.open + .overlay{ display:block; }
   </style>
 </head>
+
 <body>
   <header id="site-header">
     <div class="container bar">
