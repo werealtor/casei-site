@@ -7,10 +7,10 @@
   background:#f0f2f5;     /* 加载前浅灰底 */
 }
 @media (max-width:768px){
-  nav{display:none;}
-  header.open nav{display:flex;} /* 点击后通过 JS 给 header 加 .open */
+  nav{display:none; flex-direction:column; gap:0; width:100%}
+  nav a{padding:12px 10px; border-top:1px solid var(--line)}
+  header.open nav{display:flex;}
 }
-body{font-family:sans-serif;}
 /* 半透明遮罩 */
 .overlay{
   display:none;
