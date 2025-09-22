@@ -5,6 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
+
+  <!-- SEO / Social -->
+  <link rel="canonical" href="https://xxkit.com/">
+  <meta name="theme-color" content="#0b66ff">
+  <meta property="og:title" content="Case&i — Minimal · Premium · Personal">
+  <meta property="og:description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/images/og-cover.jpg">
+  <meta property="og:url" content="https://xxkit.com/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/images/favicon.ico">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- 可选但推荐：严格 CSP（静态站友好） -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    img-src 'self' data:;
+    media-src 'self';
+    style-src 'self' 'unsafe-inline';
+    script-src 'self';
+    connect-src 'self';
+    base-uri 'self';
+    form-action 'self'
+  ">
+
   <style>
     :root{
       --bg:#fff;--text:#111;--muted:#666;--line:#eaeaea;--tone:#f6f7fb;
@@ -23,7 +48,7 @@
 
     /* === 极简汉堡按钮 === */
     .menu-toggle{
-      margin-left:auto; /* 把按钮推到最右 */
+      margin-left:auto;
       display:none; /* 桌面端隐藏 */
       width:40px;height:40px;border:1px solid var(--line);border-radius:10px;
       background:#fff;cursor:pointer;align-items:center;justify-content:center;
@@ -36,13 +61,13 @@
     .menu-icon::before{top:-6px}
     .menu-icon::after{top:6px}
 
-    /* 移动端导航样式（默认收起） */
+    /* 移动端导航（默认收起） */
     @media (max-width: 768px){
       nav{display:none;flex-direction:column;gap:0;width:100%}
       nav a{padding:12px 10px;border-radius:0;border-top:1px solid var(--line)}
       .menu-toggle{display:inline-flex}
       .bar{justify-content:space-between}
-      header.open nav{display:flex}           /* 打开时显示导航 */
+      header.open nav{display:flex}
       header.open .menu-icon{background:transparent}
       header.open .menu-icon::before{transform:translateY(6px) rotate(45deg)}
       header.open .menu-icon::after{transform:translateY(-6px) rotate(-45deg)}
@@ -71,6 +96,16 @@
     button{background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
     button:hover{opacity:.95}
     footer{border-top:1px solid var(--line);padding:18px 0 28px;color:var(--muted);text-align:center}
+
+    /* 可选：深色模式 */
+    @media (prefers-color-scheme: dark){
+      :root{ --bg:#0b0b0b; --text:#f5f5f5; --line:#222; --tone:#141414; }
+      body{ background:var(--bg); color:var(--text); }
+      header, footer{ background:#0f0f0f; }
+      nav a:hover{ background:#161616; }
+      .card{ background:#0f0f0f; border-color:#222; }
+      .media-wrap{ background:#121212; border-color:#222; }
+    }
   </style>
 </head>
 <body>
@@ -97,8 +132,9 @@
     <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
-          <video class="media" autoplay muted loop playsinline aria-label="Case&i hero video">
+          <video class="media" preload="metadata" autoplay muted loop playsinline poster="assets/images/hero-poster.jpg" aria-label="Case&i hero video">
             <source src="assets/videos/hero.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
         </figure>
         <h1>Minimal · Premium · Personal</h1>
@@ -121,7 +157,7 @@
               <h3>Classic</h3>
               <p class="sub">Slim &amp; scratch-resistant</p>
               <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price">$19</div>
+              <div class="price" data-id="classic">$19</div>
             </div>
           </article>
           <article class="card">
@@ -130,7 +166,7 @@
               <h3>Fashion</h3>
               <p class="sub">Trendy design &amp; anti-fingerprint</p>
               <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price">$25</div>
+              <div class="price" data-id="fashion">$25</div>
             </div>
           </article>
           <article class="card">
@@ -139,7 +175,7 @@
               <h3>Business</h3>
               <p class="sub">Premium touch &amp; shockproof</p>
               <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price">$29</div>
+              <div class="price" data-id="business">$29</div>
             </div>
           </article>
         </div>
@@ -152,8 +188,9 @@
         <h2 class="title">Customize Your Case</h2>
         <form id="uForm">
           <input type="file" id="file" accept="image/png,image/jpeg" />
-          <button type="submit">Upload &amp; Preview</button>
+          <button type="submit" class="btn">Upload &amp; Preview</button>
           <p class="sub" style="text-align:center">Supports PNG/JPG, up to 5MB.</p>
+          <p id="uErr" class="error" aria-live="polite" style="text-align:center;color:#c00;"></p>
           <img id="preview" alt="Preview" style="display:none;max-width:100%;border-radius:12px;border:1px solid var(--line)" />
         </form>
       </div>
@@ -178,7 +215,7 @@
           <input type="text" name="name" placeholder="Name" required />
           <input type="email" name="email" placeholder="Email" required />
           <textarea name="message" rows="4" placeholder="Message"></textarea>
-          <button type="submit">Send</button>
+          <button type="submit" class="btn">Send</button>
         </form>
       </div>
     </section>
@@ -188,33 +225,73 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- Upload Preview + 汉堡菜单脚本 -->
+  <!-- ========= 脚本区（放在 </body> 之前） ========= -->
   <script>
-    // 上传预览（保持你的逻辑）
+    // 上传预览 + 错误提示
     (function(){
       const form=document.getElementById('uForm'),
             file=document.getElementById('file'),
-            preview=document.getElementById('preview');
+            preview=document.getElementById('preview'),
+            err=document.getElementById('uErr');
       if(!form||!file||!preview) return;
       form.addEventListener('submit',e=>{
         e.preventDefault();
-        const f=file.files?.[0]; if(!f) return alert('Please choose an image.');
-        if(!/image\/(png|jpe?g)/.test(f.type) || f.size>5*1024*1024)
-          return alert('Upload PNG/JPG under 5MB.');
+        err && (err.textContent = '');
+        const f=file.files?.[0]; if(!f){ err&&(err.textContent='Please choose an image.'); return; }
+        if(!/image\/(png|jpe?g)/.test(f.type) || f.size>5*1024*1024){
+          err && (err.textContent='Upload PNG/JPG under 5MB.');
+          return;
+        }
         const r=new FileReader();
         r.onload=ev=>{ preview.src=ev.target.result; preview.style.display='block'; };
         r.readAsDataURL(f);
       });
     })();
 
-    // 极简汉堡菜单
+    // 极简汉堡菜单（移动端）
     (function(){
       const header = document.getElementById('site-header');
-      const btn = header.querySelector('.menu-toggle');
-      const nav = header.querySelector('#primary-nav');
+      const btn = header && header.querySelector('.menu-toggle');
+      const nav = header && header.querySelector('#primary-nav');
+      if(!btn || !nav) return;
       btn.addEventListener('click', ()=>{
         const open = header.classList.toggle('open');
         btn.setAttribute('aria-expanded', open ? 'true' : 'false');
         btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       });
-      // 点击导航
+      nav.addEventListener('click', (e)=>{
+        if(e.target.tagName === 'A' && header.classList.contains('open')){
+          header.classList.remove('open');
+          btn.setAttribute('aria-expanded','false');
+          btn.setAttribute('aria-label','Open menu');
+        }
+      });
+    })();
+
+    // 可选：动态美元价（根目录存在 prices.json 时覆盖）
+    (function(){
+      const nodes = document.querySelectorAll('.price[data-id]');
+      if(!nodes.length) return;
+      fetch('prices.json',{cache:'no-store'})
+        .then(r => r.ok ? r.json() : null)
+        .then(prices=>{
+          if(!prices) return;
+          const fmt = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',minimumFractionDigits:0});
+          nodes.forEach(el=>{
+            const id = el.getAttribute('data-id');
+            if(id && prices[id]!=null){ el.textContent = fmt.format(prices[id]); }
+          });
+        })
+        .catch(()=>{ /* 静默失败，继续使用 HTML 中的价格 */ });
+    })();
+
+    // 注册 Service Worker（优先 /sw.js，找不到再尝试 /js/sw.js）
+    (function(){
+      if(!('serviceWorker' in navigator)) return;
+      navigator.serviceWorker.register('/sw.js').catch(()=>{
+        return navigator.serviceWorker.register('/js/sw.js').catch(()=>{});
+      });
+    })();
+  </script>
+</body>
+</html>
