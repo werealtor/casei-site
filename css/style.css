@@ -25,3 +25,12 @@
     background:#0f0f0f; color:var(--text); border-color:#333;
   }
 }
+.btn.secondary {
+  background:transparent;
+  color:#fff;            /* 白色文字 */
+  border-color:#fff;     /* 白色边框 */
+}
+.btn.secondary:hover {
+  background:rgba(255,255,255,0.1); /* hover 半透明 */
+}
+
