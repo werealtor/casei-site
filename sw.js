@@ -1,54 +1,59 @@
-// 版本号（修改后会强制刷新缓存）
-const CACHE_NAME = "casei-cache-v1";
-
-// 需要缓存的资源（可根据你网站实际文件调整）
-const URLS_TO_CACHE = [
-  "/",                // 首页
-  "/index.html",
-  "/css/style.css",
-  "/hero.jpg",
-  "/product-1.jpg",
-  "/product-2.jpg",
-  "/product-3.jpg"
+// sw.js  —— 版本 v3（改版本号可强制更新 SW）
+const CACHE_STATIC = 'casei-static-v3';
+const STATIC_ASSETS = [
+  '/index.html',
+  '/css/style.css',
+  '/hero.jpg',
+  '/product-1.jpg',
+  '/product-2.jpg',
+  '/product-3.jpg'
 ];
 
-// 安装阶段：预缓存
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(URLS_TO_CACHE);
-    })
-  );
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(CACHE_STATIC).then(c => c.addAll(STATIC_ASSETS)));
   self.skipWaiting();
 });
 
-// 激活阶段：清理旧缓存
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      )
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.map(k => (k !== CACHE_STATIC ? caches.delete(k) : null)))
     )
   );
   self.clients.claim();
 });
 
-// 请求拦截：缓存优先，失败时走网络
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
+// HTML（导航请求）走“网络优先”，避免旧首页长期卡住
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+
+  // 对页面导航和 text/html 强制 network-first
+  const isHTML =
+    req.mode === 'navigate' ||
+    (req.headers.get('accept') || '').includes('text/html');
+
+  if (isHTML) {
+    e.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_STATIC).then((c) => c.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req).then(r => r || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // 其他静态资源：cache-first
+  e.respondWith(
+    caches.match(req).then((cached) => {
       return (
-        cachedResponse ||
-        fetch(event.request).catch(() => {
-          // 如果请求失败，返回一个简单的离线页面
-          if (event.request.mode === "navigate") {
-            return caches.match("/index.html");
-          }
+        cached ||
+        fetch(req).then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_STATIC).then((c) => c.put(req, copy));
+          return res;
         })
       );
     })
