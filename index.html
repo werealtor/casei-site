@@ -6,8 +6,7 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
-  <link rel="stylesheet" href="css/styles.css" />
-
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <!-- Header -->
@@ -15,7 +14,7 @@
     <div class="container bar">
       <div class="brand">Case&amp;i</div>
 
-      <!-- 汉堡按钮（移动端显示） -->
+      <!-- 汉堡按钮（移动端） -->
       <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
         <span class="menu-icon" aria-hidden="true"></span>
       </button>
@@ -59,7 +58,7 @@
               <h3>Classic</h3>
               <p class="sub">Slim &amp; scratch-resistant</p>
               <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price">$19</div>
+              <div class="price" data-id="classic">$19</div>
             </div>
           </article>
 
@@ -69,7 +68,7 @@
               <h3>Fashion</h3>
               <p class="sub">Trendy design &amp; anti-fingerprint</p>
               <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price">$25</div>
+              <div class="price" data-id="fashion">$25</div>
             </div>
           </article>
 
@@ -79,7 +78,7 @@
               <h3>Business</h3>
               <p class="sub">Premium touch &amp; shockproof</p>
               <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price">$29</div>
+              <div class="price" data-id="business">$29</div>
             </div>
           </article>
         </div>
@@ -92,7 +91,7 @@
         <h2 class="title">Customize Your Case</h2>
         <form id="uForm">
           <input type="file" id="file" accept="image/png,image/jpeg" />
-          <button type="submit">Upload &amp; Preview</button>
+          <button type="submit" class="btn primary">Upload &amp; Preview</button>
           <p id="uErr" class="sub err"></p>
           <img id="preview" alt="Preview" style="display:none;max-width:100%;border-radius:12px;border:1px solid var(--line)" />
         </form>
@@ -118,7 +117,7 @@
           <input type="text" name="name" placeholder="Name" required />
           <input type="email" name="email" placeholder="Email" required />
           <textarea name="message" rows="4" placeholder="Message"></textarea>
-          <button type="submit">Send</button>
+          <button type="submit" class="btn primary">Send</button>
         </form>
       </div>
     </section>
@@ -128,55 +127,6 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- Scripts -->
-  <script>
-    // 上传预览 + 错误提示
-    (function(){
-      const form=document.getElementById('uForm'),
-            file=document.getElementById('file'),
-            preview=document.getElementById('preview'),
-            err=document.getElementById('uErr');
-      if(!form||!file||!preview) return;
-      form.addEventListener('submit',e=>{
-        e.preventDefault();
-        err.textContent='';
-        const f=file.files?.[0];
-        if(!f){ err.textContent='Please choose an image.'; return; }
-        if(!/image\/(png|jpe?g)/.test(f.type) || f.size>5*1024*1024){
-          err.textContent='Upload PNG/JPG under 5MB.'; return;
-        }
-        const r=new FileReader();
-        r.onload=ev=>{ preview.src=ev.target.result; preview.style.display='block'; };
-        r.readAsDataURL(f);
-      });
-    })();
-
-    // 极简汉堡菜单
-    (function(){
-      const header = document.getElementById('site-header');
-      const btn = header.querySelector('.menu-toggle');
-      const nav = header.querySelector('#primary-nav');
-      if(!btn || !nav) return;
-      btn.addEventListener('click', ()=>{
-        const open = header.classList.toggle('open');
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      });
-      nav.addEventListener('click', (e)=>{
-        if(e.target.tagName === 'A' && header.classList.contains('open')){
-          header.classList.remove('open');
-          btn.setAttribute('aria-expanded','false');
-          btn.setAttribute('aria-label','Open menu');
-        }
-      });
-    })();
-
-    // 注册 Service Worker（根目录 sw.js，找不到再试 /js/sw.js）
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('/sw.js').catch(()=>{
-        return navigator.serviceWorker.register('/js/sw.js').catch(()=>{});
-      });
-    }
-  </script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>
