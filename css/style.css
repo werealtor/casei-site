@@ -106,6 +106,34 @@ a{ color:inherit; text-decoration:none; }
   transition:transform .18s ease, background .2s, color .2s, border-color .2s;
 }
 .floating-toggle:hover{ transform:scale(1.08); }
+/* Apple 风格丝滑呼吸动画 */
+@keyframes subtle-breathe {
+  0%   { box-shadow: 0 0 0 rgba(11,102,255,0.0); opacity: 0.96; }
+  50%  { box-shadow: 0 0 18px rgba(11,102,255,0.25); opacity: 1; }
+  100% { box-shadow: 0 0 0 rgba(11,102,255,0.0); opacity: 0.96; }
+}
 
+/* 主按钮（蓝色） */
+.btn-primary {
+  background: var(--brand);
+  color: #fff;
+  animation: subtle-breathe 3s infinite ease-in-out;
+  transition: transform .2s;
+}
+.btn-primary:hover {
+  transform: scale(1.04);
+}
+
+/* 描边按钮（白底/蓝字） */
+.btn-outline {
+  background: transparent;
+  color: var(--brand);
+  border: 1px solid var(--brand);
+  animation: subtle-breathe 4s infinite ease-in-out;
+  transition: transform .2s;
+}
+.btn-outline:hover {
+  transform: scale(1.04);
+}
 /* 预览图占位隐藏，上传后显示 */
 .preview{ display:none; margin-top:12px; border:1px dashed var(--line); border-radius:8px; }
