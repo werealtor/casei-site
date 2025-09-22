@@ -7,6 +7,64 @@
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* 基本的光/暗模式变量 */
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --line-color: #e0e0e0;
+      --primary-btn-bg: #007bff;
+      --primary-btn-text: #ffffff;
+    }
+
+    body.dark {
+      --bg-color: #121212;
+      --text-color: #ffffff;
+      --line-color: #333333;
+      --primary-btn-bg: #0056b3;
+      --primary-btn-text: #ffffff;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* 应用到需要的地方，如按钮 */
+    .btn.primary {
+      background-color: var(--primary-btn-bg);
+      color: var(--primary-btn-text);
+    }
+
+    /* 悬浮按钮样式 */
+    .floating-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #f0f0f0;
+      border: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+      z-index: 1000;
+    }
+
+    body.dark .floating-btn {
+      background-color: #333333;
+    }
+
+    .floating-btn:hover {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -127,6 +185,41 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
+  <!-- 悬浮主题切换按钮 -->
+  <button id="theme-toggle" class="floating-btn"></button>
+
   <script src="js/main.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleButton = document.getElementById('theme-toggle');
+      const body = document.body;
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+      let currentTheme = localStorage.getItem('theme');
+
+      // 设置初始主题
+      if (!currentTheme) {
+        currentTheme = prefersDark.matches ? 'dark' : 'light';
+      }
+      body.classList.toggle('dark', currentTheme === 'dark');
+      updateButtonIcon(currentTheme);
+
+      // 切换功能
+      toggleButton.addEventListener('click', () => {
+        const isDark = body.classList.toggle('dark');
+        currentTheme = isDark ? 'dark' : 'light';
+        localStorage.setItem('theme', currentTheme);
+        updateButtonIcon(currentTheme);
+      });
+
+      // 根据当前主题更新图标（显示要切换到的模式图标）
+      function updateButtonIcon(theme) {
+        if (theme === 'light') {
+          toggleButton.innerHTML = '🌙'; // 显示月亮，切换到暗黑模式（深色）
+        } else {
+          toggleButton.innerHTML = '☀️'; // 显示太阳，切换到浅色模式
+        }
+      }
+    });
+  </script>
 </body>
 </html>
