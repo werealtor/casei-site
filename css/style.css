@@ -25,22 +25,14 @@
     background:#0f0f0f; color:var(--text); border-color:#333;
   }
 }
-/* === 强化版透明边框按钮（深色背景专用） === */
+/* 备用：反色填充按钮（最清晰） */
 @media (prefers-color-scheme: dark){
-  .btn{min-height:44px; padding:0 18px; font-weight:700; line-height:1}
   .btn.secondary{
-    background:rgba(255,255,255,.12);   /* 半透明浅白底，提高可读性 */
-    color:#fff;
-    border:2px solid rgba(255,255,255,.85);
-    box-shadow:0 1px 0 rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,255,255,.06);
-    backdrop-filter:saturate(120%) blur(2px); /* 轻微磨砂，增强边界 */
+    background:#fff;
+    color:#111;
+    border:1px solid #fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.5);
   }
-  .btn.secondary:hover{
-    background:rgba(255,255,255,.18);
-    border-color:#fff;
-  }
-  .btn.secondary:active{
-    background:rgba(255,255,255,.22);
-  }
+  .btn.secondary:hover{ background:#f2f2f2; }
 }
 
