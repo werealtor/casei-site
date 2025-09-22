@@ -41,7 +41,11 @@
     background:#0f0f0f; color:var(--text); border-color:#333;
   }
 }
-
+/* 让 CTA 按钮等宽对齐 */
+.cta .btn {
+  min-width:160px;   /* 按钮统一宽度 */
+  text-align:center;
+}
 
 
 
