@@ -228,6 +228,159 @@ footer {
   border-top: 1px solid var(--line);
   color: var(--muted);
 }
+/* 原有 CSS 保持不变，以下是补充部分 */
+
+/* 整合暗黑模式变量：定义在 :root (light) 和 body.dark (dark) */
+:root {
+  --bg: #fff;
+  --text: #111;
+  --muted: #666;
+  --line: #eaeaea;
+  --tone: #f6f7fb;
+  --brand: #0b66ff;
+  --max: 1100px;
+  --shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+body.dark {
+  --bg: #121212;
+  --text: #ffffff;
+  --muted: #bbbbbb;
+  --line: #333333;
+  --tone: #1e1e1e;
+  --brand: #4c9aff; /* 略微调整品牌色以适应暗黑模式 */
+  --shadow: 0 2px 10px rgba(0,0,0,.3); /* 阴影加深以在暗底可见 */
+}
+
+/* 确保过渡平滑 */
+body, header, .card, .btn, .pill, input, textarea, button {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 覆盖特定元素以使用变量（如果原有未覆盖） */
+header {
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  color: var(--text);
+}
+
+nav a:hover {
+  background: var(--tone);
+}
+
+.menu-toggle {
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+
+.menu-icon, .menu-icon::before, .menu-icon::after {
+  background: var(--text);
+}
+
+.hero .media-wrap {
+  background: var(--tone);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.sub {
+  color: var(--muted);
+}
+
+.btn {
+  border: 1.5px solid var(--brand);
+  color: var(--brand);
+}
+
+.btn.primary {
+  background: var(--brand);
+  color: #fff; /* 保持白色以高对比 */
+  border-color: var(--brand);
+}
+
+.btn:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
+.title {
+  color: var(--text);
+}
+
+.grid .card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.pill {
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.price {
+  color: var(--text);
+}
+
+.about-text {
+  color: var(--muted);
+}
+
+form input, form textarea {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+form button {
+  background: var(--brand);
+  color: #fff;
+  border: none; /* 如果需要调整 */
+}
+
+.err {
+  color: #e22; /* 错误色可保持或调整为 var(--error) */
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+/* 移动端特定调整（如果需要） */
+@media (max-width: 768px) {
+  nav a {
+    border-top: 1px solid var(--line);
+    color: var(--text);
+  }
+}
+
+/* 新增：调整产品卡片为黄金比例（图片区较大，约61.8%；文字区较小，约38.2%） */
+/* 保持卡片整体尺寸不变，通过设置固定最小高度并使用 flex 布局实现比例 */
+.card {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px; /* 设置固定最小高度以保持整体尺寸不变，可根据实际调整 */
+  overflow: hidden;
+}
+
+.card img {
+  flex: 1.618 1 0%; /* 黄金比例的较大部分 */
+  width: 100%;
+  object-fit: cover;
+  height: auto; /* 移除固定高度，让 flex 控制 */
+}
+
+.card .body {
+  flex: 1 1 0%; /* 黄金比例的较小部分 */
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 垂直居中文字内容 */
+}
 
 /* 移动端特定调整（如果需要） */
 @media (max-width: 768px) {
