@@ -6,3 +6,7 @@
   border-bottom:1px solid var(--line);
   background:#f0f2f5;     /* 加载前浅灰底 */
 }
+@media (max-width:768px){
+  nav{display:none;}
+  header.open nav{display:flex;} /* 点击后通过 JS 给 header 加 .open */
+}
