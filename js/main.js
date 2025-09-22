@@ -97,7 +97,7 @@
 (function () {
   if (!('serviceWorker' in navigator)) return;
   navigator.serviceWorker.register('/sw.js').catch(() => {
-    // 回退到 /js/sw.js（如果你把 sw 放到 js 目录）
+    // 回退到 /js/sw.js（如果你把 sw 放到 js 里）
     navigator.serviceWorker.register('/js/sw.js').catch(() => {});
   });
 })();
