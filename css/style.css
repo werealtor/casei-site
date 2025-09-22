@@ -46,5 +46,5 @@
   font-size:1.3rem; box-shadow:var(--shadow);
   z-index: 9999;             /* 关键 */
 }
-
+body .floating-toggle{ position:fixed !important; background:var(--bg) !important; }
 
