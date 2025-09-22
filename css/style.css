@@ -11,3 +11,14 @@
   header.open nav{display:flex;} /* 点击后通过 JS 给 header 加 .open */
 }
 body{font-family:sans-serif;}
+/* 半透明遮罩 */
+.overlay{
+  display:none;
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(0,0,0,0.4);
+  z-index:40; /* 比header低，比内容高 */
+}
+header.open + .overlay{
+  display:block;
+}
