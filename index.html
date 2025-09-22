@@ -141,5 +141,51 @@
       });
     })();
   </script>
+  <!-- DEBUG: force floating theme button -->
+<script>
+(function () {
+  // 已存在就不重复插
+  if (document.getElementById('themeToggle')) return;
+
+  const btn = document.createElement('button');
+  btn.id = 'themeToggle';
+  btn.setAttribute('aria-label','Toggle theme');
+  btn.textContent = '🌙';
+
+  // 直接内联超显眼样式（不依赖外部 CSS）
+  Object.assign(btn.style, {
+    position: 'fixed',
+    right: '20px',
+    bottom: '20px',
+    width: '60px',
+    height: '60px',
+    borderRadius: '12px',
+    background: 'red',
+    color: '#fff',
+    fontSize: '32px',
+    fontWeight: '700',
+    border: '3px solid yellow',
+    boxShadow: '0 8px 24px rgba(0,0,0,.25)',
+    zIndex: '2147483647', // 顶层
+    cursor: 'pointer'
+  });
+
+  document.body.appendChild(btn);
+
+  // 点一下能切换主题（顺便验证脚本是否执行）
+  const setIcon = (m) => btn.textContent = (m === 'dark' ? '☀️' : '🌙');
+  const init = localStorage.getItem('theme');
+  if (init) { document.documentElement.setAttribute('data-theme', init); setIcon(init); }
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme', 'dark'); setIcon('dark'); }
+
+  btn.onclick = () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    setIcon(next);
+  };
+})();
+</script>
 </body>
 </html>
