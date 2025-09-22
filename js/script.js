@@ -21,22 +21,32 @@
 })();
 
 // 极简汉堡菜单（移动端）
+// 极简汉堡菜单 + 遮罩
 (function(){
   const header = document.getElementById('site-header');
   const btn = header && header.querySelector('.menu-toggle');
   const nav = header && header.querySelector('#primary-nav');
-  if(!btn || !nav) return;
+  const overlay = document.querySelector('.overlay');
+  if(!btn || !nav || !overlay) return;
+
+  function closeMenu(){
+    header.classList.remove('open');
+    btn.setAttribute('aria-expanded','false');
+    btn.setAttribute('aria-label','Open menu');
+    overlay.style.display = 'none';
+  }
+
   btn.addEventListener('click', ()=>{
     const open = header.classList.toggle('open');
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
     btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    overlay.style.display = open ? 'block' : 'none';
   });
+
+  overlay.addEventListener('click', closeMenu);
+
   nav.addEventListener('click', (e)=>{
-    if(e.target.tagName === 'A' && header.classList.contains('open')){
-      header.classList.remove('open');
-      btn.setAttribute('aria-expanded','false');
-      btn.setAttribute('aria-label','Open menu');
-    }
+    if(e.target.tagName === 'A'){ closeMenu(); }
   });
 })();
 
