@@ -6,155 +6,140 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
 
-  <!-- 支持系统模式 -->
+  <!-- 自适应系统主题色（地址栏/状态栏） -->
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
 
-  <style>
-    :root {
-      --bg: #ffffff;
-      --text: #111111;
-      --muted: #666666;
-      --line: #eaeaea;
-      --brand: #0b66ff;
-      --shadow: 0 2px 10px rgba(0,0,0,.06);
-    }
-    [data-theme="dark"] {
-      --bg: #0b0b0b;
-      --text: #f5f5f5;
-      --muted: #aaaaaa;
-      --line: #333333;
-      --brand: #4da3ff;
-      --shadow: 0 2px 10px rgba(0,0,0,.4);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      transition: background 0.3s, color 0.3s;
-    }
-
-    header {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header .logo { font-weight: 600; font-size: 1.2rem; }
-    nav a {
-      margin-left: 1.2rem;
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 2rem 1rem;
-    }
-    .hero img {
-      width: 100%;
-      max-width: 1100px;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-    }
-    .hero h1 { font-size: 2rem; margin: 1rem 0 0.5rem; }
-    .hero p { color: var(--muted); }
-
-    .cta {
-      margin: 1rem 0.5rem 0;
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 600;
-      background: var(--brand);
-      color: #fff;
-      text-decoration: none;
-      box-shadow: var(--shadow);
-    }
-    .cta-outline {
-      background: transparent;
-      color: var(--brand);
-      border: 1px solid var(--brand);
-    }
-
-    /* 悬浮按钮样式 */
-    .floating-toggle {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: none;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 1.3rem;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s, color 0.3s, transform 0.2s;
-    }
-    .floating-toggle:hover {
-      transform: scale(1.1);
-    }
-  </style>
+  <!-- 外链样式（注意路径） -->
+  <link rel="stylesheet" href="css/style.css?v=1.0">
 </head>
 
 <body>
-  <header>
-    <div class="logo">Case&i</div>
-    <nav>
-      <a href="#products">Products</a>
-      <a href="#customize">Customize</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </nav>
+  <!-- Header / 导航 -->
+  <header class="site-header" role="banner">
+    <div class="container nav-wrap">
+      <div class="logo" aria-label="Case&i">Case&i</div>
+      <nav class="site-nav" role="navigation" aria-label="Primary">
+        <a href="#products">Products</a>
+        <a href="#customize">Customize</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
   </header>
 
-  <section class="hero">
-    <img src="hero.jpg" alt="Case&i showcase" />
-    <h1>Minimal · Premium · Personal</h1>
-    <p>Case&i by AIXX Inc</p>
-    <a href="#products" class="cta">Shop Products</a>
-    <a href="#customize" class="cta cta-outline">Customize Now</a>
+  <!-- Hero / 头图 -->
+  <section class="hero" id="home">
+    <div class="container">
+      <!-- 替换为你自己的图片文件 -->
+      <img class="hero-media" src="hero.jpg" alt="Case&i showcase" />
+      <h1 class="hero-title">Minimal · Premium · Personal</h1>
+      <p class="hero-sub">Case&i by <strong>AIXX Inc</strong></p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#products">Shop Products</a>
+        <a class="btn btn-outline" href="#customize">Customize Now</a>
+      </div>
+    </div>
   </section>
 
-  <!-- 悬浮按钮 -->
-  <button id="themeToggle" class="floating-toggle" aria-label="Toggle theme">🌙</button>
+  <!-- Products / 示例区 -->
+  <section class="section" id="products" aria-labelledby="products-title">
+    <div class="container">
+      <h2 id="products-title" class="section-title">Our Products</h2>
+      <div class="grid">
+        <!-- 示例卡片（你可以替换为真实内容或删掉） -->
+        <article class="card">
+          <img src="product-1.jpg" alt="Clear Case" />
+          <h3>Clear Case</h3>
+          <p>Minimal protection with premium clarity.</p>
+        </article>
+        <article class="card">
+          <img src="product-2.jpg" alt="MagSafe Case" />
+          <h3>MagSafe Case</h3>
+          <p>Snaps perfectly, guards beautifully.</p>
+        </article>
+        <article class="card">
+          <img src="product-3.jpg" alt="Leather Case" />
+          <h3>Leather Case</h3>
+          <p>Elegant texture, timeless style.</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
+  <!-- Customize / 定制区 -->
+  <section class="section" id="customize" aria-labelledby="customize-title">
+    <div class="container">
+      <h2 id="customize-title" class="section-title">Customize</h2>
+      <p class="muted">Upload your image to preview a personalized case.</p>
+      <form class="customize-form" id="custom-form">
+        <input type="file" id="image-upload" accept="image/*" />
+        <img id="preview-image" class="preview" alt="Preview will appear here" />
+      </form>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="section" id="about" aria-labelledby="about-title">
+    <div class="container">
+      <h2 id="about-title" class="section-title">About</h2>
+      <p>Case&i focuses on minimal aesthetics and premium quality, proudly based in California, USA.</p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="section" id="contact" aria-labelledby="contact-title">
+    <div class="container">
+      <h2 id="contact-title" class="section-title">Contact</h2>
+      <p>Email: hello@xxkit.com</p>
+    </div>
+  </section>
+
+  <!-- 悬浮主题切换按钮（右下角） -->
+  <button id="themeToggle" class="floating-toggle" aria-label="Toggle theme" title="Toggle Light/Dark">🌙</button>
+
+  <!-- 最小脚本：主题切换 & 定制预览 -->
   <script>
-    const toggleBtn = document.getElementById("themeToggle");
-    const userPref = localStorage.getItem("theme");
+    // ===== Theme Toggle =====
+    (function () {
+      const btn = document.getElementById('themeToggle');
+      const saved = localStorage.getItem('theme');
 
-    // 初始化：优先使用用户选择，否则跟随系统
-    if (userPref) {
-      document.documentElement.setAttribute("data-theme", userPref);
-      toggleBtn.textContent = userPref === "dark" ? "☀️" : "🌙";
-    } else {
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        document.documentElement.setAttribute("data-theme", "dark");
-        toggleBtn.textContent = "☀️";
+      function setIcon(mode){ btn.textContent = mode === 'dark' ? '☀️' : '🌙'; }
+
+      if (saved) {
+        document.documentElement.setAttribute('data-theme', saved);
+        setIcon(saved);
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        setIcon('dark');
+      } else {
+        setIcon('light');
       }
-    }
 
-    // 点击切换
-    toggleBtn.addEventListener("click", () => {
-      let current = document.documentElement.getAttribute("data-theme");
-      let target = current === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", target);
-      localStorage.setItem("theme", target);
-      toggleBtn.textContent = target === "dark" ? "☀️" : "🌙";
-    });
+      btn.addEventListener('click', () => {
+        const cur = document.documentElement.getAttribute('data-theme');
+        const next = cur === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        setIcon(next);
+      });
+    })();
+
+    // ===== Simple Preview =====
+    (function () {
+      const input = document.getElementById('image-upload');
+      const img = document.getElementById('preview-image');
+      if (!input || !img) return;
+      input.addEventListener('change', function () {
+        const file = this.files && this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => { img.src = e.target.result; img.style.display = 'block'; };
+        reader.readAsDataURL(file);
+      });
+    })();
   </script>
 </body>
 </html>
-<!-- build 2025-09-22 12:20 -->
