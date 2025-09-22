@@ -75,3 +75,13 @@
   navigator.serviceWorker.register('/sw.js')
     .catch(()=>navigator.serviceWorker.register('/js/sw.js').catch(()=>{}));
 })();
+// 地址栏 theme-color 跟随深/浅色切换
+(function(){
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(!meta) return;
+  const mql = window.matchMedia('(prefers-color-scheme: dark)');
+  const apply = () => meta.setAttribute('content', mql.matches ? '#0b0b0b' : '#ffffff');
+  apply();
+  if (mql.addEventListener) mql.addEventListener('change', apply);
+  else if (mql.addListener) mql.addListener(apply); // iOS 旧版兼容
+})();
