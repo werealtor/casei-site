@@ -366,26 +366,49 @@ footer {
   }
 }
 
-/* 新增：调整产品卡片图片和文字比例（图片区:文字区 = 3:2，图片区稍大但不夸张） */
-/* 保持卡片整体尺寸不变，通过设置固定最小高度并使用 flex 布局实现比例 */
-.card {
-  display: flex;
-  flex-direction: column;
-  min-height: 300px; /* 设置固定最小高度以保持整体尺寸不变，可根据实际调整 */
+/* 修改：为了让比例起作用，将图片包裹在一个 flex 容器中，避免直接在 img 上用 flex 导致尺寸失控 */
+/* 先移除原有 img 固定高度 */
+.card img {
+  width: 100%;
+  height: 100%; /* 让 img 填充其容器 */
+  object-fit: cover;
+  display: block;
+}
+
+/* 添加图片容器 */
+.card .image-wrapper {
+  flex: 3 1 0%; /* 图片区比例 */
   overflow: hidden;
 }
 
-.card img {
-  flex: 3 1 0%; /* 3:2比例的较大部分，使图片区适中 */
-  width: 100%;
-  object-fit: cover;
-  height: auto; /* 移除固定高度，让 flex 控制 */
-}
-
 .card .body {
-  flex: 2 1 0%; /* 较小部分 */
+  flex: 2 1 0%; /* 文字区比例 */
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* 垂直居中文字内容 */
+  justify-content: center;
+}
+
+/* 卡片整体布局 */
+.card {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px; /* 保持尺寸不变 */
+  overflow: hidden;
+}
+
+/* 新增：手机端（移动端）商品图片裁剪比例参照上方视频（aspect-ratio: 16/9） */
+@media (max-width: 768px) {
+  .card .image-wrapper {
+    aspect-ratio: 16/9; /* 与视频相同的比例，确保裁剪一致 */
+    height: auto; /* 让高度根据比例自适应 */
+  }
+
+  .card img {
+    object-fit: cover; /* 裁剪以填充 16/9 容器 */
+  }
+
+  .card {
+    min-height: auto; /* 在手机端移除固定高度，让比例主导 */
+  }
 }
