@@ -1,25 +1,38 @@
-// Minimal Service Worker: network-first with cache fallback
+// Case&i — Minimal SW (network-first with cache fallback)
 const CACHE = 'casei-cache-v1';
+const PRECACHE = [
+  '/', '/index.html',
+  '/css/style.css',
+  '/js/main.js',
+  // 你也可以把静态资源加进来（可选）
+  // '/assets/videos/hero.mp4',
+  // '/assets/images/classic.jpg',
+  // '/assets/images/fashion.jpg',
+  // '/assets/images/business.jpg',
+];
 
+// install：预缓存基础资源
 self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch(()=>{})
+  );
   self.skipWaiting();
 });
 
+// activate：清理旧缓存
 self.addEventListener('activate', (e) => {
-  // 清理旧缓存
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => (k !== CACHE ? caches.delete(k) : null)))
-    ).then(() => self.clients.claim())
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
   );
+  self.clients.claim();
 });
 
-// 同源 GET 请求：优先网络，失败回退缓存；成功后写入缓存（SWR）
+// fetch：网络优先，失败回退缓存；成功后写入缓存
 self.addEventListener('fetch', (e) => {
   const req = e.request;
-  const isGET = req.method === 'GET';
-  const sameOrigin = new URL(req.url).origin === self.location.origin;
-  if (!isGET || !sameOrigin) return;
+  if (req.method !== 'GET') return;
 
   e.respondWith((async () => {
     try {
@@ -28,11 +41,10 @@ self.addEventListener('fetch', (e) => {
       cache.put(req, net.clone());
       return net;
     } catch {
-      const cached = await caches.match(req);
-      if (cached) return cached;
-      // 简单文本兜底
-      return new Response('You are offline.', {
-        status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+      const hit = await caches.match(req);
+      return hit || new Response('You are offline.', {
+        status: 200,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
       });
     }
   })());
