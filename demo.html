@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Case&i — U3 Minimal Arrow Demo</title>
+  <title>Case&i — U3 Minimal Arrow + Progress Demo</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
     /* ===== U3 超简箭头样式 ===== */
@@ -15,6 +15,7 @@
     }
     .product.u3 .slide{
       scroll-snap-align: center;
+      scroll-snap-stop: always;
       flex: 0 0 100%;
       width: 100%;
       aspect-ratio: 16/9;
@@ -33,18 +34,15 @@
     .product.u3 .nav-arrow.left{ left:12px; }
     .product.u3 .nav-arrow.right{ right:12px; }
 
-    /* 悬停出现，触屏常显 */
-    .product.u3:hover .nav-arrow{ opacity:1; }
+    /* 自动显隐 */
+    .product.u3 .nav-arrow.is-visible{ opacity:1; }
     @media (hover:none){ .product.u3 .nav-arrow{ opacity:1; } }
 
-    /* 悬停/点击反馈 */
     .product.u3 .nav-arrow:hover{ color:var(--brand); }
     .product.u3 .nav-arrow:active{ transform:translateY(-50%) scale(0.92); }
-
-    /* 边界禁用时直接隐藏 */
     .product.u3 .nav-arrow.is-disabled{ display:none; }
 
-    /* 渐隐边缘提示（可选） */
+    /* 渐隐边缘提示 */
     .product.u3 .edge-mask::before,
     .product.u3 .edge-mask::after{
       content:"";
@@ -64,6 +62,18 @@
     body.dark .product.u3 .edge-mask::after{
       background:linear-gradient(to left, rgba(255,255,255,.06), transparent);
     }
+
+    /* 进度条 */
+    .product.u3 .progress {
+      position:absolute; left:0; right:0; bottom:0; height:2px;
+      background:rgba(0,0,0,.08);
+    }
+    body.dark .product.u3 .progress{ background:rgba(255,255,255,.08); }
+    .product.u3 .progress i{
+      display:block; height:100%; width:0%;
+      background:var(--brand);
+      transition:width .18s ease;
+    }
   </style>
 </head>
 <body>
@@ -74,8 +84,8 @@
   <main>
     <section class="hero">
       <div class="container">
-        <h1>U3 Minimal Arrow Demo</h1>
-        <p class="sub">极简箭头导航 + scroll-snap 吸附</p>
+        <h1>U3 Minimal Arrow + Progress Demo</h1>
+        <p class="sub">极简箭头导航 + 底部进度条</p>
       </div>
     </section>
 
@@ -86,12 +96,12 @@
           <!-- 示例产品 -->
           <article class="card product u3" data-product="business">
             <div class="main-viewport"><div class="main-track">
-              <img class="slide" src="assets/images/business/1.jpg" alt="">
-              <img class="slide" src="assets/images/business/2.jpg" alt="">
-              <img class="slide" src="assets/images/business/3.jpg" alt="">
+              <img class="slide" src="assets/images/business/1.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="">
+              <img class="slide" src="assets/images/business/2.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="">
+              <img class="slide" src="assets/images/business/3.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="">
             </div></div>
             <div class="body">
-              <h3>Business — U3 超简箭头</h3>
+              <h3>Business — U3 箭头 + 进度条</h3>
               <p class="sub">左右滑动或点击箭头切换</p>
             </div>
           </article>
@@ -102,7 +112,6 @@
   </main>
 
   <script>
-  // === U3 超简箭头脚本 ===
   (function(){
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
@@ -111,7 +120,7 @@
       const vp = card.querySelector('.main-viewport');
       if(!vp) return;
 
-      // 包裹 edge-mask（可选渐隐提示）
+      // 包裹 edge-mask
       if(!card.querySelector('.edge-mask')){
         const wrap = document.createElement('div');
         wrap.className = 'edge-mask';
@@ -131,6 +140,14 @@
       const slides = card.querySelectorAll('.slide');
       if(!slides.length) return;
 
+      // 进度条
+      if(!card.querySelector('.progress')){
+        const bar = document.createElement('div');
+        bar.className='progress'; bar.innerHTML='<i></i>';
+        vp.appendChild(bar);
+      }
+      const fill = card.querySelector('.progress i');
+
       const getIndex = ()=> Math.round(vp.scrollLeft / vp.clientWidth);
       const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
 
@@ -143,6 +160,7 @@
       const update = (i=getIndex())=>{
         left.classList.toggle('is-disabled', i<=0);
         right.classList.toggle('is-disabled', i>=slides.length-1);
+        fill.style.width = `${((i+1)/slides.length)*100}%`;
       };
 
       left.addEventListener('click',()=> goTo(getIndex()-1));
@@ -151,12 +169,14 @@
       vp.addEventListener('keydown',e=>{
         if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
         if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
+        if(e.key==='Home'){ e.preventDefault(); goTo(0); }
+        if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
       });
 
       let t;
       vp.addEventListener('scroll',()=>{
         clearTimeout(t);
-        t=setTimeout(()=> goTo(getIndex()),90);
+        t=setTimeout(()=> update(getIndex()),90);
       });
 
       let rt;
@@ -164,6 +184,18 @@
         clearTimeout(rt);
         rt=setTimeout(()=> goTo(getIndex()),120);
       });
+
+      // 自动显示箭头一会再隐藏
+      let hideTimer;
+      const showArrows = ()=>{
+        [left,right].forEach(a=>a.classList.add('is-visible'));
+        clearTimeout(hideTimer);
+        hideTimer=setTimeout(()=> [left,right].forEach(a=>a.classList.remove('is-visible')),1500);
+      };
+      ['mousemove','keydown','click','scroll'].forEach(evt=>{
+        vp.addEventListener(evt, showArrows, { passive:true });
+      });
+      showArrows();
 
       update(0);
     });
