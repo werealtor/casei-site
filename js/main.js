@@ -101,3 +101,72 @@
     navigator.serviceWorker.register('/js/sw.js').catch(() => {});
   });
 })();
+
+
+
+
+// 主题切换
+const themeBtn = document.getElementById('theme-toggle');
+if (themeBtn) {
+  themeBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    themeBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  });
+}
+
+// 移动端菜单
+const menuToggle = document.querySelector('.menu-toggle');
+const headerEl = document.querySelector('header');
+if (menuToggle && headerEl) {
+  menuToggle.addEventListener('click', () => {
+    headerEl.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', headerEl.classList.contains('open'));
+  });
+}
+
+// 上传预览
+const uForm = document.getElementById('uForm');
+if (uForm) {
+  uForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('file');
+    const err = document.getElementById('uErr');
+    const preview = document.getElementById('preview');
+    const f = fileInput.files[0];
+    if (!f) { err.textContent = 'Please choose an image.'; return; }
+    if (!f.type.startsWith('image/')) { err.textContent = 'Invalid file type.'; return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+      err.textContent = '';
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+// 产品缩略图切换（支持键盘左右）
+document.querySelectorAll('.card.product').forEach((card) => {
+  const main = card.querySelector('.main-img');
+  const thumbs = card.querySelectorAll('.thumb');
+  thumbs.forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      thumbs.forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const img = btn.querySelector('img');
+      if (img && main) {
+        main.src = img.src;
+        main.alt = img.alt.replace(/thumb|thumbnail/i,'main').trim();
+      }
+    });
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const dir = e.key === 'ArrowRight' ? 1 : -1;
+        const next = thumbs[(i + dir + thumbs.length) % thumbs.length];
+        next.focus(); next.click();
+      }
+    });
+  });
+});
