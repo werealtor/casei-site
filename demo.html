@@ -3,139 +3,103 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Case&i — Thumbnails Style Demo</title>
+  <title>Case&i — Ultra Minimal Thumbnails Demo</title>
   <link rel="stylesheet" href="css/style.css" />
-
-  <!-- 仅供 demo 使用的补充样式：把三种风格作用域到每张卡片上 -->
   <style>
-    /* 基础：确保侧滑主图与缩略图样式已在 css/style.css 里追加过
-       （.main-viewport / .main-track / .slide / .thumb-row / .thumb ...） */
-
-    /* ====== A：紧凑缩略图（作用于 .product.thumb-style-a） ====== */
-    .product.thumb-style-a .thumb-row { gap: 4px; padding: 6px; }
-    .product.thumb-style-a .thumb img { width: 56px; }
-
-    /* ====== B：右下角悬浮缩略图（作用于 .product.thumb-style-b） ====== */
-    .product.thumb-style-b .main-viewport { position: relative; }
-    .product.thumb-style-b .thumb-row {
-      position: absolute; bottom: 8px; right: 8px;
-      display: flex; gap: 4px; padding: 4px; border-radius: 8px;
-      background: rgba(0,0,0,.5);
+    /* ====== U1 圆点 ====== */
+    .product.u1 .main-viewport{ position:relative; }
+    .product.u1 .thumb-row{
+      position:absolute; left:50%; bottom:10px; transform:translateX(-50%);
+      display:flex; gap:6px;
     }
-    .product.thumb-style-b .thumb img { width: 40px; border-radius: 4px; }
-    .product.thumb-style-b .thumb.is-active {
-      border: 2px solid var(--brand); box-shadow: 0 0 0 1px #fff;
+    .product.u1 .thumb{ width:8px; height:8px; border-radius:50%; border:none;
+      background:rgba(255,255,255,.45);
     }
+    body.dark .product.u1 .thumb{ background:rgba(0,0,0,.45); }
+    .product.u1 .thumb img{ display:none; }
+    .product.u1 .thumb.is-active{ background:var(--brand); }
 
-    /* ====== C：圆点指示器（作用于 .product.thumb-style-c） ====== */
-    .product.thumb-style-c .thumb-row { gap: 6px; padding: 6px; }
-    .product.thumb-style-c .thumb img { display: none; }
-    .product.thumb-style-c .thumb {
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--line); border: none;
+    /* ====== U2 页码指示 ====== */
+    .product.u2 .thumb-row{ display:none; }
+    .product.u2 .main-viewport{ position:relative; }
+    .index-badge{
+      position:absolute; top:10px; right:10px;
+      font-size:12px; line-height:1;
+      padding:6px 8px; border-radius:999px;
+      background:rgba(0,0,0,.45); color:#fff;
     }
-    .product.thumb-style-c .thumb.is-active { background: var(--brand); }
+    body.dark .index-badge{ background:rgba(255,255,255,.18); }
+
+    /* ====== U3 箭头 ====== */
+    .product.u3 .thumb-row{ display:none; }
+    .product.u3 .main-viewport{ position:relative; }
+    .nav-arrow{
+      position:absolute; top:50%; transform:translateY(-50%);
+      width:34px; height:34px; border-radius:50%;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.7); color:#000;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; opacity:0; transition:opacity .2s ease;
+    }
+    body.dark .nav-arrow{ background:rgba(0,0,0,.5); color:#fff; border-color:rgba(255,255,255,.2); }
+    .nav-arrow.left{ left:8px; }
+    .nav-arrow.right{ right:8px; }
+    .product.u3:hover .nav-arrow{ opacity:1; }
+    @media (hover:none){ .product.u3 .nav-arrow{ opacity:1; } }
   </style>
 </head>
 <body>
-  <header id="site-header">
-    <div class="container bar">
-      <div class="brand">Case<i>&</i>i</div>
-      <nav id="primary-nav" aria-label="Primary navigation">
-        <a href="#demo">Demo</a>
-      </nav>
-    </div>
+  <header>
+    <div class="container bar"><div class="brand">Case&amp;i</div></div>
   </header>
 
-  <main id="demo">
+  <main>
     <section class="hero">
       <div class="container">
-        <h1>Thumbnails Style Demo</h1>
-        <p class="sub">A（紧凑） · B（右下角悬浮） · C（圆点）</p>
+        <h1>Ultra Minimal Demo</h1>
+        <p class="sub">Classic = U1 圆点 · Fashion = U2 页码 · Business = U3 箭头</p>
       </div>
     </section>
 
     <section id="products">
       <div class="container">
-        <h2 class="title">Our Products (Three Thumbnail Styles)</h2>
         <div class="grid products-grid">
 
-          <!-- A：紧凑缩略图 -->
-          <article class="card product thumb-style-a" data-product="classic">
-            <div class="main-viewport" aria-label="Classic gallery" role="region">
-              <div class="main-track">
-                <img class="slide" src="assets/images/classic/1.jpg" alt="Classic — front" />
-                <img class="slide" src="assets/images/classic/2.jpg" alt="Classic — back" />
-                <img class="slide" src="assets/images/classic/3.jpg" alt="Classic — detail" />
-              </div>
+          <!-- U1: 圆点 -->
+          <article class="card product u1" data-product="classic">
+            <div class="main-viewport"><div class="main-track">
+              <img class="slide" src="assets/images/classic/1.jpg" alt="">
+              <img class="slide" src="assets/images/classic/2.jpg" alt="">
+              <img class="slide" src="assets/images/classic/3.jpg" alt="">
+            </div></div>
+            <div class="thumb-row">
+              <button class="thumb is-active" data-index="0"></button>
+              <button class="thumb" data-index="1"></button>
+              <button class="thumb" data-index="2"></button>
             </div>
-            <div class="thumb-row" role="tablist" aria-label="Classic thumbnails">
-              <button class="thumb is-active" role="tab" aria-selected="true" data-index="0">
-                <img src="assets/images/classic/1.jpg" alt="Classic thumbnail 1" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" data-index="1">
-                <img src="assets/images/classic/2.jpg" alt="Classic thumbnail 2" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" data-index="2">
-                <img src="assets/images/classic/3.jpg" alt="Classic thumbnail 3" />
-              </button>
-            </div>
-            <div class="body">
-              <h3>Classic — Style A</h3>
-              <p class="sub">Slim &amp; scratch-resistant</p>
-              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" contenteditable="true" spellcheck="false">$19</div>
-            </div>
+            <div class="body"><h3>Classic — U1 圆点</h3></div>
           </article>
 
-          <!-- B：右下角悬浮缩略图 -->
-          <article class="card product thumb-style-b" data-product="fashion">
-            <div class="main-viewport" aria-label="Fashion gallery" role="region">
-              <div class="main-track">
-                <img class="slide" src="assets/images/fashion/1.jpg" alt="Fashion — front" />
-                <img class="slide" src="assets/images/fashion/2.jpg" alt="Fashion — back" />
-                <img class="slide" src="assets/images/fashion/3.jpg" alt="Fashion — detail" />
-              </div>
-            </div>
-            <div class="thumb-row" role="tablist" aria-label="Fashion thumbnails">
-              <button class="thumb is-active" role="tab" aria-selected="true" data-index="0">
-                <img src="assets/images/fashion/1.jpg" alt="Fashion thumbnail 1" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" data-index="1">
-                <img src="assets/images/fashion/2.jpg" alt="Fashion thumbnail 2" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" data-index="2">
-                <img src="assets/images/fashion/3.jpg" alt="Fashion thumbnail 3" />
-              </button>
-            </div>
-            <div class="body">
-              <h3>Fashion — Style B</h3>
-              <p class="sub">Trendy design &amp; anti-fingerprint</p>
-              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" contenteditable="true" spellcheck="false">$25</div>
-            </div>
+          <!-- U2: 页码 -->
+          <article class="card product u2" data-product="fashion">
+            <div class="main-viewport"><div class="main-track">
+              <img class="slide" src="assets/images/fashion/1.jpg" alt="">
+              <img class="slide" src="assets/images/fashion/2.jpg" alt="">
+              <img class="slide" src="assets/images/fashion/3.jpg" alt="">
+            </div></div>
+            <div class="thumb-row"></div>
+            <div class="body"><h3>Fashion — U2 页码</h3></div>
           </article>
 
-          <!-- C：圆点指示器 -->
-          <article class="card product thumb-style-c" data-product="business">
-            <div class="main-viewport" aria-label="Business gallery" role="region">
-              <div class="main-track">
-                <img class="slide" src="assets/images/business/1.jpg" alt="Business — front" />
-                <img class="slide" src="assets/images/business/2.jpg" alt="Business — back" />
-                <img class="slide" src="assets/images/business/3.jpg" alt="Business — detail" />
-              </div>
-            </div>
-            <div class="thumb-row" role="tablist" aria-label="Business indicators">
-              <button class="thumb is-active" role="tab" aria-selected="true" data-index="0"><img src="assets/images/business/1.jpg" alt=""></button>
-              <button class="thumb" role="tab" aria-selected="false" data-index="1"><img src="assets/images/business/2.jpg" alt=""></button>
-              <button class="thumb" role="tab" aria-selected="false" data-index="2"><img src="assets/images/business/3.jpg" alt=""></button>
-            </div>
-            <div class="body">
-              <h3>Business — Style C</h3>
-              <p class="sub">Premium touch &amp; shockproof</p>
-              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" contenteditable="true" spellcheck="false">$29</div>
-            </div>
+          <!-- U3: 箭头 -->
+          <article class="card product u3" data-product="business">
+            <div class="main-viewport"><div class="main-track">
+              <img class="slide" src="assets/images/business/1.jpg" alt="">
+              <img class="slide" src="assets/images/business/2.jpg" alt="">
+              <img class="slide" src="assets/images/business/3.jpg" alt="">
+            </div></div>
+            <div class="thumb-row"></div>
+            <div class="body"><h3>Business — U3 箭头</h3></div>
           </article>
 
         </div>
@@ -143,10 +107,37 @@
     </section>
   </main>
 
-  <footer>
-    <div class="container"><small>© 2025 AIXX Inc · xxkit.com</small></div>
-  </footer>
-
   <script src="js/main.js" defer></script>
+  <script>
+  // U2 页码
+  document.querySelectorAll('.product.u2').forEach(card=>{
+    const vp = card.querySelector('.main-viewport');
+    const slides = card.querySelectorAll('.slide');
+    const badge = document.createElement('div');
+    badge.className = 'index-badge'; badge.textContent = `1/${slides.length}`;
+    vp.appendChild(badge);
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          const i=[...slides].indexOf(e.target);
+          badge.textContent=`${i+1}/${slides.length}`;
+        }
+      });
+    },{root:vp,threshold:.6});
+    slides.forEach(s=>io.observe(s));
+  });
+
+  // U3 箭头
+  document.querySelectorAll('.product.u3').forEach(card=>{
+    const vp=card.querySelector('.main-viewport');
+    const left=document.createElement('button');
+    const right=document.createElement('button');
+    left.className='nav-arrow left'; left.textContent='‹';
+    right.className='nav-arrow right'; right.textContent='›';
+    vp.appendChild(left); vp.appendChild(right);
+    left.addEventListener('click',()=>vp.scrollBy({left:-vp.clientWidth,behavior:'smooth'}));
+    right.addEventListener('click',()=>vp.scrollBy({left:vp.clientWidth,behavior:'smooth'}));
+  });
+  </script>
 </body>
 </html>
