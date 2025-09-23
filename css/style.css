@@ -92,14 +92,25 @@ section{padding:36px 0}
   outline:none;
 }
 .main-viewport::-webkit-scrollbar{ display:none; }
-.main-track{ display:flex; width:100%; }
+.main-track{ display:flex; width:100%; align-items:stretch; }
+
+/* ✅ 改为“容器16:9 + 内图cover”以避免任何拉伸 */
 .slide{
+  position:relative;
   flex:0 0 100%;
   width:100%;
-  aspect-ratio:16/9;
-  object-fit:cover;
+  aspect-ratio:16/9;       /* 固定16:9视窗 */
+  overflow:hidden;         /* 超出裁剪 */
+  background:var(--tone);  /* 加底色避免闪白 */
   scroll-snap-align:center;
   scroll-snap-stop:always;
+}
+.slide .cover{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;        /* 保持比例，居中裁剪 */
+  object-position:center;
+  -webkit-user-drag:none; user-select:none;
 }
 
 /* 极简箭头 */
@@ -119,8 +130,7 @@ body.dark .nav-arrow{ color:rgba(255,255,255,.75); }
 .nav-arrow:hover{ color:var(--brand); }
 .nav-arrow:active{ transform:translateY(-50%) scale(0.92); }
 .nav-arrow.is-disabled{ display:none; }
-
-/* 自动显隐 class（由 JS 控制） */
+/* JS 控制自动显隐 */
 .nav-arrow.is-visible{ opacity:1; }
 
 /* 渐隐边缘提示（可选） */
