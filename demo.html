@@ -3,49 +3,74 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Case&i — Ultra Minimal Thumbnails Demo</title>
+  <title>Case&i — U3 Arrow Navigation Demo</title>
   <link rel="stylesheet" href="css/style.css" />
   <style>
-    /* ====== U1 圆点 ====== */
-    .product.u1 .main-viewport{ position:relative; }
-    .product.u1 .thumb-row{
-      position:absolute; left:50%; bottom:10px; transform:translateX(-50%);
-      display:flex; gap:6px;
+    /* ===== U3 进阶箭头样式 ===== */
+    .product.u3 .main-viewport{
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+      outline: none;
     }
-    .product.u1 .thumb{ width:8px; height:8px; border-radius:50%; border:none;
-      background:rgba(255,255,255,.45);
+    .product.u3 .slide{
+      scroll-snap-align: center;
+      flex: 0 0 100%;
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
     }
-    body.dark .product.u1 .thumb{ background:rgba(0,0,0,.45); }
-    .product.u1 .thumb img{ display:none; }
-    .product.u1 .thumb.is-active{ background:var(--brand); }
 
-    /* ====== U2 页码指示 ====== */
-    .product.u2 .thumb-row{ display:none; }
-    .product.u2 .main-viewport{ position:relative; }
-    .index-badge{
-      position:absolute; top:10px; right:10px;
-      font-size:12px; line-height:1;
-      padding:6px 8px; border-radius:999px;
-      background:rgba(0,0,0,.45); color:#fff;
-    }
-    body.dark .index-badge{ background:rgba(255,255,255,.18); }
-
-    /* ====== U3 箭头 ====== */
-    .product.u3 .thumb-row{ display:none; }
-    .product.u3 .main-viewport{ position:relative; }
-    .nav-arrow{
+    .product.u3 .nav-arrow{
       position:absolute; top:50%; transform:translateY(-50%);
-      width:34px; height:34px; border-radius:50%;
+      width:40px; height:40px; border-radius:50%;
       border:1px solid var(--line);
       background:rgba(255,255,255,.7); color:#000;
       display:flex; align-items:center; justify-content:center;
-      cursor:pointer; opacity:0; transition:opacity .2s ease;
+      cursor:pointer; opacity:0; transition:opacity .18s ease, transform .12s ease;
+      user-select:none;
     }
-    body.dark .nav-arrow{ background:rgba(0,0,0,.5); color:#fff; border-color:rgba(255,255,255,.2); }
-    .nav-arrow.left{ left:8px; }
-    .nav-arrow.right{ right:8px; }
+    body.dark .product.u3 .nav-arrow{
+      background:rgba(0,0,0,.55); color:#fff; border-color:rgba(255,255,255,.2);
+    }
+    .product.u3 .nav-arrow.left{ left:8px; }
+    .product.u3 .nav-arrow.right{ right:8px; }
+
+    /* 扩大热区 */
+    .product.u3 .nav-arrow::after{
+      content:""; position:absolute; inset:-10px;
+    }
+
+    /* 悬停出现，触屏常显 */
     .product.u3:hover .nav-arrow{ opacity:1; }
     @media (hover:none){ .product.u3 .nav-arrow{ opacity:1; } }
+
+    .product.u3 .nav-arrow:active{ transform:translateY(-50%) scale(0.95); }
+
+    .product.u3 .nav-arrow.is-disabled{
+      opacity:.35; cursor:default; pointer-events:none;
+    }
+
+    /* 渐隐边缘提示，可选 */
+    .product.u3 .edge-mask::before,
+    .product.u3 .edge-mask::after{
+      content:"";
+      position:absolute; top:0; bottom:0; width:48px; pointer-events:none;
+    }
+    .product.u3 .edge-mask::before{
+      left:0;
+      background:linear-gradient(to right, rgba(0,0,0,.08), transparent);
+    }
+    .product.u3 .edge-mask::after{
+      right:0;
+      background:linear-gradient(to left, rgba(0,0,0,.08), transparent);
+    }
+    body.dark .product.u3 .edge-mask::before{
+      background:linear-gradient(to right, rgba(255,255,255,.06), transparent);
+    }
+    body.dark .product.u3 .edge-mask::after{
+      background:linear-gradient(to left, rgba(255,255,255,.06), transparent);
+    }
   </style>
 </head>
 <body>
@@ -56,8 +81,8 @@
   <main>
     <section class="hero">
       <div class="container">
-        <h1>Ultra Minimal Demo</h1>
-        <p class="sub">Classic = U1 圆点 · Fashion = U2 页码 · Business = U3 箭头</p>
+        <h1>U3 Arrow Navigation Demo</h1>
+        <p class="sub">左右箭头导航 + scroll-snap 吸附</p>
       </div>
     </section>
 
@@ -65,41 +90,17 @@
       <div class="container">
         <div class="grid products-grid">
 
-          <!-- U1: 圆点 -->
-          <article class="card product u1" data-product="classic">
-            <div class="main-viewport"><div class="main-track">
-              <img class="slide" src="assets/images/classic/1.jpg" alt="">
-              <img class="slide" src="assets/images/classic/2.jpg" alt="">
-              <img class="slide" src="assets/images/classic/3.jpg" alt="">
-            </div></div>
-            <div class="thumb-row">
-              <button class="thumb is-active" data-index="0"></button>
-              <button class="thumb" data-index="1"></button>
-              <button class="thumb" data-index="2"></button>
-            </div>
-            <div class="body"><h3>Classic — U1 圆点</h3></div>
-          </article>
-
-          <!-- U2: 页码 -->
-          <article class="card product u2" data-product="fashion">
-            <div class="main-viewport"><div class="main-track">
-              <img class="slide" src="assets/images/fashion/1.jpg" alt="">
-              <img class="slide" src="assets/images/fashion/2.jpg" alt="">
-              <img class="slide" src="assets/images/fashion/3.jpg" alt="">
-            </div></div>
-            <div class="thumb-row"></div>
-            <div class="body"><h3>Fashion — U2 页码</h3></div>
-          </article>
-
-          <!-- U3: 箭头 -->
+          <!-- Business 示例 -->
           <article class="card product u3" data-product="business">
             <div class="main-viewport"><div class="main-track">
               <img class="slide" src="assets/images/business/1.jpg" alt="">
               <img class="slide" src="assets/images/business/2.jpg" alt="">
               <img class="slide" src="assets/images/business/3.jpg" alt="">
             </div></div>
-            <div class="thumb-row"></div>
-            <div class="body"><h3>Business — U3 箭头</h3></div>
+            <div class="body">
+              <h3>Business — U3 优化箭头</h3>
+              <p class="sub">左右滑动或点击箭头切换</p>
+            </div>
           </article>
 
         </div>
@@ -107,37 +108,73 @@
     </section>
   </main>
 
-  <script src="js/main.js" defer></script>
   <script>
-  // U2 页码
-  document.querySelectorAll('.product.u2').forEach(card=>{
-    const vp = card.querySelector('.main-viewport');
-    const slides = card.querySelectorAll('.slide');
-    const badge = document.createElement('div');
-    badge.className = 'index-badge'; badge.textContent = `1/${slides.length}`;
-    vp.appendChild(badge);
-    const io = new IntersectionObserver(entries=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
-          const i=[...slides].indexOf(e.target);
-          badge.textContent=`${i+1}/${slides.length}`;
-        }
-      });
-    },{root:vp,threshold:.6});
-    slides.forEach(s=>io.observe(s));
-  });
+  // === U3 进阶脚本 ===
+  (function(){
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
 
-  // U3 箭头
-  document.querySelectorAll('.product.u3').forEach(card=>{
-    const vp=card.querySelector('.main-viewport');
-    const left=document.createElement('button');
-    const right=document.createElement('button');
-    left.className='nav-arrow left'; left.textContent='‹';
-    right.className='nav-arrow right'; right.textContent='›';
-    vp.appendChild(left); vp.appendChild(right);
-    left.addEventListener('click',()=>vp.scrollBy({left:-vp.clientWidth,behavior:'smooth'}));
-    right.addEventListener('click',()=>vp.scrollBy({left:vp.clientWidth,behavior:'smooth'}));
-  });
+    document.querySelectorAll('.product.u3').forEach(card=>{
+      const vp = card.querySelector('.main-viewport');
+      if(!vp) return;
+
+      // 包裹 edge-mask
+      if(!card.querySelector('.edge-mask')){
+        const wrap = document.createElement('div');
+        wrap.className = 'edge-mask';
+        vp.parentNode.insertBefore(wrap, vp);
+        wrap.appendChild(vp);
+      }
+
+      vp.setAttribute('tabindex','0');
+      vp.setAttribute('aria-label','Product gallery');
+
+      const left = document.createElement('button');
+      const right = document.createElement('button');
+      left.className='nav-arrow left'; left.textContent='‹';
+      right.className='nav-arrow right'; right.textContent='›';
+      vp.appendChild(left); vp.appendChild(right);
+
+      const slides = card.querySelectorAll('.slide');
+      if(!slides.length) return;
+
+      const getIndex = ()=> Math.round(vp.scrollLeft / vp.clientWidth);
+      const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
+
+      const goTo = (i)=>{
+        i = clamp(i,0,slides.length-1);
+        vp.scrollTo({ left:i*vp.clientWidth, behavior:scrollBehavior });
+        update(i);
+      };
+
+      const update = (i=getIndex())=>{
+        left.classList.toggle('is-disabled', i<=0);
+        right.classList.toggle('is-disabled', i>=slides.length-1);
+      };
+
+      left.addEventListener('click',()=> goTo(getIndex()-1));
+      right.addEventListener('click',()=> goTo(getIndex()+1));
+
+      vp.addEventListener('keydown',e=>{
+        if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
+        if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
+      });
+
+      let t;
+      vp.addEventListener('scroll',()=>{
+        clearTimeout(t);
+        t=setTimeout(()=> goTo(getIndex()),90);
+      });
+
+      let rt;
+      window.addEventListener('resize',()=>{
+        clearTimeout(rt);
+        rt=setTimeout(()=> goTo(getIndex()),120);
+      });
+
+      update(0);
+    });
+  })();
   </script>
 </body>
 </html>
