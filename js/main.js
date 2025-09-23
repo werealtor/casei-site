@@ -170,3 +170,48 @@ document.querySelectorAll('.card.product').forEach((card) => {
     });
   });
 });
+
+
+
+// 侧划主图与缩略图联动
+document.querySelectorAll('.card.product').forEach(card=>{
+  const viewport = card.querySelector('.main-viewport');
+  const track = card.querySelector('.main-track');
+  const slides = card.querySelectorAll('.slide');
+  const thumbs = card.querySelectorAll('.thumb');
+
+  if(!viewport || !track || slides.length === 0) return;
+
+  // 点击缩略图 -> 平滑滚动到对应 slide
+  thumbs.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = Number(btn.dataset.index || 0);
+      viewport.scrollTo({ left: i * viewport.clientWidth, behavior: 'smooth' });
+    });
+  });
+
+  // 滚动时 -> 高亮当前缩略图
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const i = [...slides].indexOf(entry.target);
+        thumbs.forEach(t=>{ t.classList.remove('is-active'); t.setAttribute('aria-selected','false'); });
+        if(thumbs[i]){ thumbs[i].classList.add('is-active'); thumbs[i].setAttribute('aria-selected','true'); }
+      }
+    });
+  }, { root: viewport, threshold: 0.6 });
+
+  slides.forEach(s=>io.observe(s));
+
+  // 视口尺寸变化时，保持对齐（可选）
+  let resizeTimer;
+  window.addEventListener('resize', ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(()=>{
+      const active = card.querySelector('.thumb.is-active');
+      const i = Number(active?.dataset.index || 0);
+      viewport.scrollTo({ left: i * viewport.clientWidth });
+    }, 120);
+  });
+});
+
