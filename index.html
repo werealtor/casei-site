@@ -7,76 +7,15 @@
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
   <link rel="stylesheet" href="css/style.css" />
-  <style>
-    /* 基本的光/暗模式变量 */
-    :root {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-      --line-color: #e0e0e0;
-      --primary-btn-bg: #007bff;
-      --primary-btn-text: #ffffff;
-    }
-
-    body.dark {
-      --bg-color: #121212;
-      --text-color: #ffffff;
-      --line-color: #333333;
-      --primary-btn-bg: #0056b3;
-      --primary-btn-text: #ffffff;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    /* 应用到需要的地方，如按钮 */
-    .btn.primary {
-      background-color: var(--primary-btn-bg);
-      color: var(--primary-btn-text);
-    }
-
-    /* 悬浮按钮样式 */
-    .floating-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: #f0f0f0;
-      border: none;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s;
-      z-index: 1000;
-    }
-
-    body.dark .floating-btn {
-      background-color: #333333;
-    }
-
-    .floating-btn:hover {
-      transform: scale(1.1);
-    }
-  </style>
 </head>
 <body>
   <!-- Header -->
   <header id="site-header">
     <div class="container bar">
-      <div class="brand">Case&amp;i</div>
-
-      <!-- 汉堡按钮（移动端） -->
+      <div class="brand">Case<i>&</i>i</div>
       <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
         <span class="menu-icon" aria-hidden="true"></span>
       </button>
-
       <nav id="primary-nav" aria-label="Primary navigation">
         <a href="#products">Products</a>
         <a href="#custom">Customize</a>
@@ -91,13 +30,12 @@
     <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
-          <video class="media" autoplay muted loop playsinline aria-label="Case&i hero video">
+          <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
             <source src="assets/videos/hero.mp4" type="video/mp4" />
           </video>
         </figure>
         <h1>Minimal · Premium · Personal</h1>
         <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
-
         <div class="cta">
           <a class="btn primary" href="#products">Shop Products</a>
           <a class="btn" href="#custom">Customize Now</a>
@@ -105,40 +43,78 @@
       </div>
     </section>
 
-    <!-- Products -->
+    <!-- Products：每个产品独立子目录，主图 + 缩略图 -->
     <section id="products">
       <div class="container">
         <h2 class="title">Our Products</h2>
-        <div class="grid">
-          <article class="card">
-            <img src="assets/images/classic.jpg" alt="Classic Case" loading="lazy" />
+        <div class="grid products-grid">
+
+          <!-- Classic -->
+          <article class="card product" data-product="classic">
+            <img class="main-img" src="assets/images/classic/1.jpg" alt="Classic Case main" />
+            <div class="thumb-row" role="tablist" aria-label="Classic thumbnails">
+              <button class="thumb is-active" role="tab" aria-selected="true" title="Front">
+                <img src="assets/images/classic/1.jpg" alt="Classic Case — front" />
+              </button>
+              <button class="thumb" role="tab" aria-selected="false" title="Back">
+                <img src="assets/images/classic/2.jpg" alt="Classic Case — back" />
+              </button>
+              <button class="thumb" role="tab" aria-selected="false" title="Detail">
+                <img src="assets/images/classic/3.jpg" alt="Classic Case — detail" />
+              </button>
+            </div>
             <div class="body">
               <h3>Classic</h3>
               <p class="sub">Slim &amp; scratch-resistant</p>
               <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" data-id="classic">$19</div>
+              <div class="price" data-id="classic" contenteditable="true" spellcheck="false">$19</div>
             </div>
           </article>
 
-          <article class="card">
-            <img src="assets/images/fashion.jpg" alt="Fashion Case" loading="lazy" />
+          <!-- Fashion -->
+          <article class="card product" data-product="fashion">
+            <img class="main-img" src="assets/images/fashion/1.jpg" alt="Fashion Case main" />
+            <div class="thumb-row" role="tablist" aria-label="Fashion thumbnails">
+              <button class="thumb is-active" role="tab" aria-selected="true" title="Front">
+                <img src="assets/images/fashion/1.jpg" alt="Fashion Case — front" />
+              </button>
+              <button class="thumb" role="tab" aria-selected="false" title="Back">
+                <img src="assets/images/fashion/2.jpg" alt="Fashion Case — back" />
+              </button>
+              <button class="thumb" role="tab" aria-selected="false" title="Detail">
+                <img src="assets/images/fashion/3.jpg" alt="Fashion Case — detail" />
+              </button>
+            </div>
             <div class="body">
               <h3>Fashion</h3>
               <p class="sub">Trendy design &amp; anti-fingerprint</p>
               <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" data-id="fashion">$25</div>
+              <div class="price" data-id="fashion" contenteditable="true" spellcheck="false">$25</div>
             </div>
           </article>
 
-          <article class="card">
-            <img src="assets/images/business.jpg" alt="Business Case" loading="lazy" />
+          <!-- Business -->
+          <article class="card product" data-product="business">
+            <img class="main-img" src="assets/images/business/1.jpg" alt="Business Case main" />
+            <div class="thumb-row" role="tablist" aria-label="Business thumbnails">
+              <button class="thumb is-active" role="tab" aria-selected="true" title="Front">
+                <img src="assets/images/business/1.jpg" alt="Business Case — front" />
+              </button>
+              <button class="thumb" role="tab" aria-selected="false" title="Back">
+                <img src="assets/images/business/2.jpg" alt="Business Case — back" />
+              </button>
+              <button class="thumb" role="tab" aria-selected="false" title="Detail">
+                <img src="assets/images/business/3.jpg" alt="Business Case — detail" />
+              </button>
+            </div>
             <div class="body">
               <h3>Business</h3>
               <p class="sub">Premium touch &amp; shockproof</p>
               <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" data-id="business">$29</div>
+              <div class="price" data-id="business" contenteditable="true" spellcheck="false">$29</div>
             </div>
           </article>
+
         </div>
       </div>
     </section>
@@ -147,10 +123,10 @@
     <section id="custom">
       <div class="container">
         <h2 class="title">Customize Your Case</h2>
-        <form id="uForm">
+        <form id="uForm" novalidate>
           <input type="file" id="file" accept="image/png,image/jpeg" />
           <button type="submit" class="btn primary">Upload &amp; Preview</button>
-          <p id="uErr" class="sub err"></p>
+          <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
           <img id="preview" alt="Preview" style="display:none;max-width:100%;border-radius:12px;border:1px solid var(--line)" />
         </form>
       </div>
@@ -185,41 +161,9 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- 悬浮主题切换按钮 -->
-  <button id="theme-toggle" class="floating-btn"></button>
+  <!-- 悬浮主题切换 -->
+  <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
   <script src="js/main.js" defer></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const toggleButton = document.getElementById('theme-toggle');
-      const body = document.body;
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-      let currentTheme = localStorage.getItem('theme');
-
-      // 设置初始主题
-      if (!currentTheme) {
-        currentTheme = prefersDark.matches ? 'dark' : 'light';
-      }
-      body.classList.toggle('dark', currentTheme === 'dark');
-      updateButtonIcon(currentTheme);
-
-      // 切换功能
-      toggleButton.addEventListener('click', () => {
-        const isDark = body.classList.toggle('dark');
-        currentTheme = isDark ? 'dark' : 'light';
-        localStorage.setItem('theme', currentTheme);
-        updateButtonIcon(currentTheme);
-      });
-
-      // 根据当前主题更新图标（显示要切换到的模式图标）
-      function updateButtonIcon(theme) {
-        if (theme === 'light') {
-          toggleButton.innerHTML = '🌙'; // 显示月亮，切换到暗黑模式（深色）
-        } else {
-          toggleButton.innerHTML = '☀️'; // 显示太阳，切换到浅色模式
-        }
-      }
-    });
-  </script>
 </body>
 </html>
