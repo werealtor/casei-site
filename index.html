@@ -13,9 +13,12 @@
   <header id="site-header">
     <div class="container bar">
       <div class="brand">Case<i>&</i>i</div>
+
+      <!-- 汉堡按钮（移动端） -->
       <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
         <span class="menu-icon" aria-hidden="true"></span>
       </button>
+
       <nav id="primary-nav" aria-label="Primary navigation">
         <a href="#products">Products</a>
         <a href="#custom">Customize</a>
@@ -36,6 +39,7 @@
         </figure>
         <h1>Minimal · Premium · Personal</h1>
         <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
+
         <div class="cta">
           <a class="btn primary" href="#products">Shop Products</a>
           <a class="btn" href="#custom">Customize Now</a>
@@ -43,102 +47,66 @@
       </div>
     </section>
 
+    <!-- Products：U3 极简箭头 + 进度条（每个产品 16:9 侧滑，无缩略图） -->
     <section id="products">
-  <div class="container">
-    <h2 class="title">Our Products</h2>
-    <div class="grid products-grid">
+      <div class="container">
+        <h2 class="title">Our Products</h2>
+        <div class="grid products-grid">
 
-      <!-- Classic -->
-      <article class="card product" data-product="classic">
-        <!-- 可侧划主图（scroll-snap） -->
-        <div class="main-viewport" aria-label="Classic gallery" role="region">
-          <div class="main-track">
-            <img class="slide" src="assets/images/classic/1.jpg" alt="Classic Case — front" />
-            <img class="slide" src="assets/images/classic/2.jpg" alt="Classic Case — back" />
-            <img class="slide" src="assets/images/classic/3.jpg" alt="Classic Case — detail" />
-          </div>
-        </div>
+          <!-- Classic -->
+          <article class="card product u3" data-product="classic">
+            <div class="main-viewport" aria-label="Classic gallery" role="region">
+              <div class="main-track">
+                <img class="slide" src="assets/images/classic/1.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Classic — front" />
+                <img class="slide" src="assets/images/classic/2.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Classic — back" />
+                <img class="slide" src="assets/images/classic/3.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Classic — detail" />
+              </div>
+            </div>
+            <div class="body">
+              <h3>Classic</h3>
+              <p class="sub">Slim &amp; scratch-resistant</p>
+              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
+              <div class="price" data-id="classic" contenteditable="true" spellcheck="false">$19</div>
+            </div>
+          </article>
 
-        <!-- 缩略图（与主图联动） -->
-        <div class="thumb-row" role="tablist" aria-label="Classic thumbnails">
-          <button class="thumb is-active" role="tab" aria-selected="true" data-index="0">
-            <img src="assets/images/classic/1.jpg" alt="Classic thumbnail 1" />
-          </button>
-          <button class="thumb" role="tab" aria-selected="false" data-index="1">
-            <img src="assets/images/classic/2.jpg" alt="Classic thumbnail 2" />
-          </button>
-          <button class="thumb" role="tab" aria-selected="false" data-index="2">
-            <img src="assets/images/classic/3.jpg" alt="Classic thumbnail 3" />
-          </button>
-        </div>
+          <!-- Fashion -->
+          <article class="card product u3" data-product="fashion">
+            <div class="main-viewport" aria-label="Fashion gallery" role="region">
+              <div class="main-track">
+                <img class="slide" src="assets/images/fashion/1.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Fashion — front" />
+                <img class="slide" src="assets/images/fashion/2.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Fashion — back" />
+                <img class="slide" src="assets/images/fashion/3.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Fashion — detail" />
+              </div>
+            </div>
+            <div class="body">
+              <h3>Fashion</h3>
+              <p class="sub">Trendy design &amp; anti-fingerprint</p>
+              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
+              <div class="price" data-id="fashion" contenteditable="true" spellcheck="false">$25</div>
+            </div>
+          </article>
 
-        <div class="body">
-          <h3>Classic</h3>
-          <p class="sub">Slim &amp; scratch-resistant</p>
-          <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-          <div class="price" contenteditable="true" spellcheck="false">$19</div>
-        </div>
-      </article>
+          <!-- Business -->
+          <article class="card product u3" data-product="business">
+            <div class="main-viewport" aria-label="Business gallery" role="region">
+              <div class="main-track">
+                <img class="slide" src="assets/images/business/1.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Business — front" />
+                <img class="slide" src="assets/images/business/2.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Business — back" />
+                <img class="slide" src="assets/images/business/3.jpg" width="1600" height="900" loading="lazy" decoding="async" draggable="false" alt="Business — detail" />
+              </div>
+            </div>
+            <div class="body">
+              <h3>Business</h3>
+              <p class="sub">Premium touch &amp; shockproof</p>
+              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
+              <div class="price" data-id="business" contenteditable="true" spellcheck="false">$29</div>
+            </div>
+          </article>
 
-      <!-- Fashion -->
-      <article class="card product" data-product="fashion">
-        <div class="main-viewport" aria-label="Fashion gallery" role="region">
-          <div class="main-track">
-            <img class="slide" src="assets/images/fashion/1.jpg" alt="Fashion Case — front" />
-            <img class="slide" src="assets/images/fashion/2.jpg" alt="Fashion Case — back" />
-            <img class="slide" src="assets/images/fashion/3.jpg" alt="Fashion Case — detail" />
-          </div>
         </div>
-        <div class="thumb-row" role="tablist" aria-label="Fashion thumbnails">
-          <button class="thumb is-active" role="tab" aria-selected="true" data-index="0">
-            <img src="assets/images/fashion/1.jpg" alt="Fashion thumbnail 1" />
-          </button>
-          <button class="thumb" role="tab" aria-selected="false" data-index="1">
-            <img src="assets/images/fashion/2.jpg" alt="Fashion thumbnail 2" />
-          </button>
-          <button class="thumb" role="tab" aria-selected="false" data-index="2">
-            <img src="assets/images/fashion/3.jpg" alt="Fashion thumbnail 3" />
-          </button>
-        </div>
-        <div class="body">
-          <h3>Fashion</h3>
-          <p class="sub">Trendy design &amp; anti-fingerprint</p>
-          <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-          <div class="price" contenteditable="true" spellcheck="false">$25</div>
-        </div>
-      </article>
-
-      <!-- Business -->
-      <article class="card product" data-product="business">
-        <div class="main-viewport" aria-label="Business gallery" role="region">
-          <div class="main-track">
-            <img class="slide" src="assets/images/business/1.jpg" alt="Business Case — front" />
-            <img class="slide" src="assets/images/business/2.jpg" alt="Business Case — back" />
-            <img class="slide" src="assets/images/business/3.jpg" alt="Business Case — detail" />
-          </div>
-        </div>
-        <div class="thumb-row" role="tablist" aria-label="Business thumbnails">
-          <button class="thumb is-active" role="tab" aria-selected="true" data-index="0">
-            <img src="assets/images/business/1.jpg" alt="Business thumbnail 1" />
-          </button>
-          <button class="thumb" role="tab" aria-selected="false" data-index="1">
-            <img src="assets/images/business/2.jpg" alt="Business thumbnail 2" />
-          </button>
-          <button class="thumb" role="tab" aria-selected="false" data-index="2">
-            <img src="assets/images/business/3.jpg" alt="Business thumbnail 3" />
-          </button>
-        </div>
-        <div class="body">
-          <h3>Business</h3>
-          <p class="sub">Premium touch &amp; shockproof</p>
-          <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-          <div class="price" contenteditable="true" spellcheck="false">$29</div>
-        </div>
-      </article>
-
-    </div>
-  </div>
-</section>
+      </div>
+    </section>
 
     <!-- Customize -->
     <section id="custom">
@@ -182,7 +150,7 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- 悬浮主题切换 -->
+  <!-- 悬浮主题切换按钮 -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
   <script src="js/main.js" defer></script>
