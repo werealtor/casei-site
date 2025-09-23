@@ -43,81 +43,102 @@
       </div>
     </section>
 
-    <!-- Products：每个产品独立子目录，主图 + 缩略图 -->
     <section id="products">
-      <div class="container">
-        <h2 class="title">Our Products</h2>
-        <div class="grid products-grid">
+  <div class="container">
+    <h2 class="title">Our Products</h2>
+    <div class="grid products-grid">
 
-          <!-- Classic -->
-          <article class="card product" data-product="classic">
-            <img class="main-img" src="assets/images/classic/1.jpg" alt="Classic Case main" />
-            <div class="thumb-row" role="tablist" aria-label="Classic thumbnails">
-              <button class="thumb is-active" role="tab" aria-selected="true" title="Front">
-                <img src="assets/images/classic/1.jpg" alt="Classic Case — front" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" title="Back">
-                <img src="assets/images/classic/2.jpg" alt="Classic Case — back" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" title="Detail">
-                <img src="assets/images/classic/3.jpg" alt="Classic Case — detail" />
-              </button>
-            </div>
-            <div class="body">
-              <h3>Classic</h3>
-              <p class="sub">Slim &amp; scratch-resistant</p>
-              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" data-id="classic" contenteditable="true" spellcheck="false">$19</div>
-            </div>
-          </article>
-
-          <!-- Fashion -->
-          <article class="card product" data-product="fashion">
-            <img class="main-img" src="assets/images/fashion/1.jpg" alt="Fashion Case main" />
-            <div class="thumb-row" role="tablist" aria-label="Fashion thumbnails">
-              <button class="thumb is-active" role="tab" aria-selected="true" title="Front">
-                <img src="assets/images/fashion/1.jpg" alt="Fashion Case — front" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" title="Back">
-                <img src="assets/images/fashion/2.jpg" alt="Fashion Case — back" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" title="Detail">
-                <img src="assets/images/fashion/3.jpg" alt="Fashion Case — detail" />
-              </button>
-            </div>
-            <div class="body">
-              <h3>Fashion</h3>
-              <p class="sub">Trendy design &amp; anti-fingerprint</p>
-              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" data-id="fashion" contenteditable="true" spellcheck="false">$25</div>
-            </div>
-          </article>
-
-          <!-- Business -->
-          <article class="card product" data-product="business">
-            <img class="main-img" src="assets/images/business/1.jpg" alt="Business Case main" />
-            <div class="thumb-row" role="tablist" aria-label="Business thumbnails">
-              <button class="thumb is-active" role="tab" aria-selected="true" title="Front">
-                <img src="assets/images/business/1.jpg" alt="Business Case — front" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" title="Back">
-                <img src="assets/images/business/2.jpg" alt="Business Case — back" />
-              </button>
-              <button class="thumb" role="tab" aria-selected="false" title="Detail">
-                <img src="assets/images/business/3.jpg" alt="Business Case — detail" />
-              </button>
-            </div>
-            <div class="body">
-              <h3>Business</h3>
-              <p class="sub">Premium touch &amp; shockproof</p>
-              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" data-id="business" contenteditable="true" spellcheck="false">$29</div>
-            </div>
-          </article>
-
+      <!-- Classic -->
+      <article class="card product" data-product="classic">
+        <!-- 可侧划主图（scroll-snap） -->
+        <div class="main-viewport" aria-label="Classic gallery" role="region">
+          <div class="main-track">
+            <img class="slide" src="assets/images/classic/1.jpg" alt="Classic Case — front" />
+            <img class="slide" src="assets/images/classic/2.jpg" alt="Classic Case — back" />
+            <img class="slide" src="assets/images/classic/3.jpg" alt="Classic Case — detail" />
+          </div>
         </div>
-      </div>
-    </section>
+
+        <!-- 缩略图（与主图联动） -->
+        <div class="thumb-row" role="tablist" aria-label="Classic thumbnails">
+          <button class="thumb is-active" role="tab" aria-selected="true" data-index="0">
+            <img src="assets/images/classic/1.jpg" alt="Classic thumbnail 1" />
+          </button>
+          <button class="thumb" role="tab" aria-selected="false" data-index="1">
+            <img src="assets/images/classic/2.jpg" alt="Classic thumbnail 2" />
+          </button>
+          <button class="thumb" role="tab" aria-selected="false" data-index="2">
+            <img src="assets/images/classic/3.jpg" alt="Classic thumbnail 3" />
+          </button>
+        </div>
+
+        <div class="body">
+          <h3>Classic</h3>
+          <p class="sub">Slim &amp; scratch-resistant</p>
+          <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
+          <div class="price" contenteditable="true" spellcheck="false">$19</div>
+        </div>
+      </article>
+
+      <!-- Fashion -->
+      <article class="card product" data-product="fashion">
+        <div class="main-viewport" aria-label="Fashion gallery" role="region">
+          <div class="main-track">
+            <img class="slide" src="assets/images/fashion/1.jpg" alt="Fashion Case — front" />
+            <img class="slide" src="assets/images/fashion/2.jpg" alt="Fashion Case — back" />
+            <img class="slide" src="assets/images/fashion/3.jpg" alt="Fashion Case — detail" />
+          </div>
+        </div>
+        <div class="thumb-row" role="tablist" aria-label="Fashion thumbnails">
+          <button class="thumb is-active" role="tab" aria-selected="true" data-index="0">
+            <img src="assets/images/fashion/1.jpg" alt="Fashion thumbnail 1" />
+          </button>
+          <button class="thumb" role="tab" aria-selected="false" data-index="1">
+            <img src="assets/images/fashion/2.jpg" alt="Fashion thumbnail 2" />
+          </button>
+          <button class="thumb" role="tab" aria-selected="false" data-index="2">
+            <img src="assets/images/fashion/3.jpg" alt="Fashion thumbnail 3" />
+          </button>
+        </div>
+        <div class="body">
+          <h3>Fashion</h3>
+          <p class="sub">Trendy design &amp; anti-fingerprint</p>
+          <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
+          <div class="price" contenteditable="true" spellcheck="false">$25</div>
+        </div>
+      </article>
+
+      <!-- Business -->
+      <article class="card product" data-product="business">
+        <div class="main-viewport" aria-label="Business gallery" role="region">
+          <div class="main-track">
+            <img class="slide" src="assets/images/business/1.jpg" alt="Business Case — front" />
+            <img class="slide" src="assets/images/business/2.jpg" alt="Business Case — back" />
+            <img class="slide" src="assets/images/business/3.jpg" alt="Business Case — detail" />
+          </div>
+        </div>
+        <div class="thumb-row" role="tablist" aria-label="Business thumbnails">
+          <button class="thumb is-active" role="tab" aria-selected="true" data-index="0">
+            <img src="assets/images/business/1.jpg" alt="Business thumbnail 1" />
+          </button>
+          <button class="thumb" role="tab" aria-selected="false" data-index="1">
+            <img src="assets/images/business/2.jpg" alt="Business thumbnail 2" />
+          </button>
+          <button class="thumb" role="tab" aria-selected="false" data-index="2">
+            <img src="assets/images/business/3.jpg" alt="Business thumbnail 3" />
+          </button>
+        </div>
+        <div class="body">
+          <h3>Business</h3>
+          <p class="sub">Premium touch &amp; shockproof</p>
+          <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
+          <div class="price" contenteditable="true" spellcheck="false">$29</div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
 
     <!-- Customize -->
     <section id="custom">
