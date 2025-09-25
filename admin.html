@@ -1,38 +1,193 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>后台配置 - Case&i</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Case&i — Minimal · Premium · Personal</title>
+  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- PWA / Icons -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon-192.png" sizes="192x192">
+  <link rel="icon" href="/icon-512.png" sizes="512x512">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Preload hero video for faster LCP (可选) -->
+  <link rel="preload" as="video" href="/assets/videos/hero.mp4" type="video/mp4">
+
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-  <h1>后台配置</h1>
-  <p>在这里修改配置并下载 config.json</p>
-  <button id="downloadBtn">下载 config.json</button>
-<script>
-let config = {};
-async function load(){
-  try{const res=await fetch('config.json',{cache:'no-store'});config=await res.json();}
-  catch(e){config={products:[]};}
-}
-document.getElementById('downloadBtn').addEventListener('click',()=>{
-  const blob=new Blob([JSON.stringify(config,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='config.json';a.click();
-});
-load();
-</script><script>
-(async () => {
-  if ('serviceWorker' in navigator) {
-    const regs = await navigator.serviceWorker.getRegistrations();
-    for (const reg of regs) { await reg.unregister(); }
-    // 可选：清理 caches
-    if ('caches' in window) {
-      const keys = await caches.keys();
-      await Promise.all(keys.map(k => caches.delete(k)));
+  <!-- Header -->
+  <header id="site-header">
+    <div class="container bar">
+      <div class="brand">Case&amp;i</div>
+      <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
+        <span class="menu-icon" aria-hidden="true"></span>
+      </button>
+      <nav id="primary-nav" aria-label="Primary navigation">
+        <a href="#products">Products</a>
+        <a href="#custom">Customize</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="home">
+      <div class="container">
+        <figure class="media-wrap">
+          <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
+            <source src="/assets/videos/hero.mp4" type="video/mp4" />
+          </video>
+        </figure>
+        <h1>Minimal · Premium · Personal</h1>
+        <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
+        <div class="cta">
+          <a class="btn primary" href="#products">Shop Products</a>
+          <a class="btn" href="#custom">Customize Now</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section id="products">
+      <div class="container">
+        <h2 class="title">Our Products</h2>
+        <div class="grid products-grid">
+
+          <!-- Classic -->
+          <article class="card product u3" data-product="classic">
+            <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
+              <div class="main-track">
+                <div class="slide"><img class="cover" src="/assets/images/classic/1.jpg" alt="Classic — front" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/classic/2.jpg" alt="Classic — back"  draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" /></div>
+              </div>
+              <div class="progress"><i></i></div>
+            </div>
+            <div class="body">
+              <h3>Classic</h3>
+              <p class="sub">Slim &amp; scratch-resistant</p>
+              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
+              <div class="price" data-id="classic">$19</div>
+            </div>
+          </article>
+
+          <!-- Fashion -->
+          <article class="card product u3" data-product="fashion">
+            <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
+              <div class="main-track">
+                <div class="slide"><img class="cover" src="/assets/images/fashion/1.jpg" alt="Fashion — front" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/fashion/2.jpg" alt="Fashion — back"  draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/fashion/3.jpg" alt="Fashion — detail" draggable="false" /></div>
+              </div>
+              <div class="progress"><i></i></div>
+            </div>
+            <div class="body">
+              <h3>Fashion</h3>
+              <p class="sub">Trendy design &amp; anti-fingerprint</p>
+              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
+              <div class="price" data-id="fashion">$25</div>
+            </div>
+          </article>
+
+          <!-- Business -->
+          <article class="card product u3" data-product="business">
+            <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
+              <div class="main-track">
+                <div class="slide"><img class="cover" src="/assets/images/business/1.jpg" alt="Business — front" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/business/2.jpg" alt="Business — back"  draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/business/3.jpg" alt="Business — detail" draggable="false" /></div>
+              </div>
+              <div class="progress"><i></i></div>
+            </div>
+            <div class="body">
+              <h3>Business</h3>
+              <p class="sub">Premium touch &amp; shockproof</p>
+              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
+              <div class="price" data-id="business">$29</div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Customize -->
+    <section id="custom">
+      <div class="container">
+        <h2 class="title">Customize Your Case</h2>
+        <form id="uForm" novalidate>
+          <div class="file-field">
+            <label for="file" class="input-like">
+              Choose Image
+              <small id="fileName">PNG/JPEG · &lt; 10MB</small>
+            </label>
+            <button type="submit" class="btn primary">Upload &amp; Preview</button>
+          </div>
+          <input type="file" id="file" accept="image/png,image/jpeg" />
+          <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
+          <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
+        </form>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+      <div class="container">
+        <h2 class="title">About Us</h2>
+        <p class="about-text">
+          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
+          Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="container">
+        <h2 class="title">Contact Us</h2>
+        <form class="contact-form" onsubmit="event.preventDefault();alert('Submitted (demo)');">
+          <input type="text" name="name" placeholder="Name" required />
+          <input type="email" name="email" placeholder="Email" required />
+          <textarea name="message" rows="4" placeholder="Message"></textarea>
+          <div class="contact-actions">
+            <button type="submit" class="btn primary">Send</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
+  </footer>
+
+  <!-- 悬浮主题切换按钮 -->
+  <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+
+  <script src="/js/main.js" defer></script>
+
+  <!-- 注册 Service Worker（仅 HTTPS 生效；Cloudflare Pages/Pages + 自定义域名均可） -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(()=>{});
+      });
     }
-    console.log('SW unregistered & caches cleared');
-  }
-})();
-</script>
+    // 从 prices.json 动态写入价格（覆盖初始占位）
+    fetch('/prices.json').then(r=>r.json()).then(p=>{
+      document.querySelectorAll('.price[data-id]').forEach(el=>{
+        const id = el.getAttribute('data-id');
+        if(p[id] != null){ el.textContent = `$${p[id]}`; }
+      });
+    }).catch(()=>{});
+  </script>
 </body>
 </html>
