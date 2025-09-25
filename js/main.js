@@ -92,21 +92,9 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     const slides = card.querySelectorAll('.slide');
     if (!vp || !slides.length) return;
 
-    // 箭头（使用SVG优化）
-    const left  = document.createElement('button'); 
-    left.className='nav-arrow left';  
-    left.setAttribute('aria-label','Previous'); 
-    left.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`;
-
-    const right = document.createElement('button'); 
-    right.className='nav-arrow right'; 
-    right.setAttribute('aria-label','Next');     
-    right.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`;
-
+    // 箭头
+    const left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.textContent='‹';
+    const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.textContent='›';
     vp.append(left,right);
 
     const fill = card.querySelector('.progress i');
@@ -122,7 +110,6 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
       i = clamp(i, 0, slides.length-1);
       vp.scrollTo({ left: i*vp.clientWidth, behavior: scrollBehavior });
       update(i);
-      showArrows();
     };
 
     // 交互 → 暂停，5s 无交互恢复
@@ -144,15 +131,6 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndex()),90); stopAutoplayTemp(); }, {passive:true});
     let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndex()),120); });
 
-    // 箭头自动淡出
-    let hideTimer;
-    const showArrows = ()=>{
-      [left,right].forEach(a=>a.classList.add('is-visible'));
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1500);
-    };
-    ['mousemove','keydown','click','scroll'].forEach(evt=> vp.addEventListener(evt, showArrows, {passive:true}));
-
     // 自动轮播 API
     const api = {
       timer:null, resumeTimer:null, pausedByUser:false, visible:true,
@@ -166,7 +144,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     document.addEventListener('visibilitychange', ()=> api.syncAutoplay());
 
     // 初始
-    update(0); showArrows();
+    update(0);
     api.syncAutoplay();
   });
 })();
