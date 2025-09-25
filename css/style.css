@@ -80,10 +80,40 @@ section{padding:32px 0}
 .slide .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;-webkit-user-drag:none;user-select:none}
 
 /* arrows */
-.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.65);font-size:28px;font-weight:600;cursor:pointer;opacity:0;transition:opacity .18s ease,color .15s ease,transform .12s ease;user-select:none}
-.nav-arrow.left{left:12px}.nav-arrow.right{right:12px}
-.card.product:hover .nav-arrow{opacity:1}
-@media(hover:none){.nav-arrow{opacity:1}}
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.3); /* 添加半透明背景，提高可见性 */
+  border: none;
+  color: #fff; /* 改为纯白，提高对比 */
+  font-size: 36px; /* 增大字体 */
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0.7; /* 默认半可见，hover 时全显 */
+  transition: opacity .18s ease, transform .12s ease, background .15s ease;
+  user-select: none;
+  width: 44px; /* 固定宽度，确保触摸目标 */
+  height: 44px;
+  border-radius: 50%; /* 圆形设计，更现代 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-arrow:hover {
+  opacity: 1;
+  background: rgba(0,0,0,0.5); /* hover 时加深背景 */
+  transform: translateY(-50%) scale(1.1); /* 轻微放大 */
+}
+.nav-arrow:focus {
+  outline: 2px solid var(--brand); /* 焦点轮廓，使用品牌色 */
+  outline-offset: 2px;
+}
+.nav-arrow.left { left: 16px; } /* 稍增加边距，避免贴边 */
+.nav-arrow.right { right: 16px; }
+@media (hover: none) {
+  .nav-arrow { opacity: 1; } /* 移动端始终显示 */
+}
 .nav-arrow:active{transform:translateY(-50%) scale(.92)}
 .nav-arrow.is-disabled{display:none}
 .nav-arrow.is-visible{opacity:1}
