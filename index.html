@@ -1,172 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Case&i — Minimal · Premium · Personal</title>
-  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
-  <meta name="theme-color" content="#ffffff" />
-  <link rel="stylesheet" href="css/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case&i — Minimal · Personal · Essential</title>
+  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization.">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Header -->
-  <header id="site-header">
-    <div class="container bar">
-      <div class="brand">Case&amp;i</div>
-      <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
-        <span class="menu-icon" aria-hidden="true"></span>
-      </button>
-      <nav id="primary-nav" aria-label="Primary navigation">
-        <a href="#products">Products</a>
-        <a href="#custom">Customize</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </div>
+  <header>
+    <nav class="nav">
+      <a href="#">Case&i</a>
+      <a href="#products">Products</a>
+      <a href="#customize">Customize</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </header>
 
-  <main>
-    <!-- Hero -->
-    <section class="hero" id="home">
-      <div class="container">
-        <figure class="media-wrap">
-          <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
-            <source src="assets/videos/hero.mp4" type="video/mp4" />
-          </video>
-        </figure>
-        <h1>Minimal · Premium · Personal</h1>
-        <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
-        <div class="cta">
-          <a class="btn primary" href="#products">Shop Products</a>
-          <a class="btn" href="#custom">Customize Now</a>
-        </div>
+  <section class="hero">
+    <h1>Case&i by AIXX Inc</h1>
+    <p>Minimal · Personal · Essential</p>
+    <div class="cta">
+      <a href="#products" class="btn">Shop Products</a>
+      <a href="#customize" class="btn secondary">Customize Now</a>
+    </div>
+  </section>
+
+  <section id="products" class="products">
+    <h2>Our Products</h2>
+    <div class="product-grid">
+      <div class="card product">
+        <img src="images/classic.jpg" alt="Classic Case">
+        <h3>Classic</h3>
+        <p>Slim & scratch-resistant</p>
+        <p><strong>$19</strong></p>
       </div>
-    </section>
-
-    <!-- Products -->
-    <section id="products">
-      <div class="container">
-        <h2 class="title">Our Products</h2>
-        <div class="grid products-grid">
-
-          <!-- Classic -->
-          <article class="card product u3" data-product="classic">
-            <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
-              <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/classic/1.jpg" alt="Classic — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/classic/2.jpg" alt="Classic — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" /></div>
-              </div>
-              <!-- arrows -->
-              <button class="nav-arrow left" aria-label="Previous">‹</button>
-              <button class="nav-arrow right" aria-label="Next">›</button>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Classic</h3>
-              <p class="sub">Slim &amp; scratch-resistant</p>
-              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" data-id="classic">$19</div>
-            </div>
-          </article>
-
-          <!-- Fashion -->
-          <article class="card product u3" data-product="fashion">
-            <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
-              <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/fashion/1.jpg" alt="Fashion — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/fashion/2.jpg" alt="Fashion — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/fashion/3.jpg" alt="Fashion — detail" draggable="false" /></div>
-              </div>
-              <button class="nav-arrow left" aria-label="Previous">‹</button>
-              <button class="nav-arrow right" aria-label="Next">›</button>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Fashion</h3>
-              <p class="sub">Trendy design &amp; anti-fingerprint</p>
-              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" data-id="fashion">$25</div>
-            </div>
-          </article>
-
-          <!-- Business -->
-          <article class="card product u3" data-product="business">
-            <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
-              <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/business/1.jpg" alt="Business — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/business/2.jpg" alt="Business — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/business/3.jpg" alt="Business — detail" draggable="false" /></div>
-              </div>
-              <button class="nav-arrow left" aria-label="Previous">‹</button>
-              <button class="nav-arrow right" aria-label="Next">›</button>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Business</h3>
-              <p class="sub">Premium touch &amp; shockproof</p>
-              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" data-id="business">$29</div>
-            </div>
-          </article>
-
-        </div>
+      <div class="card product">
+        <img src="images/fashion.jpg" alt="Fashion Case">
+        <h3>Fashion</h3>
+        <p>Trendy design & anti-fingerprint</p>
+        <p><strong>$25</strong></p>
       </div>
-    </section>
-
-    <!-- Customize -->
-    <section id="custom">
-      <div class="container">
-        <h2 class="title">Customize Your Case</h2>
-        <form id="uForm" novalidate>
-          <div class="file-field">
-            <label for="file" class="input-like">
-              Choose Image
-              <small id="fileName">PNG/JPEG · &lt; 10MB</small>
-            </label>
-            <button type="submit" class="btn primary">Upload &amp; Preview</button>
-          </div>
-          <input type="file" id="file" accept="image/png,image/jpeg" />
-          <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
-          <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
-        </form>
+      <div class="card product">
+        <img src="images/business.jpg" alt="Business Case">
+        <h3>Business</h3>
+        <p>Premium touch & shockproof</p>
+        <p><strong>$29</strong></p>
       </div>
-    </section>
-
-    <!-- About -->
-    <section id="about">
-      <div class="container">
-        <h2 class="title">About Us</h2>
-        <p class="about-text">
-          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
-          Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
-        </p>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact">
-      <div class="container">
-        <h2 class="title">Contact Us</h2>
-        <form class="contact-form" onsubmit="event.preventDefault();alert('Submitted (demo)');">
-          <input type="text" name="name" placeholder="Name" required />
-          <input type="email" name="email" placeholder="Email" required />
-          <textarea name="message" rows="4" placeholder="Message"></textarea>
-          <div class="contact-actions">
-            <button type="submit" class="btn primary">Send</button>
-          </div>
-        </form>
-      </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
   <footer>
-    <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
+    <p>© 2025 Case&i · AIXX Inc · All rights reserved.</p>
   </footer>
 
-  <!-- Theme toggle -->
-  <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
-
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
