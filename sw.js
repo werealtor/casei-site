@@ -49,3 +49,13 @@ self.addEventListener('fetch', (e) => {
     }
   })());
 });
+const CACHE = 'casei-cache-v1';
+const PRECACHE = [
+  '/', '/index.html',
+  '/css/style.css',
+  '/js/main.js',
+  '/manifest.webmanifest',
+  '/prices.json'
+  // 可按需追加静态资源：'/assets/videos/hero.mp4', '/assets/images/...'
+];
+/* 其余保持你的实现 */
