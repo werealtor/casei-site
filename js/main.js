@@ -97,6 +97,8 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.textContent='›';
     vp.append(left,right);
 
+    const progress = card.querySelector('.progress');
+
     const fill = card.querySelector('.progress i');
     const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
     const clamp    = (n,min,max)=> Math.max(min, Math.min(max,n));
@@ -105,11 +107,23 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
       left.classList.toggle('is-disabled', i<=0);
       right.classList.toggle('is-disabled', i>=slides.length-1);
       fill.style.width = `${((i+1)/slides.length)*100}%`;
+
+      // 只在第一张 (i==0) 显示箭头和进度条
+      if (i === 0) {
+        left.style.display = 'block';
+        right.style.display = 'block';
+        progress.style.display = 'block';
+      } else {
+        left.style.display = 'none';
+        right.style.display = 'none';
+        progress.style.display = 'none';
+      }
     };
     const goTo = (i)=>{
       i = clamp(i, 0, slides.length-1);
       vp.scrollTo({ left: i*vp.clientWidth, behavior: scrollBehavior });
       update(i);
+      showArrows();
     };
 
     // 交互 → 暂停，5s 无交互恢复
@@ -131,6 +145,15 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndex()),90); stopAutoplayTemp(); }, {passive:true});
     let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndex()),120); });
 
+    // 箭头自动淡出
+    let hideTimer;
+    const showArrows = ()=>{
+      [left,right].forEach(a=>a.classList.add('is-visible'));
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1500);
+    };
+    ['mousemove','keydown','click','scroll'].forEach(evt=> vp.addEventListener(evt, showArrows, {passive:true}));
+
     // 自动轮播 API
     const api = {
       timer:null, resumeTimer:null, pausedByUser:false, visible:true,
@@ -144,7 +167,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     document.addEventListener('visibilitychange', ()=> api.syncAutoplay());
 
     // 初始
-    update(0);
+    update(0); showArrows();
     api.syncAutoplay();
   });
 })();
