@@ -9,13 +9,10 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- Header -->
+  <!-- Header (简化：移除菜单图标，纯文本导航) -->
   <header id="site-header">
     <div class="container bar">
       <div class="brand">Case&amp;i</div>
-      <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
-        <span class="menu-icon" aria-hidden="true"></span>
-      </button>
       <nav id="primary-nav" aria-label="Primary navigation">
         <a href="#products">Products</a>
         <a href="#custom">Customize</a>
@@ -26,14 +23,9 @@
   </header>
 
   <main>
-    <!-- Hero -->
+    <!-- Hero (简化：移除视频，使用静态图像或纯色背景) -->
     <section class="hero" id="home">
       <div class="container">
-        <figure class="media-wrap">
-          <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
-            <source src="assets/videos/hero.mp4" type="video/mp4" />
-          </video>
-        </figure>
         <h1>Minimal · Premium · Personal</h1>
         <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
         <div class="cta">
@@ -43,21 +35,19 @@
       </div>
     </section>
 
-    <!-- Products -->
+    <!-- Products (简化：移除箭头、进度条、缩略图；使用单张图像或简单滑动，无自动) -->
     <section id="products">
       <div class="container">
         <h2 class="title">Our Products</h2>
         <div class="grid products-grid">
 
           <!-- Classic -->
-          <article class="card product u3" data-product="classic">
-            <div class="main-viewport" role="group" aria-label="Classic image carousel" tabindex="0">
+          <article class="card product" data-product="classic">
+            <div class="main-viewport" role="group" aria-label="Classic phone case image" tabindex="0">
               <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/classic/1.jpg" alt="Classic — front" draggable="false" loading="lazy" /></div>
-                <div class="slide"><img class="cover" src="assets/images/classic/2.jpg" alt="Classic — back" draggable="false" loading="lazy" /></div>
-                <div class="slide"><img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" loading="lazy" /></div>
+                <div class="slide"><img class="cover" src="assets/images/classic/1.jpg" alt="Front view of Classic slim and scratch-resistant phone case" draggable="false" loading="lazy" /></div>
+                <!-- 移除额外slide，只保留主图以极简 -->
               </div>
-              <div class="progress"><i></i></div>
             </div>
             <div class="body">
               <h3>Classic</h3>
@@ -68,14 +58,11 @@
           </article>
 
           <!-- Fashion -->
-          <article class="card product u3" data-product="fashion">
-            <div class="main-viewport" role="group" aria-label="Fashion image carousel" tabindex="0">
+          <article class="card product" data-product="fashion">
+            <div class="main-viewport" role="group" aria-label="Fashion phone case image" tabindex="0">
               <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/fashion/1.jpg" alt="Fashion — front" draggable="false" loading="lazy" /></div>
-                <div class="slide"><img class="cover" src="assets/images/fashion/2.jpg" alt="Fashion — back" draggable="false" loading="lazy" /></div>
-                <div class="slide"><img class="cover" src="assets/images/fashion/3.jpg" alt="Fashion — detail" draggable="false" loading="lazy" /></div>
+                <div class="slide"><img class="cover" src="assets/images/fashion/1.jpg" alt="Front view of Fashion trendy anti-fingerprint phone case" draggable="false" loading="lazy" /></div>
               </div>
-              <div class="progress"><i></i></div>
             </div>
             <div class="body">
               <h3>Fashion</h3>
@@ -86,14 +73,11 @@
           </article>
 
           <!-- Business -->
-          <article class="card product u3" data-product="business">
-            <div class="main-viewport" role="group" aria-label="Business image carousel" tabindex="0">
+          <article class="card product" data-product="business">
+            <div class="main-viewport" role="group" aria-label="Business phone case image" tabindex="0">
               <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/business/1.jpg" alt="Business — front" draggable="false" loading="lazy" /></div>
-                <div class="slide"><img class="cover" src="assets/images/business/2.jpg" alt="Business — back" draggable="false" loading="lazy" /></div>
-                <div class="slide"><img class="cover" src="assets/images/business/3.jpg" alt="Business — detail" draggable="false" loading="lazy" /></div>
+                <div class="slide"><img class="cover" src="assets/images/business/1.jpg" alt="Front view of Business premium touch shockproof phone case" draggable="false" loading="lazy" /></div>
               </div>
-              <div class="progress"><i></i></div>
             </div>
             <div class="body">
               <h3>Business</h3>
@@ -107,7 +91,7 @@
       </div>
     </section>
 
-    <!-- Customize -->
+    <!-- Customize (简化：移除预览错误显示，纯上传) -->
     <section id="custom">
       <div class="container">
         <h2 class="title">Customize Your Case</h2>
@@ -120,13 +104,12 @@
             <button type="submit" class="btn primary">Upload &amp; Preview</button>
           </div>
           <input type="file" id="file" accept="image/png,image/jpeg" />
-          <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
-          <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
+          <img id="preview" alt="Preview of customized phone case image" style="display:none;max-width:100%;" />
         </form>
       </div>
     </section>
 
-    <!-- About -->
+    <!-- About (简化：纯文本) -->
     <section id="about">
       <div class="container">
         <h2 class="title">About Us</h2>
@@ -137,7 +120,7 @@
       </div>
     </section>
 
-    <!-- Contact -->
+    <!-- Contact (简化：移除动作，纯表单) -->
     <section id="contact">
       <div class="container">
         <h2 class="title">Contact Us</h2>
@@ -145,9 +128,7 @@
           <input type="text" name="name" placeholder="Name" required />
           <input type="email" name="email" placeholder="Email" required />
           <textarea name="message" rows="4" placeholder="Message"></textarea>
-          <div class="contact-actions">
-            <button type="submit" class="btn primary">Send</button>
-          </div>
+          <button type="submit" class="btn primary">Send</button>
         </form>
       </div>
     </section>
@@ -157,8 +138,7 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- 悬浮主题切换按钮 -->
-  <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+  <!-- 移除主题切换按钮，以极简 -->
 
   <script src="js/main.js" defer></script>
 </body>
