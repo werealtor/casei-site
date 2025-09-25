@@ -6,17 +6,63 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
-  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root{
+      --bg:#fff; --text:#111; --muted:#666; --line:#eaeaea; --tone:#f6f7fb;
+      --brand:#0b66ff; --max:1100px; --shadow:0 2px 10px rgba(0,0,0,.06);
+    }
+    body.dark{
+      --bg:#121212; --text:#fff; --muted:#bbb; --line:#333; --tone:#1e1e1e;
+      --brand:#4c9aff; --shadow:0 2px 10px rgba(0,0,0,.3);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         background:var(--bg);color:var(--text);margin:0;line-height:1.6;transition:.3s}
+    header{border-bottom:1px solid var(--line);background:var(--bg);position:sticky;top:0}
+    .bar{max-width:var(--max);margin:auto;display:flex;justify-content:space-between;
+         align-items:center;padding:14px 20px}
+    nav{display:flex;gap:20px}
+    nav a{text-decoration:none;color:var(--text);padding:6px 10px;border-radius:8px}
+    nav a:hover{background:var(--tone)}
+    section{padding:40px 20px;max-width:var(--max);margin:auto}
+    h1,h2{text-align:center}
+    .cta{display:flex;justify-content:center;gap:12px;margin-top:16px}
+    .btn{padding:10px 18px;border-radius:10px;border:1.5px solid var(--brand);
+         color:var(--brand);background:transparent;font-weight:600;text-decoration:none}
+    .btn.primary{background:var(--brand);color:#fff}
+    .btn:hover{background:var(--brand);color:#fff}
+    .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+          padding:16px;text-align:center;background:var(--bg)}
+    .pillrow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+    .pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--muted)}
+    .sub{color:var(--muted);font-size:14px}
+    form{display:grid;gap:10px;max-width:480px;margin:auto}
+    input,textarea{padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:var(--bg);color:var(--text)}
+    footer{border-top:1px solid var(--line);text-align:center;color:var(--muted);padding:18px}
+    .floating-btn{
+      position:fixed;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;
+      border:1px solid var(--line);background:var(--bg);box-shadow:0 4px 12px rgba(0,0,0,.15);
+      font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:999;
+      animation: breathe 3s ease-in-out infinite;
+      transition: box-shadow .3s ease, transform .2s ease;
+    }
+    @keyframes breathe {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    .floating-btn:hover {
+      box-shadow:0 0 12px var(--brand), 0 0 24px rgba(11,102,255,.4);
+      transform: scale(1.12);
+    }
+  </style>
 </head>
 <body>
-  <!-- Header -->
-  <header id="site-header">
-    <div class="container bar">
+  <header>
+    <div class="bar">
       <div class="brand">Case&amp;i</div>
-      <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
-        <span class="menu-icon" aria-hidden="true"></span>
-      </button>
-      <nav id="primary-nav" aria-label="Primary navigation">
+      <nav>
         <a href="#products">Products</a>
         <a href="#custom">Customize</a>
         <a href="#about">About</a>
@@ -27,139 +73,85 @@
 
   <main>
     <!-- Hero -->
-    <section class="hero" id="home">
-      <div class="container">
-        <figure class="media-wrap">
-          <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
-            <source src="assets/videos/hero.mp4" type="video/mp4" />
-          </video>
-        </figure>
-        <h1>Minimal · Premium · Personal</h1>
-        <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
-        <div class="cta">
-          <a class="btn primary" href="#products">Shop Products</a>
-          <a class="btn" href="#custom">Customize Now</a>
-        </div>
+    <section id="home">
+      <h1>Minimal · Premium · Personal</h1>
+      <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
+      <div class="cta">
+        <a href="#products" class="btn primary">Shop Products</a>
+        <a href="#custom" class="btn">Customize Now</a>
       </div>
     </section>
 
     <!-- Products -->
     <section id="products">
-      <div class="container">
-        <h2 class="title">Our Products</h2>
-        <div class="grid products-grid">
-
-          <!-- Classic -->
-          <article class="card product u3" data-product="classic">
-            <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
-              <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/classic/1.jpg" alt="Classic — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/classic/2.jpg" alt="Classic — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" /></div>
-              </div>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Classic</h3>
-              <p class="sub">Slim &amp; scratch-resistant</p>
-              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" data-id="classic">$19</div>
-            </div>
-          </article>
-
-          <!-- Fashion -->
-          <article class="card product u3" data-product="fashion">
-            <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
-              <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/fashion/1.jpg" alt="Fashion — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/fashion/2.jpg" alt="Fashion — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/fashion/3.jpg" alt="Fashion — detail" draggable="false" /></div>
-              </div>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Fashion</h3>
-              <p class="sub">Trendy design &amp; anti-fingerprint</p>
-              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" data-id="fashion">$25</div>
-            </div>
-          </article>
-
-          <!-- Business -->
-          <article class="card product u3" data-product="business">
-            <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
-              <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/business/1.jpg" alt="Business — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/business/2.jpg" alt="Business — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/business/3.jpg" alt="Business — detail" draggable="false" /></div>
-              </div>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Business</h3>
-              <p class="sub">Premium touch &amp; shockproof</p>
-              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" data-id="business">$29</div>
-            </div>
-          </article>
-
+      <h2>Our Products</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>Classic</h3>
+          <p class="sub">Slim &amp; scratch-resistant</p>
+          <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
+          <div class="price">$19</div>
+        </div>
+        <div class="card">
+          <h3>Fashion</h3>
+          <p class="sub">Trendy design &amp; anti-fingerprint</p>
+          <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
+          <div class="price">$25</div>
+        </div>
+        <div class="card">
+          <h3>Business</h3>
+          <p class="sub">Premium touch &amp; shockproof</p>
+          <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
+          <div class="price">$29</div>
         </div>
       </div>
     </section>
 
     <!-- Customize -->
     <section id="custom">
-      <div class="container">
-        <h2 class="title">Customize Your Case</h2>
-        <form id="uForm" novalidate>
-          <div class="file-field">
-            <label for="file" class="input-like">
-              Choose Image
-              <small id="fileName">PNG/JPEG · &lt; 10MB</small>
-            </label>
-            <button type="submit" class="btn primary">Upload &amp; Preview</button>
-          </div>
-          <input type="file" id="file" accept="image/png,image/jpeg" />
-          <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
-          <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
-        </form>
-      </div>
+      <h2>Customize Your Case</h2>
+      <form>
+        <label>Choose Image <small>PNG/JPEG · &lt; 10MB</small></label>
+        <input type="file" accept="image/png,image/jpeg" />
+        <button class="btn primary" type="submit">Upload &amp; Preview</button>
+      </form>
     </section>
 
     <!-- About -->
     <section id="about">
-      <div class="container">
-        <h2 class="title">About Us</h2>
-        <p class="about-text">
-          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
-          Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
-        </p>
-      </div>
+      <h2>About Us</h2>
+      <p class="about-text">Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability. Visit <a href="https://xxkit.com" target="_blank">xxkit.com</a> to learn more.</p>
     </section>
 
     <!-- Contact -->
     <section id="contact">
-      <div class="container">
-        <h2 class="title">Contact Us</h2>
-        <form class="contact-form" onsubmit="event.preventDefault();alert('Submitted (demo)');">
-          <input type="text" name="name" placeholder="Name" required />
-          <input type="email" name="email" placeholder="Email" required />
-          <textarea name="message" rows="4" placeholder="Message"></textarea>
-          <div class="contact-actions">
-            <button type="submit" class="btn primary">Send</button>
-          </div>
-        </form>
-      </div>
+      <h2>Contact Us</h2>
+      <form onsubmit="event.preventDefault();alert('Submitted (demo)');">
+        <input type="text" placeholder="Name" required />
+        <input type="email" placeholder="Email" required />
+        <textarea rows="4" placeholder="Message"></textarea>
+        <button class="btn primary" type="submit">Send</button>
+      </form>
     </section>
   </main>
 
   <footer>
-    <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
+    © 2025 AIXX Inc · All rights reserved · xxkit.com
   </footer>
 
-  <!-- 悬浮主题切换按钮 -->
-  <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
+  <button id="theme-toggle" class="floating-btn" title="Toggle theme">🌙</button>
 
-  <script src="js/main.js" defer></script>
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    let theme = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.body.classList.toggle('dark', theme === 'dark');
+    btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    btn.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark');
+      btn.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  </script>
 </body>
 </html>
