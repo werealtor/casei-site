@@ -68,14 +68,16 @@ window.addEventListener('scroll', refreshFirstScreenGate, { passive:true });
 window.addEventListener('resize', refreshFirstScreenGate);
 document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
 
-/* ========= U3：箭头 + 进度条 + 自动轮播 ========= */
+/* ========= U3：更稳的箭头/进度条/自动轮播 ========= */
 (function(){
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
-  const AUTOPLAY_DELAY = 3000;
-  const RESUME_AFTER   = 5000;
-  const OBS_THRESHOLD  = 0.6;
+  const AUTOPLAY_DELAY = 3000;      // 自动轮播间隔
+  const RESUME_AFTER   = 5000;      // 用户交互后恢复时间
+  const OBS_THRESHOLD  = 0.6;       // 进入视口阈值
+  const EPS            = 0.001;     // 浮点误差修正
 
+  // 可见性观察：卡片可见才允许自动播放
   const io = ('IntersectionObserver' in window)
     ? new IntersectionObserver(entries=>{
         entries.forEach(entry=>{
@@ -87,74 +89,98 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
       }, { threshold:[OBS_THRESHOLD] })
     : null;
 
-  document.querySelectorAll('.card.product.u3').forEach(card=>{
-    const vp = card.querySelector('.main-viewport');
-    const slides = card.querySelectorAll('.slide');
-    if (!vp || !slides.length) return;
+  // 辅助：更稳的 index 计算（修正分辨率/缩放下的取整误差）
+  const getIndexBy = (vp)=> {
+    const idx = (vp.scrollLeft + EPS) / Math.max(1, vp.clientWidth);
+    return Math.round(idx);
+  };
 
-    // 箭头
-    const left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.textContent='‹';
-    const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.textContent='›';
+  document.querySelectorAll('.card.product.u3').forEach(card=>{
+    const vp     = card.querySelector('.main-viewport');
+    const slides = card.querySelectorAll('.slide');
+    const fill   = card.querySelector('.progress i');
+
+    if (!vp || !slides.length || !fill) return;
+
+    // 生成左右箭头（一次性）
+    const left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;';
+    const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.innerHTML='&#8250;';
     vp.append(left,right);
 
-    const fill = card.querySelector('.progress i');
-    const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
-    const clamp    = (n,min,max)=> Math.max(min, Math.min(max,n));
+    // 初始“闪现”一下，解决“有时看不见”的第一印象问题
+    requestAnimationFrame(()=>{ [left,right].forEach(a=>a.classList.add('is-visible')); setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1200); });
 
-    const update = (i=getIndex())=>{
-      left.classList.toggle('is-disabled', i<=0);
-      right.classList.toggle('is-disabled', i>=slides.length-1);
-      fill.style.width = `${((i+1)/slides.length)*100}%`;
+    // 状态与方法
+    const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
+    const len   = slides.length;
+
+    const update = (i=getIndexBy(vp))=>{
+      left.classList.toggle('is-disabled',  i<=0);
+      right.classList.toggle('is-disabled', i>=len-1);
+      fill.style.width = `${((i+1)/len)*100}%`;
     };
+
     const goTo = (i)=>{
-      i = clamp(i, 0, slides.length-1);
-      vp.scrollTo({ left: i*vp.clientWidth, behavior: scrollBehavior });
+      i = clamp(i, 0, len-1);
+      // 为了避免 iOS 上 scrollTo 的累积误差，先计算目标 left
+      const target = i * vp.clientWidth;
+      vp.scrollTo({ left: target, behavior: scrollBehavior });
       update(i);
       showArrows();
     };
 
-    // 交互 → 暂停，5s 无交互恢复
-    const stopAutoplayTemp = ()=>{
-      api.pausedByUser = true; api.stop();
-      clearTimeout(api.resumeTimer);
-      api.resumeTimer = setTimeout(()=>{ api.pausedByUser=false; api.syncAutoplay(); }, RESUME_AFTER);
-    };
-    left.addEventListener('click', ()=>{ stopAutoplayTemp(); goTo(getIndex()-1); });
-    right.addEventListener('click', ()=>{ stopAutoplayTemp(); goTo(getIndex()+1); });
-    vp.addEventListener('keydown', e=>{
-      if(e.key==='ArrowLeft'){ e.preventDefault(); stopAutoplayTemp(); goTo(getIndex()-1); }
-      if(e.key==='ArrowRight'){ e.preventDefault(); stopAutoplayTemp(); goTo(getIndex()+1); }
-      if(e.key==='Home'){ e.preventDefault(); stopAutoplayTemp(); goTo(0); }
-      if(e.key==='End'){ e.preventDefault(); stopAutoplayTemp(); goTo(slides.length-1); }
-    });
-
-    // 滚动/尺寸
-    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndex()),90); stopAutoplayTemp(); }, {passive:true});
-    let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndex()),120); });
-
-    // 箭头自动淡出
+    // 箭头显隐逻辑（触摸/键盘/滚动都触发）
     let hideTimer;
     const showArrows = ()=>{
       [left,right].forEach(a=>a.classList.add('is-visible'));
       clearTimeout(hideTimer);
-      hideTimer = setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1500);
+      hideTimer = setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')), 1500);
     };
-    ['mousemove','keydown','click','scroll','touchstart'].forEach(evt=> vp.addEventListener(evt, showArrows, {passive:true}));
+    ['mousemove','click','keydown','scroll','touchstart','touchmove'].forEach(evt=>{
+      vp.addEventListener(evt, showArrows, {passive:true});
+    });
 
-    // 自动轮播 API
+    // 用户交互时暂停自动播放，若 5s 无交互再恢复
     const api = {
       timer:null, resumeTimer:null, pausedByUser:false, visible:true,
-      start(){ if (prefersReduced) return; if (this.timer) return; this.timer=setInterval(()=>{ const i=getIndex(); goTo(i+1>=slides.length?0:i+1); }, AUTOPLAY_DELAY); },
+      start(){ if (prefersReduced) return; if (this.timer) return;
+        this.timer = setInterval(()=>{
+          const i = getIndexBy(vp);
+          goTo(i+1 >= len ? 0 : i+1);
+        }, AUTOPLAY_DELAY);
+      },
       stop(){ if (this.timer){ clearInterval(this.timer); this.timer=null; } },
-      allow(){ if (firstScreenGate) return false; if (document.hidden) return false; if (!this.visible) return false; if (this.pausedByUser) return false; return true; },
+      allow(){ if (window.firstScreenGate) return false; if (document.hidden) return false; if (!this.visible) return false; if (this.pausedByUser) return false; return true; },
       syncAutoplay(){ this.stop(); if (this.allow()) this.start(); }
     };
     card._sliderAPI = api;
+
+    const pauseTemporarily = ()=>{
+      api.pausedByUser = true; api.stop();
+      clearTimeout(api.resumeTimer);
+      api.resumeTimer = setTimeout(()=>{ api.pausedByUser = false; api.syncAutoplay(); }, RESUME_AFTER);
+    };
+
+    left.addEventListener('click',  ()=>{ pauseTemporarily(); goTo(getIndexBy(vp)-1); });
+    right.addEventListener('click', ()=>{ pauseTemporarily(); goTo(getIndexBy(vp)+1); });
+
+    // 键盘可用（确保 viewport 有 tabindex="0"）
+    vp.setAttribute('tabindex','0');
+    vp.addEventListener('keydown', e=>{
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); pauseTemporarily(); goTo(getIndexBy(vp)-1); }
+      if (e.key === 'ArrowRight'){ e.preventDefault(); pauseTemporarily(); goTo(getIndexBy(vp)+1); }
+      if (e.key === 'Home'){ e.preventDefault(); pauseTemporarily(); goTo(0); }
+      if (e.key === 'End'){ e.preventDefault(); pauseTemporarily(); goTo(len-1); }
+    });
+
+    // 滚动/尺寸变化：去抖并强制刷新状态
+    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndexBy(vp)), 80); }, {passive:true});
+    let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>{ goTo(getIndexBy(vp)); }, 120); });
+
     if (io) io.observe(card);
     document.addEventListener('visibilitychange', ()=> api.syncAutoplay());
 
-    // 初始
-    update(0); showArrows();
-    api.syncAutoplay();
+    // 初始同步
+    update(0); api.syncAutoplay();
   });
 })();
