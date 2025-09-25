@@ -158,3 +158,122 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     api.syncAutoplay();
   });
 })();
+/* ========= Theme toggle ========= */
+const themeBtn = document.getElementById('theme-toggle');
+if (themeBtn) {
+  let theme = localStorage.getItem('theme') ||
+              (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.body.classList.toggle('dark', theme === 'dark');
+  themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  themeBtn.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark');
+    themeBtn.textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+}
+
+/* ========= Mobile menu ========= */
+const menuToggle = document.querySelector('.menu-toggle');
+const headerEl = document.querySelector('header');
+if (menuToggle && headerEl) {
+  menuToggle.addEventListener('click', () => {
+    headerEl.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', headerEl.classList.contains('open'));
+  });
+}
+
+/* ========= Upload & preview ========= */
+const uForm = document.getElementById('uForm');
+if (uForm) {
+  const fileInput = document.getElementById('file');
+  const nameEl = document.getElementById('fileName');
+  const err = document.getElementById('uErr');
+  const preview = document.getElementById('preview');
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
+  fileInput.addEventListener('change', () => {
+    if (!fileInput.files.length) { nameEl.textContent = 'PNG/JPEG · < 10MB'; return; }
+    const f = fileInput.files[0];
+    nameEl.textContent = `${f.name} · ${(f.size/1024/1024).toFixed(1)}MB`;
+  });
+
+  uForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = fileInput.files[0];
+    if (!f) { err.textContent = 'Please choose an image.'; return; }
+    if (!/^image\/(png|jpe?g)$/i.test(f.type)) { err.textContent = 'Only PNG/JPEG supported.'; return; }
+    if (f.size > MAX_SIZE) { err.textContent = 'File too large (max 10MB).'; return; }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+      err.textContent = '';
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+/* ========= Slider with arrows + progress ========= */
+(function(){
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
+
+  document.querySelectorAll('.card.product.u3').forEach(card=>{
+    const vp     = card.querySelector('.main-viewport');
+    const track  = card.querySelector('.main-track');
+    const slides = track ? track.querySelectorAll('.slide') : [];
+    if (!vp || !slides.length) return;
+
+    // if arrows not present (for安全)，创建
+    let left  = card.querySelector('.nav-arrow.left');
+    let right = card.querySelector('.nav-arrow.right');
+    if (!left || !right) {
+      left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.textContent='‹';
+      right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');    right.textContent='›';
+      vp.append(left,right);
+    }
+    const fill = card.querySelector('.progress i');
+
+    const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
+    const clamp    = (n,min,max)=> Math.max(min, Math.min(max,n));
+
+    function update(i=getIndex()){
+      left.classList.toggle('is-disabled', i<=0);
+      right.classList.toggle('is-disabled', i>=slides.length-1);
+      if (fill) fill.style.width = `${((i+1)/slides.length)*100}%`;
+    }
+    function goTo(i){
+      i = clamp(i, 0, slides.length-1);
+      vp.scrollTo({ left: i*vp.clientWidth, behavior: scrollBehavior });
+      update(i);
+      showArrows();
+    }
+
+    left.addEventListener('click', ()=> goTo(getIndex()-1));
+    right.addEventListener('click', ()=> goTo(getIndex()+1));
+
+    // keyboard
+    vp.addEventListener('keydown', e=>{
+      if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
+      if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
+    });
+
+    // sync on scroll / resize
+    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndex()),80); }, {passive:true});
+    let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndex()),100); });
+
+    // auto hide/show arrows
+    let hideTimer;
+    function showArrows(){
+      [left,right].forEach(a=>a.classList.add('is-visible'));
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1500);
+    }
+    ['mousemove','keydown','click','scroll','touchstart'].forEach(evt=> vp.addEventListener(evt, showArrows, {passive:true}));
+
+    // init
+    update(0);
+    showArrows();
+  });
+})();
