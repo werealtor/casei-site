@@ -22,7 +22,7 @@ if (menuToggle && headerEl) {
   });
 }
 
-/* ========= 上传预览（增强：显示文件名 & 大小限制） ========= */
+/* ========= 上传预览 ========= */
 const uForm = document.getElementById('uForm');
 if (uForm) {
   const fileInput = document.getElementById('file');
@@ -54,10 +54,10 @@ if (uForm) {
   });
 }
 
-/* ========= 首屏自动暂停（滚到产品区再启播） ========= */
+/* ========= 首屏门控 + U3 轮播 ========= */
 let firstScreenGate = true;
 const productsSection = document.getElementById('products');
-const FIRST_GATE_OFFSET = 120; // 提前阈值
+const FIRST_GATE_OFFSET = 120;
 function refreshFirstScreenGate() {
   if (!productsSection) { firstScreenGate = false; return; }
   const triggerY = productsSection.offsetTop - FIRST_GATE_OFFSET;
@@ -68,7 +68,7 @@ window.addEventListener('scroll', refreshFirstScreenGate, { passive:true });
 window.addEventListener('resize', refreshFirstScreenGate);
 document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
 
-/* ========= U3：箭头 + 进度条 + 自动轮播（首屏门控/可见性/交互恢复） ========= */
+/* ========= U3：箭头 + 进度条 + 自动轮播 ========= */
 (function(){
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
       clearTimeout(hideTimer);
       hideTimer = setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1500);
     };
-    ['mousemove','keydown','click','scroll'].forEach(evt=> vp.addEventListener(evt, showArrows, {passive:true}));
+    ['mousemove','keydown','click','scroll','touchstart'].forEach(evt=> vp.addEventListener(evt, showArrows, {passive:true}));
 
     // 自动轮播 API
     const api = {
