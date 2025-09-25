@@ -92,9 +92,21 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     const slides = card.querySelectorAll('.slide');
     if (!vp || !slides.length) return;
 
-    // 箭头
-    const left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.textContent='‹';
-    const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.textContent='›';
+    // 箭头（使用SVG替换文本箭头）
+    const left  = document.createElement('button'); 
+    left.className='nav-arrow left';  
+    left.setAttribute('aria-label','Previous'); 
+    left.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
+    const right = document.createElement('button'); 
+    right.className='nav-arrow right'; 
+    right.setAttribute('aria-label','Next');     
+    right.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
     vp.append(left,right);
 
     const fill = card.querySelector('.progress i');
