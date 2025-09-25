@@ -4,11 +4,9 @@ const PRECACHE = [
   '/', '/index.html',
   '/css/style.css',
   '/js/main.js',
-  // 你也可以把静态资源加进来（可选）
-  // '/assets/videos/hero.mp4',
-  // '/assets/images/classic.jpg',
-  // '/assets/images/fashion.jpg',
-  // '/assets/images/business.jpg',
+  '/assets/images/classic/1.jpg', // 只缓存主图
+  '/assets/images/fashion/1.jpg',
+  '/assets/images/business/1.jpg',
 ];
 
 // install：预缓存基础资源
