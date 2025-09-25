@@ -97,8 +97,6 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.textContent='›';
     vp.append(left,right);
 
-    const progress = card.querySelector('.progress');
-
     const fill = card.querySelector('.progress i');
     const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
     const clamp    = (n,min,max)=> Math.max(min, Math.min(max,n));
@@ -107,17 +105,6 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
       left.classList.toggle('is-disabled', i<=0);
       right.classList.toggle('is-disabled', i>=slides.length-1);
       fill.style.width = `${((i+1)/slides.length)*100}%`;
-
-      // 只在第一张 (i==0) 显示箭头和进度条
-      if (i === 0) {
-        left.style.display = 'block';
-        right.style.display = 'block';
-        progress.style.display = 'block';
-      } else {
-        left.style.display = 'none';
-        right.style.display = 'none';
-        progress.style.display = 'none';
-      }
     };
     const goTo = (i)=>{
       i = clamp(i, 0, slides.length-1);
