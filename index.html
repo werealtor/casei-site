@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
-  <meta name="theme-color" content="#ffffff" />
-  <link rel="stylesheet" href="css/style.css" />
+  <meta name="theme-color" content="#0b66ff" />
+  <link rel="manifest" href="/manifest.webmanifest?v=4">
+  <link rel="stylesheet" href="/css/style.css?v=4" />
 </head>
 <body>
   <!-- Header -->
   <header id="site-header">
-    <div class="container bar">
+    <div class="bar">
       <div class="brand">Case&amp;i</div>
       <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
         <span class="menu-icon" aria-hidden="true"></span>
@@ -32,7 +32,7 @@
       <div class="container">
         <figure class="media-wrap">
           <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
-            <source src="assets/videos/hero.mp4" type="video/mp4" />
+            <source src="/assets/videos/hero.mp4" type="video/mp4" />
           </video>
         </figure>
         <h1>Minimal · Premium · Personal</h1>
@@ -48,15 +48,15 @@
     <section id="products">
       <div class="container">
         <h2 class="title">Our Products</h2>
-        <div class="grid products-grid">
+        <div class="products-grid">
 
           <!-- Classic -->
           <article class="card product u3" data-product="classic">
             <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
               <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/classic/1.jpg" alt="Classic — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/classic/2.jpg" alt="Classic — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/classic/1.jpg" alt="Classic — front" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/classic/2.jpg" alt="Classic — back"  draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" /></div>
               </div>
               <div class="progress"><i></i></div>
             </div>
@@ -72,9 +72,9 @@
           <article class="card product u3" data-product="fashion">
             <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
               <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/fashion/1.jpg" alt="Fashion — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/fashion/2.jpg" alt="Fashion — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/fashion/3.jpg" alt="Fashion — detail" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/fashion/1.jpg" alt="Fashion — front" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/fashion/2.jpg" alt="Fashion — back"  draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/fashion/3.jpg" alt="Fashion — detail" draggable="false" /></div>
               </div>
               <div class="progress"><i></i></div>
             </div>
@@ -90,9 +90,9 @@
           <article class="card product u3" data-product="business">
             <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
               <div class="main-track">
-                <div class="slide"><img class="cover" src="assets/images/business/1.jpg" alt="Business — front" draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/business/2.jpg" alt="Business — back"  draggable="false" /></div>
-                <div class="slide"><img class="cover" src="assets/images/business/3.jpg" alt="Business — detail" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/business/1.jpg" alt="Business — front" draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/business/2.jpg" alt="Business — back"  draggable="false" /></div>
+                <div class="slide"><img class="cover" src="/assets/images/business/3.jpg" alt="Business — detail" draggable="false" /></div>
               </div>
               <div class="progress"><i></i></div>
             </div>
@@ -158,11 +158,18 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- 悬浮主题切换按钮 -->
+  <!-- 主题切换按钮 -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
-  <script src="js/main.js" defer></script>
+  <script src="/js/main.js?v=4" defer></script>
+
+  <!-- 安全注册 SW（若 sw.js 存在才注册） -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js?v=3').catch(()=>{});
+      });
+    }
+  </script>
 </body>
 </html>
-<link rel="stylesheet" href="/css/style.css?v=3">
-<script src="/js/main.js?v=3" defer></script>
