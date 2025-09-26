@@ -1,5 +1,5 @@
 // Case&i — Minimal SW (network-first with cache fallback)
-const CACHE = 'casei-cache-v2';
+const CACHE = 'casei-cache-v1';
 const PRECACHE = [
   '/', '/index.html',
   '/css/style.css',
