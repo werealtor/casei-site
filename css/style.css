@@ -155,3 +155,35 @@ body.dark .progress{ background:rgba(255,255,255,.18) }
 .main-track{ display:flex; align-items:stretch }
 .slide{ flex:0 0 100%; width:100%; aspect-ratio:16/9; scroll-snap-align:center; scroll-snap-stop:always; position:relative; overflow:hidden; background:var(--tone) }
 .slide .cover{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; -webkit-user-drag:none; user-select:none }-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0) + 16px);right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:2147483647}
+/* === 修复：箭头在移动端/触屏设备稳定可见，且初始就短暂出现 === */
+.nav-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(0,0,0,.45);color:#fff;border:none;
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;line-height:1;cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
+  opacity:0;transition:opacity .18s ease, transform .12s ease, background .2s ease;
+  user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color: transparent;
+}
+.nav-arrow.left{left:10px}
+.nav-arrow.right{right:10px}
+.card.product:hover .nav-arrow{opacity:1}
+@media (hover:none){ .nav-arrow{opacity:1} }         /* 触屏：常显 */
+
+.nav-arrow:active{ transform:translateY(-50%) scale(.95) }
+.nav-arrow.is-disabled{ display:none }
+.nav-arrow.is-visible{ opacity:1 }
+
+/* === 修复：进度条在暗黑/浅色下可见，容器不被裁剪 === */
+.main-viewport{ position:relative; overflow-x:auto; scroll-snap-type:x mandatory; }
+.progress{ position:absolute; left:12px; right:12px; bottom:8px; height:3px;
+  border-radius:999px; background:rgba(0,0,0,.12) }
+body.dark .progress{ background:rgba(255,255,255,.18) }
+.progress i{ display:block; height:100%; width:0; border-radius:999px;
+  background: var(--brand); transition: width .2s ease }
+
+/* === 修复：slide 宽度与 viewport 精确一致，避免图片未加载导致抖动 === */
+.main-track{ display:flex; align-items:stretch }
+.slide{ flex:0 0 100%; width:100%; aspect-ratio:16/9; scroll-snap-align:center; scroll-snap-stop:always; position:relative; overflow:hidden; background:var(--tone) }
+.slide .cover{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; -webkit-user-drag:none; user-select:none }
