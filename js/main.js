@@ -54,7 +54,7 @@ if (uForm) {
   });
 }
 
-/* ========= 首屏门控：滚至产品区再启播 ========= */
+/* ========= 首屏门控 ========= */
 let firstScreenGate = true;
 const productsSection = document.getElementById('products');
 const FIRST_GATE_OFFSET = 120;
@@ -68,7 +68,7 @@ addEventListener('scroll', refreshFirstScreenGate, { passive:true });
 addEventListener('resize', refreshFirstScreenGate);
 document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
 
-/* ========= U3：箭头 + 进度条 + 自动轮播（稳健版） ========= */
+/* ========= U3：箭头 + 进度条 + 自动轮播 ========= */
 (function onReady(fn){
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn, {once:true});
   else fn();
@@ -80,49 +80,35 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
   const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
   const getIndex = (vp)=> Math.round((vp.scrollLeft + EPS) / Math.max(1, vp.clientWidth));
 
-  // 只在同一个卡片容器里添加一次控件
   function ensureControls(card){
-    const vp = card.querySelector('.main-viewport');
-    if (!vp) return null;
-
-    // 兜底：层级 & 点击性（避免被图片盖住）
+    const vp = card.querySelector('.main-viewport'); if (!vp) return null;
     vp.style.position = vp.style.position || 'relative';
 
     let prog = card.querySelector('.progress');
-    if (!prog){
-      prog = document.createElement('div');
-      prog.className = 'progress';
-      prog.innerHTML = '<i></i>';
-      vp.appendChild(prog);
-    }
+    if (!prog){ prog = document.createElement('div'); prog.className='progress'; prog.innerHTML='<i></i>'; vp.appendChild(prog); }
     const fill = prog.querySelector('i');
 
     let left = card.querySelector('.nav-arrow.left');
     let right = card.querySelector('.nav-arrow.right');
     if (!left || !right) {
-      left  = document.createElement('button');
-      right = document.createElement('button');
-      left.className = 'nav-arrow left';
-      right.className = 'nav-arrow right';
-      left.setAttribute('aria-label', 'Previous');
-      right.setAttribute('aria-label', 'Next');
-      left.innerHTML  = '&#8249;'; // ‹
-      right.innerHTML = '&#8250;'; // ›
-      vp.append(left, right);
+      left  = document.createElement('button'); right = document.createElement('button');
+      left.className='nav-arrow left'; right.className='nav-arrow right';
+      left.setAttribute('aria-label','Previous'); right.setAttribute('aria-label','Next');
+      left.innerHTML='&#8249;'; right.innerHTML='&#8250;';
+      vp.append(left,right);
     }
 
-    // 确保图片在底层且不拦截点击
+    // 图片放底层 & 不拦点击
     card.querySelectorAll('.slide .cover').forEach(img=>{
-      img.style.zIndex = '0';
-      img.style.pointerEvents = 'none';
+      img.style.zIndex='0'; img.style.pointerEvents='none';
       img.style.position = img.style.position || 'absolute';
       img.style.inset = img.style.inset || '0';
       img.style.objectFit = img.style.objectFit || 'cover';
       img.style.width = img.style.width || '100%';
       img.style.height = img.style.height || '100%';
     });
-    // 控件层级兜底
-    [prog, left, right].forEach(el=>{
+
+    [prog,left,right].forEach(el=>{
       el.style.position = el.style.position || 'absolute';
       el.style.zIndex = el.style.zIndex || '99';
     });
@@ -132,8 +118,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
 
   function initCard(card){
     if (card._u3Inited) return;
-    const refs = ensureControls(card);
-    if (!refs) return;
+    const refs = ensureControls(card); if (!refs) return;
     const { vp, fill, left, right } = refs;
     const slides = card.querySelectorAll('.slide');
     const len = slides.length || 1;
@@ -161,16 +146,14 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     card._u3 = api;
 
     const pause = ()=>{
-      api.pausedByUser = true;
-      api.stop();
+      api.pausedByUser = true; api.stop();
       clearTimeout(api.resumeTimer);
-      api.resumeTimer = setTimeout(()=>{ api.pausedByUser = false; api.syncAutoplay(); }, RESUME_AFTER);
+      api.resumeTimer = setTimeout(()=>{ api.pausedByUser=false; api.syncAutoplay(); }, RESUME_AFTER);
     };
 
     left.addEventListener('click',  ()=>{ pause(); goTo(getIndex(vp)-1); });
     right.addEventListener('click', ()=>{ pause(); goTo(getIndex(vp)+1); });
 
-    // 键盘可用
     vp.setAttribute('tabindex','0');
     vp.addEventListener('keydown', e=>{
       if(e.key==='ArrowLeft'){ e.preventDefault(); pause(); goTo(getIndex(vp)-1); }
@@ -179,32 +162,26 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
       if(e.key==='End'){ e.preventDefault(); pause(); goTo(len-1); }
     });
 
-    // 滚动/尺寸变化
-    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndex(vp)), 90); }, {passive:true});
-    let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndex(vp)), 120); });
+    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndex(vp)),90); }, {passive:true});
+    let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndex(vp)),120); });
 
-    // 可见性：进入视口才轮播
     if ('IntersectionObserver' in window){
       const io = new IntersectionObserver(es=>{
-        es.forEach(e=>{ api.visible = e.isIntersecting && e.intersectionRatio >= 0.6; api.syncAutoplay(); });
+        es.forEach(e=>{ api.visible = e.isIntersecting && e.intersectionRatio>=0.6; api.syncAutoplay(); });
       }, { threshold:[0.6] });
       io.observe(card);
     }
 
-    // 文档可见性变更
     document.addEventListener('visibilitychange', ()=> api.syncAutoplay());
 
-    // 初始
     update(0);
     api.syncAutoplay();
 
     card._u3Inited = true;
   }
 
-  // 初始化现有卡片
   document.querySelectorAll('.card.product.u3').forEach(initCard);
 
-  // 监听后续动态插入的卡片（防止“第二/第三页”漏初始化）
   const mo = new MutationObserver(muts=>{
     muts.forEach(m=>{
       m.addedNodes && m.addedNodes.forEach(n=>{
