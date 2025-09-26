@@ -22,7 +22,7 @@ if (menuToggle && headerEl) {
   });
 }
 
-/* ========= 上传预览（显示文件名 & 大小限制） ========= */
+/* ========= 上传预览 ========= */
 const uForm = document.getElementById('uForm');
 if (uForm) {
   const fileInput = document.getElementById('file');
@@ -54,10 +54,10 @@ if (uForm) {
   });
 }
 
-/* ========= 首屏自动暂停（滚到产品区再启播） ========= */
+/* ========= 首屏门控：滚到产品区再启播 ========= */
 let firstScreenGate = true;
 const productsSection = document.getElementById('products');
-const FIRST_GATE_OFFSET = 120; // 提前阈值
+const FIRST_GATE_OFFSET = 120;
 function refreshFirstScreenGate() {
   if (!productsSection) { firstScreenGate = false; return; }
   const triggerY = productsSection.offsetTop - FIRST_GATE_OFFSET;
@@ -68,8 +68,13 @@ window.addEventListener('scroll', refreshFirstScreenGate, { passive:true });
 window.addEventListener('resize', refreshFirstScreenGate);
 document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
 
-/* ========= U3：箭头 + 进度条 + 自动轮播（稳健版） ========= */
-(function(){
+/* ========= U3：箭头 + 进度条 + 自动轮播（稳定版） ========= */
+(function onReady(fn){
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fn, { once:true });
+  } else { fn(); }
+})(function initU3(){
+
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
   const AUTOPLAY_DELAY = 3000;
@@ -77,6 +82,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
   const OBS_THRESHOLD  = 0.6;
   const EPS            = 0.001;
 
+  // 可见性观察：进入视口才允许自动轮播
   const io = ('IntersectionObserver' in window)
     ? new IntersectionObserver(entries=>{
         entries.forEach(entry=>{
@@ -97,13 +103,10 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     const fill = card.querySelector('.progress i');
     if (!vp || !slides.length || !fill) return;
 
-    // 箭头
+    // 生成左右箭头（CSS 里已设为默认可见，便于调试）
     const left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;';
     const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.innerHTML='&#8250;';
     vp.append(left,right);
-
-    // 初始短暂显现，确保可见
-    requestAnimationFrame(()=>{ [left,right].forEach(a=>a.classList.add('is-visible')); setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1200); });
 
     const len = slides.length;
 
@@ -115,24 +118,12 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
 
     const goTo = (i)=>{
       i = clamp(i, 0, len-1);
-      const target = i * vp.clientWidth; // iOS 浮点误差规避
+      const target = i * vp.clientWidth; // 规避 iOS 浮点误差
       vp.scrollTo({ left: target, behavior: scrollBehavior });
       update(i);
-      showArrows();
     };
 
-    // 箭头显隐（交互时短显）
-    let hideTimer;
-    const showArrows = ()=>{
-      [left,right].forEach(a=>a.classList.add('is-visible'));
-      clearTimeout(hideTimer);
-      hideTimer = setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1500);
-    };
-    ['mousemove','click','keydown','scroll','touchstart','touchmove'].forEach(evt=>{
-      vp.addEventListener(evt, showArrows, {passive:true});
-    });
-
-    // 自动轮播 API
+    // 交互 → 暂停，空闲一段时间再恢复
     const api = {
       timer:null, resumeTimer:null, pausedByUser:false, visible:true,
       start(){ if (prefersReduced) return; if (this.timer) return;
@@ -143,12 +134,13 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     };
     card._sliderAPI = api;
 
-    // 交互 → 暂停，5s 无交互恢复
     const pauseTemporarily = ()=>{
       api.pausedByUser = true; api.stop();
       clearTimeout(api.resumeTimer);
       api.resumeTimer = setTimeout(()=>{ api.pausedByUser=false; api.syncAutoplay(); }, RESUME_AFTER);
     };
+
+    // 交互绑定
     left.addEventListener('click', ()=>{ pauseTemporarily(); goTo(getIndexBy(vp)-1); });
     right.addEventListener('click',()=>{ pauseTemporarily(); goTo(getIndexBy(vp)+1); });
 
@@ -161,7 +153,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
       if(e.key==='End'){ e.preventDefault(); pauseTemporarily(); goTo(len-1); }
     });
 
-    // 滚动/尺寸
+    // 滚动/尺寸变化：去抖刷新
     let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndexBy(vp)),90); }, {passive:true});
     let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndexBy(vp)),120); });
 
@@ -169,6 +161,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     document.addEventListener('visibilitychange', ()=> api.syncAutoplay());
 
     // 初始
-    update(0); showArrows(); api.syncAutoplay();
+    update(0);
+    api.syncAutoplay();
   });
-})();
+});
