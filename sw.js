@@ -1,61 +1,95 @@
-// Case&i — Minimal SW (network-first with cache fallback)
-const CACHE = 'casei-cache-v1';
+// sw.js — safe version
+const VERSION = 'v3';
+const CACHE = `casei-cache-${VERSION}`;
+
+// 只预缓存框架文件；图片不预缓存（避免大体积与更新问题）
 const PRECACHE = [
   '/', '/index.html',
   '/css/style.css',
-  '/js/main.js',
-  // 你也可以把静态资源加进来（可选）
-  // '/assets/videos/hero.mp4',
-  // '/assets/images/classic.jpg',
-  // '/assets/images/fashion.jpg',
-  // '/assets/images/business.jpg',
+  '/js/main.js'
 ];
 
-// install：预缓存基础资源
+// ===== Install：预缓存 =====
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch(()=>{})
+    caches.open(CACHE).then(c => c.addAll(PRECACHE)).catch(() => {})
   );
   self.skipWaiting();
 });
 
-// activate：清理旧缓存
+// ===== Activate：清旧缓存 & 打开导航预加载（可用时）=====
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
-  );
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)));
+    if ('navigationPreload' in self.registration) {
+      try { await self.registration.navigationPreload.enable(); } catch {}
+    }
+  })());
   self.clients.claim();
 });
 
-// fetch：网络优先，失败回退缓存；成功后写入缓存
+// ===== Helpers：不同资源不同策略 =====
+const isSameOrigin = (url) => url.origin === self.location.origin;
+
+async function networkFirst(req) {
+  try {
+    const net = await fetch(req);
+    const c = await caches.open(CACHE);
+    c.put(req, net.clone());
+    return net;
+  } catch (err) {
+    const hit = await caches.match(req);
+    return hit || new Response('Offline', { status: 503 });
+  }
+}
+
+async function staleWhileRevalidate(req) {
+  const c = await caches.open(CACHE);
+  const cached = await c.match(req);
+  const fetchPromise = fetch(req).then(net => { c.put(req, net.clone()); return net; }).catch(() => null);
+  return cached || (await fetchPromise) || new Response('Offline', { status: 503 });
+}
+
+async function cacheFirst(req) {
+  const c = await caches.open(CACHE);
+  const cached = await c.match(req);
+  if (cached) return cached;
+  try {
+    const net = await fetch(req);
+    c.put(req, net.clone());
+    return net;
+  } catch {
+    return new Response('Offline', { status: 503 });
+  }
+}
+
+// ===== Fetch：同源 GET 才拦；分类型策略 =====
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
 
-  e.respondWith((async () => {
-    try {
-      const net = await fetch(req);
-      const cache = await caches.open(CACHE);
-      cache.put(req, net.clone());
-      return net;
-    } catch {
-      const hit = await caches.match(req);
-      return hit || new Response('You are offline.', {
-        status: 200,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-      });
-    }
-  })());
+  const url = new URL(req.url);
+  if (!isSameOrigin(url)) return; // 跨域请求不拦，直接走网络
+
+  // HTML（导航请求）：网络优先
+  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
+    e.respondWith(networkFirst(req));
+    return;
+  }
+
+  // 样式和脚本：SWR（先用缓存，后台更新）
+  if (url.pathname.endsWith('.css') || url.pathname.endsWith('.js')) {
+    e.respondWith(staleWhileRevalidate(req));
+    return;
+  }
+
+  // 图片：缓存优先（命中即回，未命中再取）
+  if (/\.(png|jpe?g|gif|webp|svg|ico)$/i.test(url.pathname)) {
+    e.respondWith(cacheFirst(req));
+    return;
+  }
+
+  // 其他同源资源：SWR
+  e.respondWith(staleWhileRevalidate(req));
 });
-const CACHE = 'casei-cache-v1';
-const PRECACHE = [
-  '/', '/index.html',
-  '/css/style.css',
-  '/js/main.js',
-  '/manifest.webmanifest',
-  '/prices.json'
-  // 可按需追加静态资源：'/assets/videos/hero.mp4', '/assets/images/...'
-];
-/* 其余保持你的实现 */
