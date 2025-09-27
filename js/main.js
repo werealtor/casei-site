@@ -65,12 +65,9 @@ const debounce = (fn, wait = 90) => { let t; return (...a) => { clearTimeout(t);
 
   document.querySelectorAll('.card.product.u3').forEach(card => {
     const vp = card.querySelector('.main-viewport');
-    if (!vp) return;
-
-    // 轨道 & 幻灯
     const track  = card.querySelector('.main-track');
     const slides = card.querySelectorAll('.slide');
-    if (!track || !slides.length) return;
+    if (!vp || !track || !slides.length) return;
 
     // 进度条（缺则补）
     let progress = card.querySelector('.progress');
@@ -108,18 +105,17 @@ const debounce = (fn, wait = 90) => { let t; return (...a) => { clearTimeout(t);
       left.classList.toggle('is-disabled',  i <= 0);
       right.classList.toggle('is-disabled', i >= slides.length - 1);
 
-      // 价格联动（读当前 slide 上的 data-price）
+      // 价格联动：读当前 slide 的 data-price（建议写成 "$25" 这种）
       if (priceEl) {
-        const s = slides[i];
-        const p = s?.dataset?.price;
-        if (p) priceEl.textContent = p; // p 已含 $ 符号，例如 "$25"
+        const p = slides[i]?.dataset?.price;
+        if (p) priceEl.textContent = p;
       }
 
-      // 进度条宽度
+      // 进度条宽度（蓝色进度条在 CSS 中）
       fill.style.width = `${((i + 1) / slides.length) * 100}%`;
     }
 
-    // 事件
+    // 点击/键盘/滚动/尺寸变化
     left.addEventListener('click',  () => goTo(getIndex() - 1));
     right.addEventListener('click', () => goTo(getIndex() + 1));
 
