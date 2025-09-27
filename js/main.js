@@ -107,4 +107,18 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     // 點擊 & 鍵盤
     left.addEventListener('click', ()=> goTo(getIndex()-1));
     right.addEventListener('click',()=> goTo(getIndex()+1));
-    vp.addEventListener('keydown', e
+    vp.addEventListener('keydown', e=>{
+      if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
+      if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
+      if(e.key==='Home'){ e.preventDefault(); goTo(0); }
+      if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
+    });
+
+    // 滾動/尺寸
+    vp.addEventListener('scroll', debounce(()=>update(getIndex()),90), {passive:true});
+    window.addEventListener('resize', debounce(()=>update(getIndex()),120));
+
+    // 初始
+    update(0);
+  });
+})();
