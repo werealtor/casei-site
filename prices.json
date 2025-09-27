@@ -1,12 +1,13 @@
-
 {
-  "classic-1": 19,
-  "classic-2": 20,
-  "classic-3": 22,
-  "business-1": 19,
-  "business-2": 20,
-  "business-3": 22,
-  "fashion-1": 25,
-  "fashion-2": 27,
-  "fashion-3": 29
+  "classic": 19,
+  "fashion": [25, 26, 27, 28, 29, 30, 31],
+  "business": {
+    "1": 29,
+    "2": 31,
+    "3": 33,
+    "4": 34,
+    "5": 36,
+    "6": 38,
+    "7": 40
+  }
 }
