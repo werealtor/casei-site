@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
-  <meta name="theme-color" content="#ffffff" />
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
   <!-- Header -->
@@ -27,7 +25,7 @@
   </header>
 
   <main>
-    <!-- Hero -->
+    <!-- Hero（可选） -->
     <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
@@ -44,14 +42,14 @@
       </div>
     </section>
 
-    <!-- Products -->
+    <!-- Products（关键结构：每张卡都有 main-viewport > main-track + progress） -->
     <section id="products">
       <div class="container">
         <h2 class="title">Our Products</h2>
         <div class="grid products-grid">
 
           <!-- Classic -->
-          <article class="card product u3" data-product="classic" data-slides="7">
+          <article class="card product u3" data-product="classic">
             <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
               <div class="main-track"></div>
               <div class="progress"><i></i></div>
@@ -60,12 +58,12 @@
               <h3>Classic</h3>
               <p class="sub">Slim &amp; scratch-resistant</p>
               <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" data-id="classic">$19</div>
+              <div class="price" aria-live="polite">$—</div>
             </div>
           </article>
 
           <!-- Fashion -->
-          <article class="card product u3" data-product="fashion" data-slides="7">
+          <article class="card product u3" data-product="fashion">
             <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
               <div class="main-track"></div>
               <div class="progress"><i></i></div>
@@ -74,12 +72,12 @@
               <h3>Fashion</h3>
               <p class="sub">Trendy design &amp; anti-fingerprint</p>
               <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" data-id="fashion">$25</div>
+              <div class="price" aria-live="polite">$—</div>
             </div>
           </article>
 
           <!-- Business -->
-          <article class="card product u3" data-product="business" data-slides="7">
+          <article class="card product u3" data-product="business">
             <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
               <div class="main-track"></div>
               <div class="progress"><i></i></div>
@@ -88,7 +86,7 @@
               <h3>Business</h3>
               <p class="sub">Premium touch &amp; shockproof</p>
               <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" data-id="business">$29</div>
+              <div class="price" aria-live="polite">$—</div>
             </div>
           </article>
 
@@ -146,9 +144,10 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- 主题切换按钮 -->
+  <!-- 主题切换按钮（可留可删） -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
+  <!-- 关键：加载补丁后的 main.js -->
   <script src="js/main.js" defer></script>
 </body>
 </html>
