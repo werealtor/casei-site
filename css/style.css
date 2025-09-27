@@ -256,4 +256,125 @@ footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);text-a
   opacity:0 !important;
   pointer-events:none !important;
 }
+/* =============== 视觉层级与留白 =============== */
+section{ padding: clamp(28px, 5vw, 44px) 0; }
+.container{ padding-left: max(20px, 4vw); padding-right: max(20px, 4vw); }
 
+/* 细分割：让大段内容更通透（不抢眼） */
+section + section{
+  position: relative;
+}
+section + section::before{
+  content:"";
+  position:absolute; left:0; right:0; top:-1px; height:1px;
+  background: linear-gradient(90deg, transparent, var(--line), transparent);
+  opacity:.65;
+}
+
+/* =============== 标题体系 =============== */
+.title{
+  font-weight:800;
+  letter-spacing:.3px;
+  margin: 8px 0 18px;
+  line-height:1.25;
+}
+#about .title, #contact .title, #custom .title{
+  text-align:left;
+}
+
+/* =============== 卡片质感（统一圆角/阴影） =============== */
+:root{ --radius-lg: 16px; --radius-md: 12px; }
+.card, .file-field, .contact-form{
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  border:1px solid color-mix(in oklab, var(--line) 80%, transparent);
+  backdrop-filter: saturate(1.1);
+}
+.card .body{ padding:16px 18px }
+
+/* 卡片微交互 */
+.card{
+  transition: transform .18s ease, box-shadow .18s ease;
+  will-change: transform;
+}
+@media(hover:hover){
+  .card:hover{ transform: translateY(-2px); box-shadow:0 6px 22px rgba(0,0,0,.08) }
+}
+
+/* =============== 上传区（更一致的排版） =============== */
+#custom .container{ max-width:760px }
+.file-field{
+  padding: 12px;
+  background: color-mix(in oklab, var(--tone) 92%, transparent);
+}
+.input-like{
+  background: color-mix(in oklab, var(--tone) 96%, white 4%);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+.input-like span{ font-weight:600 }
+.input-like small{ opacity:.8 }
+
+/* =============== 按钮手感：渐变 + 阴影 =============== */
+.btn{
+  border-radius: var(--radius-md);
+  transition: transform .12s ease, box-shadow .12s ease, background .2s ease, color .2s ease;
+}
+.btn.primary{
+  border:none;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--brand) 90%, white 10%), var(--brand));
+  box-shadow: 0 6px 16px color-mix(in oklab, var(--brand) 30%, transparent);
+}
+.btn.primary:hover{ transform: translateY(-1px); }
+.btn.primary:active{ transform: translateY(0); box-shadow:0 4px 10px color-mix(in oklab, var(--brand) 25%, transparent) }
+
+/* 次按钮更柔和（如 hero 的第二个） */
+.btn:not(.primary){
+  background: color-mix(in oklab, var(--brand) 8%, transparent);
+}
+
+/* =============== 表单可用性：焦点/禁用 =============== */
+.contact-form{
+  padding: 16px;
+  background: color-mix(in oklab, var(--tone) 96%, transparent);
+}
+.contact-form input,
+.contact-form textarea{
+  background: color-mix(in oklab, var(--tone) 94%, white 6%);
+  border-radius: var(--radius-md);
+}
+.contact-form input:focus,
+.contact-form textarea:focus{
+  outline:0;
+  border-color: var(--brand);
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--brand) 28%, transparent);
+  background:#fff;
+}
+
+/* =============== 文字与行宽微调 =============== */
+.about-text{
+  max-width: 38rem;
+  margin-top: 4px;
+  line-height: 1.85;
+  letter-spacing: .1px;
+}
+
+/* =============== 进度条细化（更细腻） =============== */
+.progress{ height: 3px; background: color-mix(in oklab, var(--text) 12%, transparent); }
+body.dark .progress{ background: color-mix(in oklab, #fff 14%, transparent); }
+.progress i{
+  background: linear-gradient(90deg, var(--brand), color-mix(in oklab, var(--brand) 70%, #fff));
+  border-radius: 0 2px 2px 0;
+  transition: width .28s cubic-bezier(.22,.61,.36,1);
+}
+
+/* =============== 暗色优化 =============== */
+body.dark .input-like,
+body.dark .contact-form input,
+body.dark .contact-form textarea{
+  background: color-mix(in oklab, var(--tone) 96%, black 4%);
+}
+body.dark .file-field,
+body.dark .contact-form{
+  background: color-mix(in oklab, var(--tone) 94%, black 6%);
+}
