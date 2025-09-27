@@ -56,8 +56,9 @@ const fmtMoney=(num,currency='USD',locale=(navigator.language||'en-US'))=>{
   try{ return new Intl.NumberFormat(locale,{style:'currency',currency,maximumFractionDigits:0}).format(num); }
   catch{ return `$${num}`; }
 };
+async function fetchJSON(url){ try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); } catch{ return null; } }
 
-/* ========= 价格加载（带兜底 & 全局缓存） ========= */
+/* ========= 价格加载（带兜底） ========= */
 const FALLBACK_PRICES = {
   classic: [19,19,19,19,19,19,19],
   fashion: [25,26,27,28,29,30,31],
@@ -69,18 +70,12 @@ async function loadPrices() {
     const r = await fetch('prices.json', { cache: 'no-store' });
     if (r.ok && (r.headers.get('content-type') || '').includes('application/json')) {
       prices = await r.json();
-    } else {
-      console.warn('[prices.json] status/type:', r.status, r.headers.get('content-type'));
     }
-  } catch (e) {
-    console.warn('[prices.json] fetch failed:', e);
-  }
+  } catch {}
   if (!prices) prices = FALLBACK_PRICES;
   window.__prices__ = prices;
   return prices;
 }
-
-/* ========= 价格映射 ========= */
 function priceFromMap(map,id,idx0){
   if(!map||!(id in map)) return null;
   const v = map[id];
@@ -96,13 +91,21 @@ function priceFromMap(map,id,idx0){
   return null;
 }
 
-/* ========= 初始化一个卡片的滑块（层级 & 结构补丁） ========= */
+/* ========= 初始化一个卡片 ========= */
 function initCardSlider(card, prices, currency='USD'){
   const vp = card.querySelector('.main-viewport');
   const track = card.querySelector('.main-track');
   if(!vp || !track) return;
 
-  // —— 保证 progress & arrows 是 viewport 的直接子元素，且层级最高 ——
+  // 兜底：如果 main-track 为空，自动填充 1~7.jpg
+  if (track.children.length === 0) {
+    const pid = card.dataset.product;
+    track.innerHTML = Array.from({length:7},(_,i)=>(
+      `<div class="slide"><img class="cover" src="assets/images/${pid}/${i+1}.jpg" alt="${pid} ${i+1}" draggable="false" /></div>`
+    )).join('');
+  }
+
+  // progress（确保是 viewport 子元素）
   let progress = card.querySelector('.progress');
   if(!progress){
     progress = document.createElement('div');
@@ -114,39 +117,25 @@ function initCardSlider(card, prices, currency='USD'){
   }
   const fill = progress.querySelector('i');
 
+  // arrows（确保是 viewport 子元素）
   let left  = card.querySelector('.nav-arrow.left');
   let right = card.querySelector('.nav-arrow.right');
-  if(!left){
-    left = document.createElement('button');
-    left.className = 'nav-arrow left';
-    left.setAttribute('aria-label','Previous');
-    left.innerHTML = '&#8249;';
-    vp.appendChild(left);
-  } else if (left.parentElement !== vp) {
-    vp.appendChild(left);
-  }
-  if(!right){
-    right = document.createElement('button');
-    right.className = 'nav-arrow right';
-    right.setAttribute('aria-label','Next');
-    right.innerHTML = '&#8250;';
-    vp.appendChild(right);
-  } else if (right.parentElement !== vp) {
-    vp.appendChild(right);
-  }
+  if(!left){ left = document.createElement('button'); left.className='nav-arrow left'; left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
+  else if(left.parentElement!==vp){ vp.appendChild(left); }
+  if(!right){ right=document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.innerHTML='&#8250;'; vp.appendChild(right); }
+  else if(right.parentElement!==vp){ vp.appendChild(right); }
 
-  // —— 再保险：viewport 创建堆叠上下文，图片层压到底 ——
+  // 层级与定位保险
   if (getComputedStyle(vp).position === 'static') vp.style.position = 'relative';
   track.style.position = track.style.position || 'relative';
   card.querySelectorAll('.slide, .slide .cover').forEach(el=>{
     if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
-    el.style.zIndex = 0; // 图片层置底，避免覆盖控制件
+    el.style.zIndex = 0; // 图片置底
   });
 
   const slides  = track.querySelectorAll('.slide');
   const priceEl = card.querySelector('.price');
   const pid     = card.dataset.product;
-
   const getIndex = ()=> Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
 
   function update(i=getIndex()){
@@ -184,16 +173,7 @@ function initCardSlider(card, prices, currency='USD'){
 (async function boot(){
   const prices = await loadPrices();
   const currency = 'USD';
-
   document.querySelectorAll('.card.product.u3').forEach(card=>{
-    // 兜底：如果 main-track 为空，自动拼 1~7.jpg
-    const track = card.querySelector('.main-track');
-    if(track && track.children.length===0){
-      const pid = card.dataset.product;
-      track.innerHTML = Array.from({length:7},(_,i)=>(
-        `<div class="slide"><img class="cover" src="assets/images/${pid}/${i+1}.jpg" alt="${pid} ${i+1}" draggable="false" /></div>`
-      )).join('');
-    }
     initCardSlider(card, prices, currency);
   });
 })();
