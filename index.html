@@ -129,52 +129,57 @@
 
         </div>
       </div>
-    </section>
+    </<!-- Customize -->
+<section id="custom">
+  <div class="container">
+    <h2 class="title">Customize Your Case</h2>
 
-    <!-- Customize -->
-    <section id="custom">
-      <div class="container">
-        <h2 class="title">Customize Your Case</h2>
-        <form id="uForm" novalidate>
-          <div class="file-field">
-            <label for="file" class="input-like">
-              Choose Image
-              <small id="fileName">PNG/JPEG · &lt; 10MB</small>
-            </label>
-            <button type="submit" class="btn primary">Upload &amp; Preview</button>
-          </div>
-          <input type="file" id="file" accept="image/png,image/jpeg" />
-          <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
-          <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
-        </form>
-      </div>
-    </section>
+    <form id="uForm" novalidate>
+      <div class="file-field">
+        <!-- 自定义的“选择图片”按钮（点它会触发隐藏的 #file） -->
+        <label for="file" class="input-like">
+          <span>Choose Image</span>
+          <small id="fileName">PNG/JPEG · &lt; 10MB</small>
+        </label>
 
-    <!-- About -->
-    <section id="about">
-      <div class="container">
-        <h2 class="title">About Us</h2>
-        <p class="about-text">
-          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
-          Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
-        </p>
+        <button type="submit" class="btn primary">Upload &amp; Preview</button>
       </div>
-    </section>
 
-    <!-- Contact -->
-    <section id="contact">
-      <div class="container">
-        <h2 class="title">Contact Us</h2>
-        <form class="contact-form" onsubmit="event.preventDefault();alert('Submitted (demo)');">
-          <input type="text" name="name" placeholder="Name" required />
-          <input type="email" name="email" placeholder="Email" required />
-          <textarea name="message" rows="4" placeholder="Message"></textarea>
-          <div class="contact-actions">
-            <button type="submit" class="btn primary">Send</button>
-          </div>
-        </form>
+      <!-- 彻底隐藏原生文件输入框 -->
+      <input type="file" id="file" accept="image/png,image/jpeg" />
+      <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
+      <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
+    </form>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="container">
+    <h2 class="title">About Us</h2>
+    <p class="about-text">
+      Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
+      Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
+    </p>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="container">
+    <h2 class="title">Contact Us</h2>
+    <form class="contact-form" onsubmit="event.preventDefault();alert('Submitted (demo)');">
+      <input type="text"  name="name"  placeholder="Name"  required />
+      <input type="email" name="email" placeholder="Email" required />
+      <textarea name="message" rows="4" placeholder="Message"></textarea>
+      <div class="contact-actions">
+        <button type="submit" class="btn primary">Send</button>
       </div>
-    </section>
+    </form>
+  </div>
+</section>
+
+    
   </main>
 
   <footer>
