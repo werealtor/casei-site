@@ -116,3 +116,54 @@ body.dark .progress{background:rgba(255,255,255,.08)}
 /* Footer & Theme btn */
 footer{border-top:1px solid var(--line);padding:18px 0 calc(20px + env(safe-area-inset-bottom,0));color:var(--muted);text-align:center}
 .floating-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0) + 16px);right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:2147483647}
+/* === Arrow & Progress z-index hotfix === */
+.card.product .main-viewport{
+  position: relative !important;
+  overflow-x: auto;           /* 保持滚动 */
+  overflow-y: hidden;
+  z-index: 0 !important;      /* 创建基准堆叠上下文 */
+}
+.card.product .main-track,
+.card.product .slide,
+.card.product .slide .cover{
+  position: relative;
+  z-index: 0 !important;      /* 所有图片层压到同一底层 */
+}
+.card.product .slide .cover{
+  pointer-events: none !important; /* 避免拦截点击，箭头可点 */
+}
+
+/* 让控制元素永远浮在最上面 */
+.card.product .nav-arrow{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000 !important;   /* 高于一切图片 */
+  background: none;
+  border: 0;
+  color: rgba(255,255,255,.95);
+  font-size: 28px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 1;                 /* 移动端始终可见 */
+  pointer-events: auto;
+}
+.card.product .nav-arrow.left{ left: 12px }
+.card.product .nav-arrow.right{ right: 12px }
+
+.card.product .progress{
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: rgba(0,0,0,.08);
+  z-index: 900 !important;    /* 仅次于箭头 */
+  overflow: hidden;
+}
+body.dark .card.product .progress{ background: rgba(255,255,255,.1) }
+.card.product .progress i{
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--brand);
+  transition: width .25s ease;
+}
