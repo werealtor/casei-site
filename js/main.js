@@ -165,3 +165,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 });
+
+
+
+
+
+
+let pWrap = vp.querySelector('.progress');
+if(!pWrap){ pWrap = document.createElement('div'); pWrap.className='progress'; pWrap.innerHTML='<i></i>'; vp.appendChild(pWrap); }
+const progEl = pWrap.querySelector('i');
+
+
+
