@@ -71,7 +71,7 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     const progress = card.querySelector('.progress');
     const fill = progress ? progress.querySelector('i') : null;
 
-    // 箭頭（缺則補）
+    // 箭头（缺则补）
     let left  = card.querySelector('.nav-arrow.left');
     let right = card.querySelector('.nav-arrow.right');
     if (!left)  { left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
@@ -87,24 +87,24 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     }
 
     function update(i=getIndex()){
-      // 箭頭顯隱
+      // 箭头显隐
       left.classList.toggle('is-disabled', i<=0);
       right.classList.toggle('is-disabled', i>=slides.length-1);
 
-      // 價格聯動
+      // 价格联动
       if (priceEl) {
         const slide = slides[i];
         const p = slide && slide.dataset && slide.dataset.price;
         if (p) priceEl.textContent = `$${p}`;
       }
 
-      // 進度遮罩（白色）寬度更新
+      // 进度遮罩（白色）宽度更新
       if (fill) {
         fill.style.width = `${((i+1)/slides.length)*100}%`;
       }
     }
 
-    // 點擊 & 鍵盤
+    // 点击 & 键盘
     left.addEventListener('click', ()=> goTo(getIndex()-1));
     right.addEventListener('click',()=> goTo(getIndex()+1));
     vp.addEventListener('keydown', e=>{
@@ -114,7 +114,7 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
       if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
     });
 
-    // 滾動/尺寸
+    // 滚动/尺寸
     vp.addEventListener('scroll', debounce(()=>update(getIndex()),90), {passive:true});
     window.addEventListener('resize', debounce(()=>update(getIndex()),120));
 
