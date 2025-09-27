@@ -109,3 +109,15 @@ footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);text-a
 
 /* Floating button */
 .floating-btn{position:fixed;bottom:16px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:999}
+/* 强制确保箭头 & 进度条在最上层 */
+.card.product.u3 .nav-arrow,
+.card.product.u3 .progress {
+  position: absolute !important;
+  z-index: 99 !important;
+  pointer-events: auto !important;
+}
+
+.card.product.u3 .slide .cover {
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
