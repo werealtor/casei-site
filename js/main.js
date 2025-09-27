@@ -68,7 +68,6 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     const slides = card.querySelectorAll('.slide');
     if (!vp || !slides.length) return;
 
-    // 进度条元素（灰底 + 白色遮罩）
     const progress = card.querySelector('.progress');
     const fill = progress ? progress.querySelector('i') : null;
 
@@ -99,7 +98,7 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
         if (p) priceEl.textContent = `$${p}`;
       }
 
-      // 进度遮罩（白色）宽度更新：((当前序号+1)/总数) * 100%
+      // 进度遮罩（白色）宽度更新
       if (fill) {
         fill.style.width = `${((i+1)/slides.length)*100}%`;
       }
