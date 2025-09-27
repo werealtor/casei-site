@@ -55,7 +55,7 @@ if (uForm) {
 }
 
 /* ========= 小工具 ========= */
-function debounce(fn, wait = 50){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
+function debounce(fn, wait = 80){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
 const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
 
 /* ========= U3：箭头 + 价格联动 + 进度遮罩 ========= */
@@ -63,7 +63,7 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
 
-  document.querySelectorAll('.card.product.u3').forEach(card=>{
+  document.querySelectorAll('.card.product.u3').forEach((card, cardIndex) => { // 添加cardIndex以獨立處理
     const vp = card.querySelector('.main-viewport');
     const slides = card.querySelectorAll('.slide');
     if (!vp || !slides.length) return;
@@ -71,41 +71,42 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     const progress = card.querySelector('.progress');
     const fill = progress ? progress.querySelector('i') : null;
 
-    // 箭头（缺则补）
+    // 箭頭（缺則補）
     let left  = card.querySelector('.nav-arrow.left');
     let right = card.querySelector('.nav-arrow.right');
     if (!left)  { left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
     if (!right) { right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.innerHTML='&#8250;'; vp.appendChild(right); }
 
     const priceEl = card.querySelector('.price');
-    const EPS = 0.1;
-    const getIndex = () => Math.round((vp.scrollLeft + EPS) / Math.max(1, vp.clientWidth));
+    const getIndex = () => Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
 
     function goTo(i){
       i = clamp(i, 0, slides.length-1);
       vp.scrollTo({ left: i*vp.clientWidth, behavior: scrollBehavior });
-      requestAnimationFrame(() => update(i)); // 使用RAF即時更新
+      update(i);
     }
 
     function update(i=getIndex()){
-      // 箭头显隐
+      // 箭頭顯隱
       left.classList.toggle('is-disabled', i<=0);
       right.classList.toggle('is-disabled', i>=slides.length-1);
+      left.style.opacity = 1; // 強制顯示
+      right.style.opacity = 1;
 
-      // 价格联动
+      // 價格聯動
       if (priceEl) {
         const slide = slides[i];
         const p = slide && slide.dataset && slide.dataset.price;
         if (p) priceEl.textContent = `$${p}`;
       }
 
-      // 进度遮罩（白色）宽度更新
+      // 進度遮罩（白色）寬度更新
       if (fill) {
         fill.style.width = `${((i+1)/slides.length)*100}%`;
       }
     }
 
-    // 点击 & 键盘
+    // 點擊 & 鍵盤
     left.addEventListener('click', ()=> goTo(getIndex()-1));
     right.addEventListener('click',()=> goTo(getIndex()+1));
     vp.addEventListener('keydown', e=>{
@@ -115,19 +116,9 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
       if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
     });
 
-    // 滚动/尺寸
-    vp.addEventListener('scroll', debounce(()=> requestAnimationFrame(()=>update(getIndex())),50), {passive:true});
+    // 滾動/尺寸
+    vp.addEventListener('scroll', debounce(()=>update(getIndex()),90), {passive:true});
     window.addEventListener('resize', debounce(()=>update(getIndex()),120));
-
-    // 圖片加載後強制更新
-    slides.forEach(slide => {
-      const img = slide.querySelector('img');
-      if (img.complete) {
-        update();
-      } else {
-        img.addEventListener('load', () => update());
-      }
-    });
 
     // 初始
     update(0);
