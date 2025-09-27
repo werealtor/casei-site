@@ -63,7 +63,7 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
 
-  document.querySelectorAll('.card.product.u3').forEach((card, cardIndex) => { // 添加cardIndex以獨立處理
+  document.querySelectorAll('.card.product.u3').forEach(card=>{
     const vp = card.querySelector('.main-viewport');
     const slides = card.querySelectorAll('.slide');
     if (!vp || !slides.length) return;
@@ -90,8 +90,6 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
       // 箭頭顯隱
       left.classList.toggle('is-disabled', i<=0);
       right.classList.toggle('is-disabled', i>=slides.length-1);
-      left.style.opacity = 1; // 強制顯示
-      right.style.opacity = 1;
 
       // 價格聯動
       if (priceEl) {
@@ -109,18 +107,4 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     // 點擊 & 鍵盤
     left.addEventListener('click', ()=> goTo(getIndex()-1));
     right.addEventListener('click',()=> goTo(getIndex()+1));
-    vp.addEventListener('keydown', e=>{
-      if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
-      if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
-      if(e.key==='Home'){ e.preventDefault(); goTo(0); }
-      if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
-    });
-
-    // 滾動/尺寸
-    vp.addEventListener('scroll', debounce(()=>update(getIndex()),90), {passive:true});
-    window.addEventListener('resize', debounce(()=>update(getIndex()),120));
-
-    // 初始
-    update(0);
-  });
-})();
+    vp.addEventListener('keydown', e
