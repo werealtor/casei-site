@@ -7,6 +7,7 @@
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
   <!-- Header -->
@@ -50,11 +51,9 @@
         <div class="grid products-grid">
 
           <!-- Classic -->
-          <article class="card product u3" data-product="classic">
+          <article class="card product u3" data-product="classic" data-slides="7">
             <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
-              <div class="main-track">
-                <!-- 可留空，JS 会兜底插入 1~7.jpg -->
-              </div>
+              <div class="main-track"></div>
               <div class="progress"><i></i></div>
             </div>
             <div class="body">
@@ -66,7 +65,7 @@
           </article>
 
           <!-- Fashion -->
-          <article class="card product u3" data-product="fashion">
+          <article class="card product u3" data-product="fashion" data-slides="7">
             <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
               <div class="main-track"></div>
               <div class="progress"><i></i></div>
@@ -80,7 +79,7 @@
           </article>
 
           <!-- Business -->
-          <article class="card product u3" data-product="business">
+          <article class="card product u3" data-product="business" data-slides="7">
             <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
               <div class="main-track"></div>
               <div class="progress"><i></i></div>
@@ -147,7 +146,7 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- Theme toggle -->
+  <!-- 主题切换按钮 -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
   <script src="js/main.js" defer></script>
