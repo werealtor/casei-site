@@ -55,12 +55,10 @@ if (uForm) {
 }
 
 /* ========= 小工具 ========= */
-function debounce(fn, wait = 80){
-  let t; return (...a)=>{ clearTimeout(t); t = setTimeout(()=>fn(...a), wait); };
-}
+function debounce(fn, wait = 80){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
 const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
 
-/* ========= U3：箭头 + 价格联动（灰色进度条不更新蓝条） ========= */
+/* ========= U3：箭头 + 价格联动 + 进度遮罩 ========= */
 (function(){
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
@@ -70,9 +68,11 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     const slides = card.querySelectorAll('.slide');
     if (!vp || !slides.length) return;
 
-    // 进度条：页面已有 .progress（灰色底条），无需改动
+    // 进度条元素（灰底 + 白色遮罩）
+    const progress = card.querySelector('.progress');
+    const fill = progress ? progress.querySelector('i') : null;
 
-    // 箭头：缺则补
+    // 箭头（缺则补）
     let left  = card.querySelector('.nav-arrow.left');
     let right = card.querySelector('.nav-arrow.right');
     if (!left)  { left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
@@ -92,14 +92,17 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
       left.classList.toggle('is-disabled', i<=0);
       right.classList.toggle('is-disabled', i>=slides.length-1);
 
-      // 价格联动：从当前 slide 的 data-price 读取
+      // 价格联动
       if (priceEl) {
         const slide = slides[i];
         const p = slide && slide.dataset && slide.dataset.price;
         if (p) priceEl.textContent = `$${p}`;
       }
 
-      // 不更新 .progress i 的宽度（蓝色条已在 CSS 隐藏）
+      // 进度遮罩（白色）宽度更新：((当前序号+1)/总数) * 100%
+      if (fill) {
+        fill.style.width = `${((i+1)/slides.length)*100}%`;
+      }
     }
 
     // 点击 & 键盘
