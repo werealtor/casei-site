@@ -41,7 +41,7 @@ if (uForm) {
     e.preventDefault();
     const f = fileInput.files[0];
     if (!f) { err.textContent = 'Please choose an image.'; return; }
-    if (!/^image\/(png|jpe?g)$/i.test(f.type)) { err.textContent = 'Only PNG/JPEG supported.'; return; }
+    if (!/^image\\/(png|jpe?g)$/i.test(f.type)) { err.textContent = 'Only PNG/JPEG supported.'; return; }
     if (f.size > MAX_SIZE) { err.textContent = 'File too large (max 10MB).'; return; }
 
     const reader = new FileReader();
@@ -54,30 +54,25 @@ if (uForm) {
   });
 }
 
-/* ========= 小工具 ========= */
-function debounce(fn, wait = 80){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
-const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
-
-/* ========= U3：箭头 + 价格联动 + 进度遮罩 ========= */
+/* ========= Slider 箭头 + 价格联动 ========= */
 (function(){
+  const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
 
   document.querySelectorAll('.card.product.u3').forEach(card=>{
     const vp = card.querySelector('.main-viewport');
     const slides = card.querySelectorAll('.slide');
+    const fill = card.querySelector('.progress i');
+    const priceEl = card.querySelector('.price');
     if (!vp || !slides.length) return;
 
-    const progress = card.querySelector('.progress');
-    const fill = progress ? progress.querySelector('i') : null;
-
-    // 箭头（缺则补）
+    // 箭头
     let left  = card.querySelector('.nav-arrow.left');
     let right = card.querySelector('.nav-arrow.right');
-    if (!left)  { left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
-    if (!right) { right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.innerHTML='&#8250;'; vp.appendChild(right); }
+    if (!left)  { left  = document.createElement('button'); left.className='nav-arrow left'; left.innerHTML='‹'; vp.appendChild(left); }
+    if (!right) { right = document.createElement('button'); right.className='nav-arrow right'; right.innerHTML='›'; vp.appendChild(right); }
 
-    const priceEl = card.querySelector('.price');
     const getIndex = () => Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
 
     function goTo(i){
@@ -87,38 +82,26 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     }
 
     function update(i=getIndex()){
-      // 箭头显隐
       left.classList.toggle('is-disabled', i<=0);
       right.classList.toggle('is-disabled', i>=slides.length-1);
 
       // 价格联动
       if (priceEl) {
-        const slide = slides[i];
-        const p = slide && slide.dataset && slide.dataset.price;
-        if (p) priceEl.textContent = `$${p}`;
+        const p = slides[i].dataset.price || priceEl.dataset.base || priceEl.textContent.replace('$','');
+        priceEl.textContent = `$${p}`;
       }
 
-      // 进度遮罩（白色）宽度更新
+      // 进度条（仅灰色底条，fill 透明）
       if (fill) {
         fill.style.width = `${((i+1)/slides.length)*100}%`;
       }
     }
 
-    // 点击 & 键盘
     left.addEventListener('click', ()=> goTo(getIndex()-1));
     right.addEventListener('click',()=> goTo(getIndex()+1));
-    vp.addEventListener('keydown', e=>{
-      if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
-      if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
-      if(e.key==='Home'){ e.preventDefault(); goTo(0); }
-      if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
-    });
+    vp.addEventListener('scroll', ()=> update(getIndex()), {passive:true});
+    window.addEventListener('resize', ()=> update(getIndex()));
 
-    // 滚动/尺寸
-    vp.addEventListener('scroll', debounce(()=>update(getIndex()),90), {passive:true});
-    window.addEventListener('resize', debounce(()=>update(getIndex()),120));
-
-    // 初始
     update(0);
   });
 })();
