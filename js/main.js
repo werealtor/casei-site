@@ -158,16 +158,41 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     api.syncAutoplay();
   });
 })();
-/* ========= 动态加载价格 ========= */
+/* ========= 滑块价格联动 ========= */
+function bindPriceSlider(card, prices) {
+  const vp = card.querySelector('.main-viewport');
+  const slides = [...card.querySelectorAll('.slide')];
+  const priceEl = card.querySelector('.price');
+
+  if (!vp || !slides.length || !priceEl) return;
+
+  function updatePrice() {
+    const i = Math.round(vp.scrollLeft / vp.clientWidth);
+    const slide = slides[i];
+    const pid = slide.getAttribute('data-price-id');
+    if (pid && prices[pid] !== undefined) {
+      priceEl.textContent = `$${prices[pid]}`;
+    }
+  }
+
+  // 初始
+  updatePrice();
+
+  // 滚动时更新（节流一下）
+  let st;
+  vp.addEventListener('scroll', () => {
+    clearTimeout(st);
+    st = setTimeout(updatePrice, 100);
+  }, {passive:true});
+}
+
+/* ========= 动态加载价格并绑定 ========= */
 (async function(){
   try {
     const res = await fetch('prices.json', {cache:'no-store'});
     const prices = await res.json();
-    document.querySelectorAll('.price[data-id]').forEach(el=>{
-      const id = el.getAttribute('data-id');
-      if (prices[id] !== undefined) {
-        el.textContent = `$${prices[id]}`;
-      }
+    document.querySelectorAll('.card.product').forEach(card=>{
+      bindPriceSlider(card, prices);
     });
   } catch(e){
     console.warn('价格加载失败', e);
