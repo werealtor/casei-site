@@ -1,6 +1,7 @@
 :root{
   --bg:#fff; --text:#111; --muted:#666; --line:#eaeaea; --tone:#f6f7fb;
   --brand:#0b66ff; --max:1100px; --shadow:0 2px 10px rgba(0,0,0,.06);
+  --radius-lg:16px; --radius-md:12px;
 }
 body.dark{
   --bg:#121212; --text:#ffffff; --muted:#bbbbbb; --line:#333333; --tone:#1e1e1e;
@@ -8,18 +9,21 @@ body.dark{
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  color:var(--text); background:var(--bg); line-height:1.6;
+  font-family:
+    -apple-system, BlinkMacSystemFont, system-ui, "SF Pro Text",
+    "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color:var(--text); background:var(--bg); line-height:1.7;
   transition:background-color .3s ease, color .3s ease;
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 a{color:inherit;text-decoration:none}
 .container{max-width:var(--max);margin:0 auto;padding:0 20px}
 
-/* Header */
+/* Header & Nav */
 header{background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
 .bar{display:flex;align-items:center;gap:16px;padding:14px 0}
-.brand{font-weight:600; font-size:18px; letter-spacing:.5px}
+.brand{font-weight:700; font-size:18px; letter-spacing:.4px}
 nav{display:flex;gap:18px}
 nav a{padding:8px 10px;border-radius:10px}
 nav a:hover{background:var(--tone)}
@@ -38,343 +42,137 @@ nav a:hover{background:var(--tone)}
   header.open .menu-icon::after{transform:translateY(-6px) rotate(-45deg)}
 }
 
+/* Section rhythm */
+section{ padding: clamp(28px, 5vw, 44px) 0; }
+.container{ padding-left: max(20px, 4vw); padding-right: max(20px, 4vw); }
+section + section{ position:relative; }
+section + section::before{
+  content:""; position:absolute; left:0; right:0; top:-1px; height:1px;
+  background: linear-gradient(90deg, transparent, var(--line), transparent); opacity:.65;
+}
+
 /* Hero */
 .hero{padding:44px 0 28px}
 .media-wrap{border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);background:var(--tone)}
 .media{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
-.hero h1{font-size:clamp(26px,4.8vw,40px);text-align:center;margin:16px 0 6px}
+.hero h1{font-size:clamp(24px,5vw,40px);text-align:center;margin:16px 0 6px;font-weight:800}
 .sub{color:var(--muted);text-align:center}
 .cta{display:flex;gap:12px;justify-content:center;margin-top:14px}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:12px;cursor:pointer;border:1.5px solid var(--brand);background:transparent;color:var(--brand);font-weight:600;transition:all .25s ease}
-.btn.primary{background:var(--brand);color:#fff}
-.btn:hover{background:var(--brand);color:#fff}
-
-/* Products */
-.products-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.card{background:var(--bg); border:1px solid var(--line); border-radius:18px;box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column;}
-.card .body{padding:14px 16px; text-align:center}
-.card h3{font-size:18px;font-weight:600;margin:6px 0}
-.card .sub{font-size:14px;color:var(--muted);margin-bottom:6px}
-.pillrow{display:flex;gap:6px;justify-content:center;margin:6px 0;flex-wrap:wrap}
-.pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--muted)}
-.price{font-weight:700;margin-top:4px}
-
-/* Slider */
-.main-viewport{position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;border-bottom:1px solid var(--line);border-radius:12px 12px 0 0;background:var(--bg)}
-.main-viewport::-webkit-scrollbar{display:none}
-.main-track{display:flex;width:100%;align-items:stretch}
-.slide{flex:0 0 100%;aspect-ratio:16/9;scroll-snap-align:center;background:var(--tone);position:relative}
-.slide .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;will-change:transform}
-
-/* arrows */
-.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.9);font-size:34px;font-weight:600;cursor:pointer;opacity:0;transition:opacity .25s;z-index:30;padding:6px}
-.nav-arrow.left{left:12px}.nav-arrow.right{right:12px}
-.card.product:hover .nav-arrow,.card.product .main-viewport:hover .nav-arrow{opacity:1}
-@media(hover:none){.nav-arrow{opacity:1}}
-.nav-arrow:active{transform:translateY(-50%) scale(.9)}
-.nav-arrow.is-disabled{display:none}
-
-/* progress 灰底 + 蓝色进度条 */
-.progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(0,0,0,.08);z-index:20}
-body.dark .progress{background:rgba(255,255,255,.08)}
-.progress i{display:block;height:100%;width:0;background:var(--brand);transition:width .25s ease}
-
-/* Footer */
-footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);text-align:center}
-.floating-btn{position:fixed;bottom:16px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:2147483647}
-
-/* —— 自定义上传区域布局 —— */
-#custom .container{max-width:680px}
-#uForm{display:block}
-
-.file-field{
-  display:grid;
-  grid-template-columns: 1fr auto;   /* 左侧自定义输入，右侧提交按钮 */
-  gap:10px;
-  align-items:center;
-}
-
-@media(max-width:480px){
-  .file-field{ grid-template-columns:1fr; }
-}
-
-/* 外观统一、可点整个条 */
-.input-like{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  min-height:44px;
-  padding:10px 14px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:var(--bg);
-  color:var(--text);
-  font:inherit;
-  cursor:pointer;
-}
-.input-like small{
-  color:var(--muted);
-  margin-left:8px;
-  font-size:12px;
-}
-
-/* —— 彻底隐藏原生文件输入框（避免 iOS/Safari 显示 “Choose File” 那条） —— */
-#file{
-  position:absolute !important;
-  left:-9999px !important;
-  width:1px !important;
-  height:1px !important;
-  opacity:0 !important;
-  pointer-events:none !important;
-}
-
-/* —— Contact 表单布局 —— */
-#contact .container{max-width:820px}
-.contact-form{
-  display:grid;
-  gap:10px;
-  grid-template-columns:1fr 1fr;
-}
-.contact-form input,
-.contact-form textarea{
-  width:100%;
-  min-height:44px;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:12px 14px;
-  background:var(--bg);
-  color:var(--text);
-  font:inherit;
-}
-.contact-form textarea{
-  min-height:110px;
-  grid-column:1/-1; /* 占满两列 */
-  resize:vertical;
-}
-.contact-actions{
-  grid-column:1/-1;
-  display:flex;
-  justify-content:flex-end;
-}
-@media(max-width:640px){
-  .contact-form{ grid-template-columns:1fr; }
-  .contact-actions .btn.primary{ width:100%; }
-}
-
-/* —— 标题与文本自适应（让比例更协调） —— */
-.hero h1{ font-size: clamp(24px, 5vw, 40px); }
-.title{   font-size: clamp(18px, 3.5vw, 24px); }
-.card h3{  font-size: clamp(16px, 2.8vw, 20px); }
-.card .sub, .about-text{ font-size: clamp(13px, 2.6vw, 16px); line-height:1.7; }
-.price{    font-size: clamp(15px, 3vw, 18px); }
-
-/* ====== Section 标题更有层次 ====== */
-.title{
-  font-weight:700;
-  letter-spacing:.2px;
-  margin:18px 0 14px;
-}
-
-/* ====== 上传区域美化：卡片化 + 对齐 ====== */
-#custom .container{max-width:720px}
-.file-field{
-  background:var(--bg);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px;
-  box-shadow:var(--shadow);
-  align-items:center;
-}
-.input-like{
-  gap:8px;
-  border-color:transparent;         /* 用父容器的边框即可 */
-  background:var(--tone);
-}
-.input-like span{font-weight:600}
-.input-like small{margin-left:auto}
-#uForm .btn.primary{
-  min-height:46px;
-  font-size:clamp(14px,2.6vw,16px);
-  border-radius:12px;
-}
-@media(max-width:520px){
-  #uForm .btn.primary{width:100%}
-}
-
-/* ====== About：更优行宽与间距 ====== */
-.about-text{
-  max-width:36em;         /* 控制行宽，提升可读性 */
-  margin-top:6px;
-  line-height:1.8;
-}
-
-/* ====== Contact 表单卡片化 + 焦点样式 ====== */
-#contact .container{max-width:820px}
-.contact-form{
-  background:var(--bg);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:14px;
-  box-shadow:var(--shadow);
-}
-.contact-form input,
-.contact-form textarea{
-  background:var(--tone);
-  border-color:transparent;
-  transition:border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
-}
-.contact-form input:focus,
-.contact-form textarea:focus{
-  outline:0;
-  border-color:var(--brand);
-  box-shadow:0 0 0 3px color-mix(in oklab, var(--brand) 30%, transparent);
-  background:#fff;
-}
-.contact-actions .btn.primary{
-  min-height:46px;
-  border-radius:12px;
-  font-size:clamp(14px,2.6vw,16px);
-}
-@media(max-width:640px){
-  .contact-actions .btn.primary{width:100%}
-}
-
-/* ====== 细节：整体排版更协调 ====== */
-.hero h1{ font-size:clamp(24px,5vw,40px) }
-.title{   font-size:clamp(18px,3.5vw,24px) }
-.card h3{  font-size:clamp(16px,2.8vw,20px) }
-.card .sub,
-.about-text{ font-size:clamp(13px,2.6vw,16px) }
-.price{    font-size:clamp(15px,3vw,18px) }
-
-/* ====== 上传输入彻底隐藏（防止 iOS 再冒出来） ====== */
-#file{
-  position:absolute !important;
-  left:-9999px !important;
-  width:1px !important;
-  height:1px !important;
-  opacity:0 !important;
-  pointer-events:none !important;
-}
-/* =============== 视觉层级与留白 =============== */
-section{ padding: clamp(28px, 5vw, 44px) 0; }
-.container{ padding-left: max(20px, 4vw); padding-right: max(20px, 4vw); }
-
-/* 细分割：让大段内容更通透（不抢眼） */
-section + section{
-  position: relative;
-}
-section + section::before{
-  content:"";
-  position:absolute; left:0; right:0; top:-1px; height:1px;
-  background: linear-gradient(90deg, transparent, var(--line), transparent);
-  opacity:.65;
-}
-
-/* =============== 标题体系 =============== */
-.title{
-  font-weight:800;
-  letter-spacing:.3px;
-  margin: 8px 0 18px;
-  line-height:1.25;
-}
-#about .title, #contact .title, #custom .title{
-  text-align:left;
-}
-
-/* =============== 卡片质感（统一圆角/阴影） =============== */
-:root{ --radius-lg: 16px; --radius-md: 12px; }
-.card, .file-field, .contact-form{
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  border:1px solid color-mix(in oklab, var(--line) 80%, transparent);
-  backdrop-filter: saturate(1.1);
-}
-.card .body{ padding:16px 18px }
-
-/* 卡片微交互 */
-.card{
-  transition: transform .18s ease, box-shadow .18s ease;
-  will-change: transform;
-}
-@media(hover:hover){
-  .card:hover{ transform: translateY(-2px); box-shadow:0 6px 22px rgba(0,0,0,.08) }
-}
-
-/* =============== 上传区（更一致的排版） =============== */
-#custom .container{ max-width:760px }
-.file-field{
-  padding: 12px;
-  background: color-mix(in oklab, var(--tone) 92%, transparent);
-}
-.input-like{
-  background: color-mix(in oklab, var(--tone) 96%, white 4%);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-}
-.input-like span{ font-weight:600 }
-.input-like small{ opacity:.8 }
-
-/* =============== 按钮手感：渐变 + 阴影 =============== */
 .btn{
-  border-radius: var(--radius-md);
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:10px 18px;border-radius:var(--radius-md);cursor:pointer;
+  border:1.5px solid var(--brand);background:transparent;color:var(--brand);font-weight:600;
   transition: transform .12s ease, box-shadow .12s ease, background .2s ease, color .2s ease;
 }
 .btn.primary{
   border:none;
   background: linear-gradient(180deg, color-mix(in oklab, var(--brand) 90%, white 10%), var(--brand));
-  box-shadow: 0 6px 16px color-mix(in oklab, var(--brand) 30%, transparent);
+  color:#fff;
+  box-shadow:0 6px 16px color-mix(in oklab, var(--brand) 30%, transparent);
 }
+.btn:hover{background:var(--brand);color:#fff}
 .btn.primary:hover{ transform: translateY(-1px); }
 .btn.primary:active{ transform: translateY(0); box-shadow:0 4px 10px color-mix(in oklab, var(--brand) 25%, transparent) }
 
-/* 次按钮更柔和（如 hero 的第二个） */
-.btn:not(.primary){
-  background: color-mix(in oklab, var(--brand) 8%, transparent);
-}
+/* Titles */
+.title{font-size:clamp(18px,3.5vw,24px); font-weight:800; letter-spacing:.3px; margin:8px 0 18px; line-height:1.25; text-align:left}
 
-/* =============== 表单可用性：焦点/禁用 =============== */
-.contact-form{
-  padding: 16px;
-  background: color-mix(in oklab, var(--tone) 96%, transparent);
+/* Grid & Card */
+.products-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{
+  background:var(--bg); border:1px solid color-mix(in oklab, var(--line) 80%, transparent);
+  border-radius:var(--radius-lg); box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column;
+  transition: transform .18s ease, box-shadow .18s ease; will-change: transform;
 }
-.contact-form input,
-.contact-form textarea{
-  background: color-mix(in oklab, var(--tone) 94%, white 6%);
-  border-radius: var(--radius-md);
-}
-.contact-form input:focus,
-.contact-form textarea:focus{
-  outline:0;
-  border-color: var(--brand);
-  box-shadow:0 0 0 3px color-mix(in oklab, var(--brand) 28%, transparent);
-  background:#fff;
-}
+@media(hover:hover){ .card:hover{ transform: translateY(-2px); box-shadow:0 6px 22px rgba(0,0,0,.08) } }
+.card .body{padding:16px 18px; text-align:center}
+.card h3{font-size:clamp(16px,2.8vw,20px);font-weight:700;margin:6px 0}
+.card .sub{font-size:clamp(13px,2.6vw,16px);color:var(--muted);margin-bottom:6px}
+.pillrow{display:flex;gap:6px;justify-content:center;margin:6px 0;flex-wrap:wrap}
+.pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--muted);white-space:nowrap}
+.price{font-size:clamp(15px,3vw,18px);font-weight:700;margin-top:4px}
 
-/* =============== 文字与行宽微调 =============== */
-.about-text{
-  max-width: 38rem;
-  margin-top: 4px;
-  line-height: 1.85;
-  letter-spacing: .1px;
+/* ===== U3 Slider ===== */
+.main-viewport{
+  position:relative; overflow-x:auto; -webkit-overflow-scrolling:touch; scroll-snap-type:x mandatory;
+  border-bottom:1px solid var(--line); border-radius:12px 12px 0 0; background:var(--bg)
 }
+.main-viewport::-webkit-scrollbar{display:none}
+.main-track{display:flex;width:100%;align-items:stretch}
+.slide{position:relative;flex:0 0 100%;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--tone);scroll-snap-align:center;scroll-snap-stop:always}
+.slide .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;-webkit-user-drag:none;user-select:none;pointer-events:none;will-change:transform}
 
-/* =============== 进度条细化（更细腻） =============== */
-.progress{ height: 3px; background: color-mix(in oklab, var(--text) 12%, transparent); }
-body.dark .progress{ background: color-mix(in oklab, #fff 14%, transparent); }
+/* arrows */
+.nav-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;
+  color:rgba(255,255,255,.92);font-size:34px;font-weight:700;cursor:pointer;opacity:0;
+  transition:opacity .25s, color .15s, transform .12s; user-select:none; z-index:30; padding:6px
+}
+.nav-arrow.left{left:12px}.nav-arrow.right{right:12px}
+.card.product:hover .nav-arrow,.card.product .main-viewport:hover .nav-arrow{opacity:1}
+@media(hover:none){.nav-arrow{opacity:1}}
+.nav-arrow:active{transform:translateY(-50%) scale(.92)}
+.nav-arrow.is-disabled{display:none}
+
+/* progress：灰底 + 蓝色进度条 */
+.progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:color-mix(in oklab, var(--text) 12%, transparent);z-index:20;overflow:hidden}
+body.dark .progress{background:color-mix(in oklab, #fff 14%, transparent)}
 .progress i{
+  display:block;height:100%;width:0;
   background: linear-gradient(90deg, var(--brand), color-mix(in oklab, var(--brand) 70%, #fff));
-  border-radius: 0 2px 2px 0;
-  transition: width .28s cubic-bezier(.22,.61,.36,1);
+  border-radius:0 2px 2px 0;
+  transition:width .28s cubic-bezier(.22,.61,.36,1)
 }
 
-/* =============== 暗色优化 =============== */
+/* Customize */
+#custom .container{max-width:760px}
+#uForm{display:block}
+.file-field{
+  display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center;
+  background: color-mix(in oklab, var(--tone) 92%, transparent);
+  border:1px solid var(--line); border-radius:var(--radius-lg); padding:12px; box-shadow:var(--shadow);
+}
+@media(max-width:520px){ .file-field{ grid-template-columns:1fr } }
+.input-like{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  min-height:44px; padding:12px 14px; border:1px solid transparent;
+  border-radius:var(--radius-md); background:color-mix(in oklab, var(--tone) 96%, white 4%);
+  color:var(--text); font:inherit; cursor:pointer
+}
+.input-like small{color:var(--muted);margin-left:8px;font-size:12px;opacity:.85}
+#file{ position:absolute !important; left:-9999px !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important; }
+#uForm .btn.primary{min-height:46px; font-size:clamp(14px,2.6vw,16px); border-radius:var(--radius-md)}
+
+/* About */
+.about-text{max-width:38rem;margin:6px auto 0;line-height:1.85;letter-spacing:.1px;text-align:left;color:var(--muted)}
+
+/* Contact */
+#contact .container{max-width:820px}
+.contact-form{
+  display:grid; gap:10px; grid-template-columns:1fr 1fr;
+  background: color-mix(in oklab, var(--tone) 96%, transparent);
+  border:1px solid var(--line); border-radius:var(--radius-lg); padding:16px; box-shadow:var(--shadow)
+}
+.contact-form input,.contact-form textarea{
+  width:100%;min-height:44px;border:1px solid transparent;border-radius:var(--radius-md);
+  padding:12px 14px;background: color-mix(in oklab, var(--tone) 94%, white 6%); color:var(--text); font:inherit;
+  transition:border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+.contact-form textarea{min-height:110px;grid-column:1/-1;resize:vertical}
+.contact-form input:focus,.contact-form textarea:focus{
+  outline:0;border-color:var(--brand);
+  box-shadow:0 0 0 3px color-mix(in oklab, var(--brand) 28%, transparent); background:#fff;
+}
+.contact-actions{grid-column:1/-1;display:flex;justify-content:flex-end}
+.contact-actions .btn.primary{min-height:46px;border-radius:var(--radius-md);font-size:clamp(14px,2.6vw,16px)}
+@media(max-width:640px){ .contact-form{grid-template-columns:1fr} .contact-actions .btn.primary{width:100%} }
+
+/* Footer & Theme btn */
+footer{border-top:1px solid var(--line);padding:18px 0 calc(20px + env(safe-area-inset-bottom,0));color:var(--muted);text-align:center}
+.floating-btn{position:fixed;bottom:16px;right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:2147483647}
+
+/* Dark mode tweaks */
 body.dark .input-like,
 body.dark .contact-form input,
-body.dark .contact-form textarea{
-  background: color-mix(in oklab, var(--tone) 96%, black 4%);
-}
-body.dark .file-field,
-body.dark .contact-form{
-  background: color-mix(in oklab, var(--tone) 94%, black 6%);
-}
+body.dark .contact-form textarea{ background: color-mix(in oklab, var(--tone) 96%, black 4%) }
+body.dark .file-field, body.dark .contact-form{ background: color-mix(in oklab, var(--tone) 94%, black 6%) }
