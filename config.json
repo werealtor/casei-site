@@ -1,1 +1,58 @@
+{
+  "settings": {
+    "currency": "USD"
+  },
+  "products": [
+    {
+      "id": "classic",
+      "name": "Classic",
+      "images": [
+        "assets/images/classic/1.jpg",
+        "assets/images/classic/2.jpg",
+        "assets/images/classic/3.jpg",
+        "assets/images/classic/4.jpg",
+        "assets/images/classic/5.jpg",
+        "assets/images/classic/6.jpg",
+        "assets/images/classic/7.jpg"
+      ],
+      "price": [25, 26, 27, 28, 29, 30, 31]
+    },
+    {
+      "id": "fashion",
+      "name": "Fashion",
+      "images": [
+        "assets/images/fashion/1.jpg",
+        "assets/images/fashion/2.jpg",
+        "assets/images/fashion/3.jpg",
+        "assets/images/fashion/4.jpg",
+        "assets/images/fashion/5.jpg",
+        "assets/images/fashion/6.jpg",
+        "assets/images/fashion/7.jpg"
+      ],
+      "price": [25, 26, 27, 28, 29, 30, 31]
+    },
+    {
+      "id": "business",
+      "name": "Business",
+      "images": [
+        "assets/images/business/1.jpg",
+        "assets/images/business/2.jpg",
+        "assets/images/business/3.jpg",
+        "assets/images/business/4.jpg",
+        "assets/images/business/5.jpg",
+        "assets/images/business/6.jpg",
+        "assets/images/business/7.jpg"
+      ],
+      "price": {
+        "1": 29,
+        "2": 31,
+        "3": 33,
+        "4": 34,
+        "5": 36,
+        "6": 38,
+        "7": 40
+      }
+    }
+  ]
+}
 
