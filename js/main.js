@@ -96,32 +96,52 @@ function priceFromMap(map,id,idx0){
   return null;
 }
 
-/* ========= 初始化一个卡片的滑块 ========= */
 function initCardSlider(card, prices, currency='USD'){
   const vp = card.querySelector('.main-viewport');
   const track = card.querySelector('.main-track');
   if(!vp || !track) return;
 
-  // 确保结构齐全（progress & arrows）
+  // 确保结构齐全：progress & arrows 永远存在且在 vp 里
   let progress = card.querySelector('.progress');
-  if(!progress){ progress = document.createElement('div'); progress.className='progress'; progress.innerHTML='<i></i>'; vp.appendChild(progress); }
-  let fill = progress.querySelector('i');
+  if(!progress){
+    progress = document.createElement('div');
+    progress.className = 'progress';
+    progress.innerHTML = '<i></i>';
+    vp.appendChild(progress);
+  }
+  const fill = progress.querySelector('i');
 
   let left  = card.querySelector('.nav-arrow.left');
   let right = card.querySelector('.nav-arrow.right');
-  if(!left){ left=document.createElement('button'); left.className='nav-arrow left'; left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
-  if(!right){ right=document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.innerHTML='&#8250;'; vp.appendChild(right); }
+  if(!left){
+    left = document.createElement('button');
+    left.className = 'nav-arrow left';
+    left.setAttribute('aria-label','Previous');
+    left.innerHTML = '&#8249;';
+    vp.appendChild(left);
+  }
+  if(!right){
+    right = document.createElement('button');
+    right.className = 'nav-arrow right';
+    right.setAttribute('aria-label','Next');
+    right.innerHTML = '&#8250;';
+    vp.appendChild(right);
+  }
 
-  const slides = track.querySelectorAll('.slide');
+  // 关键：滚动区域自身形成堆叠上下文，箭头/进度条 z-index 更高
+  vp.style.position = vp.style.position || 'relative';
+
+  const slides  = track.querySelectorAll('.slide');
   const priceEl = card.querySelector('.price');
-  const pid = card.dataset.product;
-
+  const pid     = card.dataset.product;
   const getIndex = ()=> Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
+  const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
 
   function update(i=getIndex()){
     left.classList.toggle('is-disabled', i<=0);
     right.classList.toggle('is-disabled', i>=slides.length-1);
     fill.style.width = `${((i+1)/slides.length)*100}%`;
+
     if(priceEl){
       const p = priceFromMap(prices, pid, i);
       priceEl.textContent = p==null ? '—' : fmtMoney(p, currency);
@@ -142,9 +162,14 @@ function initCardSlider(card, prices, currency='USD'){
     if(e.key==='Home'){ e.preventDefault(); goTo(0); }
     if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
   });
-  vp.addEventListener('scroll', debounce(()=>update(getIndex()),80), {passive:true});
-  window.addEventListener('resize', debounce(()=>update(getIndex()),120));
+  vp.addEventListener('scroll', (()=>{
+    let t; return ()=>{ clearTimeout(t); t=setTimeout(()=>update(getIndex()),80); };
+  })(), {passive:true});
+  window.addEventListener('resize', (()=>{
+    let t; return ()=>{ clearTimeout(t); t=setTimeout(()=>update(getIndex()),120); };
+  })());
 
+  // 初始状态
   update(0);
 }
 
