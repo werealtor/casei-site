@@ -158,3 +158,18 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     api.syncAutoplay();
   });
 })();
+/* ========= 动态加载价格 ========= */
+(async function(){
+  try {
+    const res = await fetch('prices.json', {cache:'no-store'});
+    const prices = await res.json();
+    document.querySelectorAll('.price[data-id]').forEach(el=>{
+      const id = el.getAttribute('data-id');
+      if (prices[id] !== undefined) {
+        el.textContent = `$${prices[id]}`;
+      }
+    });
+  } catch(e){
+    console.warn('价格加载失败', e);
+  }
+})();
