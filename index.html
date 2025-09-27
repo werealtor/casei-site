@@ -6,14 +6,22 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
-  <link rel="stylesheet" href="css/style.css?v=10" />
+
+  <!-- 预加载海报图（可选但推荐） -->
+  <link rel="preload" as="image" href="assets/images/hero-poster.jpg" />
+
+  <!-- 样式（带版本号避免缓存） -->
+  <link rel="stylesheet" href="css/style.css?v=12" />
 </head>
 <body>
   <!-- Header -->
   <header id="site-header">
     <div class="container bar">
       <div class="brand">Case&amp;i</div>
-      <nav id="primary-nav">
+      <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
+        <span class="menu-icon" aria-hidden="true"></span>
+      </button>
+      <nav id="primary-nav" aria-label="Primary navigation">
         <a href="#products">Products</a>
         <a href="#custom">Customize</a>
         <a href="#about">About</a>
@@ -26,6 +34,16 @@
     <!-- Hero -->
     <section class="hero" id="home">
       <div class="container">
+        <figure class="media-wrap">
+          <video class="media"
+                 autoplay muted loop playsinline preload="metadata"
+                 poster="assets/images/hero-poster.jpg"
+                 aria-label="Case&i hero video">
+            <source src="assets/videos/hero.webm" type="video/webm" />
+            <source src="assets/videos/hero.mp4"  type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </figure>
         <h1>Minimal · Premium · Personal</h1>
         <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
         <div class="cta">
@@ -46,15 +64,16 @@
             <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
               <div class="main-track">
                 <div class="slide" data-price="19">
-                  <img class="cover" src="assets/images/classic/1.jpg" alt="Classic — front" />
+                  <img class="cover" src="assets/images/classic/1.jpg" alt="Classic — front" draggable="false" />
                 </div>
                 <div class="slide" data-price="21">
-                  <img class="cover" src="assets/images/classic/2.jpg" alt="Classic — back" />
+                  <img class="cover" src="assets/images/classic/2.jpg" alt="Classic — back" draggable="false" />
                 </div>
                 <div class="slide" data-price="23">
-                  <img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" />
+                  <img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" />
                 </div>
               </div>
+              <!-- 只保留灰色底条，蓝色条在 CSS 中已隐藏 -->
               <div class="progress"><i></i></div>
             </div>
             <div class="body">
@@ -70,13 +89,13 @@
             <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
               <div class="main-track">
                 <div class="slide" data-price="25">
-                  <img class="cover" src="assets/images/fashion/1.jpg" alt="Fashion — front" />
+                  <img class="cover" src="assets/images/fashion/1.jpg" alt="Fashion — front" draggable="false" />
                 </div>
                 <div class="slide" data-price="27">
-                  <img class="cover" src="assets/images/fashion/2.jpg" alt="Fashion — back" />
+                  <img class="cover" src="assets/images/fashion/2.jpg" alt="Fashion — back" draggable="false" />
                 </div>
                 <div class="slide" data-price="29">
-                  <img class="cover" src="assets/images/fashion/3.jpg" alt="Fashion — detail" />
+                  <img class="cover" src="assets/images/fashion/3.jpg" alt="Fashion — detail" draggable="false" />
                 </div>
               </div>
               <div class="progress"><i></i></div>
@@ -94,13 +113,13 @@
             <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
               <div class="main-track">
                 <div class="slide" data-price="29">
-                  <img class="cover" src="assets/images/business/1.jpg" alt="Business — front" />
+                  <img class="cover" src="assets/images/business/1.jpg" alt="Business — front" draggable="false" />
                 </div>
                 <div class="slide" data-price="32">
-                  <img class="cover" src="assets/images/business/2.jpg" alt="Business — back" />
+                  <img class="cover" src="assets/images/business/2.jpg" alt="Business — back" draggable="false" />
                 </div>
                 <div class="slide" data-price="35">
-                  <img class="cover" src="assets/images/business/3.jpg" alt="Business — detail" />
+                  <img class="cover" src="assets/images/business/3.jpg" alt="Business — detail" draggable="false" />
                 </div>
               </div>
               <div class="progress"><i></i></div>
@@ -135,14 +154,71 @@
         </form>
       </div>
     </section>
+
+    <!-- About -->
+    <section id="about">
+      <div class="container">
+        <h2 class="title">About Us</h2>
+        <p class="about-text">
+          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
+          Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="container">
+        <h2 class="title">Contact Us</h2>
+        <form class="contact-form" onsubmit="event.preventDefault();alert('Submitted (demo)');">
+          <input type="text" name="name" placeholder="Name" required />
+          <input type="email" name="email" placeholder="Email" required />
+          <textarea name="message" rows="4" placeholder="Message"></textarea>
+          <div class="contact-actions">
+            <button type="submit" class="btn primary">Send</button>
+          </div>
+        </form>
+      </div>
+    </section>
   </main>
 
   <footer>
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
+  <!-- 悬浮主题切换按钮 -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
-  <script src="js/main.js?v=10" defer></script>
+  <!-- 主脚本（带版本号避免缓存） -->
+  <script src="js/main.js?v=12" defer></script>
+
+  <!-- Service Worker 注册（含热更新） -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('/sw.js');
+          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener('statechange', () => {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                nw.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          });
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+          });
+        } catch (e) {
+          console.warn('SW register failed:', e);
+        }
+      });
+    }
+  </script>
 </body>
 </html>
