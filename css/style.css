@@ -1,85 +1,42 @@
-:root {
-  --bg:#fff;
-  --text:#111;
-  --muted:#666;
-  --line:#eaeaea;
-  --tone:#f6f7fb;
-  --brand:#0b66ff;
-  --max:1100px;
-  --shadow:0 2px 10px rgba(0,0,0,.06);
+:root{
+  --bg:#fff; --text:#111; --muted:#666; --line:#eaeaea; --tone:#f6f7fb;
+  --brand:#0b66ff; --max:1100px; --shadow:0 2px 10px rgba(0,0,0,.06);
 }
-body.dark {
-  --bg:#121212;
-  --text:#fff;
-  --muted:#bbb;
-  --line:#333;
-  --tone:#1e1e1e;
-  --brand:#4c9aff;
-  --shadow:0 2px 10px rgba(0,0,0,.3);
-}
-
 *{box-sizing:border-box;margin:0;padding:0}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  background:var(--bg);color:var(--text);line-height:1.6;
+  background:var(--bg); color:var(--text); line-height:1.6;
 }
-
-/* --- 通用按钮 --- */
-.btn{
-  display:inline-block;
-  padding:10px 18px;
-  border-radius:6px;
-  border:1px solid var(--brand);
-  background:#fff;
-  color:var(--brand);
-  font-weight:500;
-  cursor:pointer;
-  text-decoration:none;
-  transition:.25s;
-}
+.container{max-width:var(--max);margin:0 auto;padding:0 20px}
+.header{position:sticky;top:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:12px;border:1.5px solid var(--brand);font-weight:600;color:var(--brand)}
 .btn.primary{background:var(--brand);color:#fff}
-.btn:hover{opacity:.85}
 
-/* --- 产品卡片 --- */
-.card.product.u3{background:var(--bg);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
-.card.product.u3 .main-viewport{position:relative;overflow:hidden}
-.card.product.u3 .main-track{display:flex;scroll-snap-type:x mandatory;overflow-x:auto;scroll-behavior:smooth}
-.card.product.u3 .slide{flex:0 0 100%;scroll-snap-align:center;position:relative}
+/* cards */
+.products-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--bg);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.card .body{padding:14px 16px;text-align:center}
+.pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--muted);margin:0 4px}
+.price{font-weight:700;color:var(--brand)}
+
+/* U3 slider core */
+.card.product.u3 .main-viewport{position:relative;overflow-x:auto;scroll-snap-type:x mandatory;border-bottom:1px solid var(--line);border-radius:12px 12px 0 0;background:var(--bg)}
+.card.product.u3 .main-track{display:flex}
+.card.product.u3 .slide{position:relative;flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;aspect-ratio:16/9;background:var(--tone)}
 .card.product.u3 .slide .cover{
-  width:100%;height:260px;object-fit:cover;
-  position:absolute;inset:0;z-index:0;pointer-events:none;
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  z-index:0; pointer-events:none; /* 关键：不挡住箭头点击 */
 }
 
-/* --- 进度条 & 箭头 --- */
+/* arrows + progress */
 .card.product.u3 .nav-arrow,
-.card.product.u3 .progress{
-  position:absolute;z-index:9999;pointer-events:auto;
-}
+.card.product.u3 .progress{position:absolute;z-index:9999;pointer-events:auto}
 .card.product.u3 .nav-arrow{
-  top:50%;transform:translateY(-50%);
-  width:40px;height:40px;
-  border-radius:50%;
-  background:rgba(0,0,0,.55);
-  color:#fff;border:none;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:700;cursor:pointer;
+  top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;
+  background:rgba(0,0,0,.55);color:#fff;border:none;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer
 }
 .card.product.u3 .nav-arrow.left{left:12px}
 .card.product.u3 .nav-arrow.right{right:12px}
-.card.product.u3 .progress{
-  left:10px;right:10px;bottom:8px;height:3px;
-  background:rgba(0,0,0,.15);
-}
-.card.product.u3 .progress i{
-  display:block;height:100%;width:0;
-  background:var(--brand);
-  transition:width .2s ease;
-}
 
-/* --- 产品正文 --- */
-.card.product.u3 .body{padding:16px}
-.card.product.u3 h3{margin-bottom:4px;font-size:1.1rem}
-.card.product.u3 .sub{color:var(--muted);margin-bottom:8px}
-.card.product.u3 .pillrow{margin-bottom:8px}
-.card.product.u3 .pill{display:inline-block;padding:3px 8px;border-radius:4px;background:var(--tone);margin-right:6px;font-size:.8rem}
-.card.product.u3 .price{font-size:1rem;font-weight:600;color:var(--brand)}
+.card.product.u3 .progress{left:10px;right:10px;bottom:8px;height:3px;background:rgba(0,0,0,.15)}
+.card.product.u3 .progress i{display:block;height:100%;width:0;background:var(--brand);transition:width .2s ease}
