@@ -1,23 +1,4 @@
-/* ===========================
- * Case&i main.js — 最终联动版
- * 优先级：prices.json > config.json(price 数字/数组/对象) > “暂无报价”
- * =========================== */
-
-/* 主题切换 */
-const themeBtn = document.getElementById('theme-toggle');
-if (themeBtn) {
-  const theme = localStorage.getItem('theme') ||
-    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  document.body.classList.toggle('dark', theme === 'dark');
-  themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
-  themeBtn.addEventListener('click', () => {
-    const isDark = document.body.classList.toggle('dark');
-    themeBtn.textContent = isDark ? '☀️' : '🌙';
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  });
-}
-
-/* 移动端菜单 */
+/* ========= 移动端菜单 ========= */
 const menuToggle = document.querySelector('.menu-toggle');
 const headerEl = document.querySelector('header');
 if (menuToggle && headerEl) {
@@ -27,192 +8,93 @@ if (menuToggle && headerEl) {
   });
 }
 
-/* 上传预览 */
-const uForm = document.getElementById('uForm');
-if (uForm) {
-  const fileInput = document.getElementById('file');
-  const nameEl = document.getElementById('fileName');
-  const err = document.getElementById('uErr');
-  const preview = document.getElementById('preview');
-  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-  fileInput.addEventListener('change', () => {
-    if (!fileInput.files.length) { nameEl.textContent = 'PNG/JPEG · < 10MB'; return; }
-    const f = fileInput.files[0];
-    nameEl.textContent = `${f.name} · ${(f.size/1024/1024).toFixed(1)}MB`;
-  });
-  uForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const f = fileInput.files[0];
-    if (!f) { err.textContent = 'Please choose an image.'; return; }
-    if (!/^image\/(png|jpe?g)$/i.test(f.type)) { err.textContent = 'Only PNG/JPEG supported.'; return; }
-    if (f.size > MAX_SIZE) { err.textContent = 'File too large (max 10MB).'; return; }
-    const reader = new FileReader();
-    reader.onload = (ev) => { preview.src = ev.target.result; preview.style.display = 'block'; err.textContent = ''; };
-    reader.readAsDataURL(f);
-  });
-}
-
-/* ===== 工具 ===== */
+/* ========= 工具 ========= */
 const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
 const debounce=(fn,wait=90)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),wait)}}
-const fmtMoney=(num,currency='USD',locale=(navigator.language||'en-US'))=>{
-  try{ return new Intl.NumberFormat(locale,{style:'currency',currency,maximumFractionDigits:0}).format(num); }
-  catch{ return `$${num}`; }
-};
-const fmtOrNA=(v,c,loc)=> (v==null||Number.isNaN(v)) ? '暂无报价' : fmtMoney(v,c,loc);
 
+/* ========= 价格加载（可选） ========= */
 async function fetchJSON(url){
   try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); }
   catch{ return null; }
 }
-
-/* ===== 价格来源：prices.json > config.json(price 数字/数组/对象) ===== */
-function priceFromPricesJSON(map,id,idx0){
-  if(!map||!(id in map)) return null;
-  const v = map[id];
-  if(typeof v==='number') return v;                   // 统一价
-  if(Array.isArray(v)) return v[idx0] ?? null;        // 数组：按索引
-  if(v && typeof v==='object'){                       // 对象：{"1":xx,"2":xx}
-    const k1=String(idx0+1), k0=String(idx0);
-    return v[k1] ?? v[k0] ?? null;
+function getPriceFromMaps(pricesMap, productId, index0){
+  if(!pricesMap || !(productId in pricesMap)) return null;
+  const v = pricesMap[productId];
+  if (typeof v === 'number') return v;
+  if (Array.isArray(v)) return v[index0] ?? v[v.length-1];
+  if (v && typeof v === 'object') {
+    const k1 = String(index0+1);
+    if (v[k1]!=null) return v[k1];
+    // fallback 最小键
+    const keys = Object.keys(v).sort((a,b)=>+a-+b);
+    return v[keys[0]];
   }
   return null;
 }
-function priceFromConfig(prod,idx0){
-  const p=prod?.price;
-  if(typeof p==='number') return p;                   // 单价
-  if(Array.isArray(p)) return p[idx0] ?? null;        // 数组：按索引
-  if(p && typeof p==='object'){                       // 对象：{"1":xx,"2":xx}
-    const k1=String(idx0+1), k0=String(idx0);
-    return p[k1] ?? p[k0] ?? null;
+function fmtMoney(num,currency='USD',locale=(navigator.language||'en-US')){
+  try{ return new Intl.NumberFormat(locale,{style:'currency',currency,maximumFractionDigits:0}).format(num); }
+  catch{ return `$${num}`; }
+}
+
+/* ========= 初始化每个卡片的滑块 ========= */
+function initCardSlider(card, prices){
+  const vp = card.querySelector('.main-viewport');
+  const track = card.querySelector('.main-track');
+  if (!vp || !track) return;
+
+  // 只在 viewport 层插入一次箭头&进度条（避免被图片遮挡）
+  let left = card.querySelector('.nav-arrow.left');
+  let right = card.querySelector('.nav-arrow.right');
+  let progress = card.querySelector('.progress');
+  if (!progress){ progress = document.createElement('div'); progress.className='progress'; progress.innerHTML='<i></i>'; vp.appendChild(progress); }
+  const fill = progress.querySelector('i');
+
+  if (!left){ left=document.createElement('button'); left.className='nav-arrow left'; left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
+  if (!right){ right=document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.innerHTML='&#8250;'; vp.appendChild(right); }
+
+  const slides = track.querySelectorAll('.slide');
+  const priceEl = card.querySelector('.price');
+  const pid = card.dataset.product;
+
+  const getIndex = ()=> Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
+
+  function update(i=getIndex()){
+    left.classList.toggle('is-disabled', i<=0);
+    right.classList.toggle('is-disabled', i>=slides.length-1);
+
+    // 进度条
+    fill.style.width = `${((i+1)/slides.length)*100}%`;
+
+    // 价格联动（有 prices.json 就显示）
+    if (prices && priceEl) {
+      const p = getPriceFromMaps(prices, pid, i);
+      priceEl.textContent = (p==null) ? '—' : fmtMoney(p);
+      priceEl.classList.toggle('is-na', p==null);
+    }
   }
-  return null;
-}
-function getPrice({pricesMap,prod,idx0}){
-  const v1 = priceFromPricesJSON(pricesMap, prod.id, idx0);
-  if(v1!=null) return v1;
-  const v2 = priceFromConfig(prod, idx0);
-  if(v2!=null) return v2;
-  return null;
-}
+  function goTo(i){
+    i = clamp(i, 0, slides.length-1);
+    vp.scrollTo({ left: i * vp.clientWidth, behavior: 'smooth' });
+    update(i);
+  }
 
-/* ===== 若 main-track 为空，则按 config.json 注入 slides；并为每张 slide 写入 data-price ===== */
-async function ensureSlidesAndSeedPrice(){
-  const cfg = await fetchJSON('config.json');       // 可选
-  const prices = await fetchJSON('prices.json');    // 建议提供
-  const currency = cfg?.settings?.currency || 'USD';
-  const locale = (navigator.language || 'en-US');
-
-  // 映射 config 产品
-  const cfgMap = Object.fromEntries((cfg?.products||[]).map(p=>[p.id,p]));
-
-  document.querySelectorAll('.card.product').forEach(card=>{
-    const pid = card.dataset.product;
-    const prod = cfgMap[pid] || { id: pid };
-    const vp = card.querySelector('.main-viewport');
-    let track = card.querySelector('.main-track');
-    if(!vp) return;
-    if(!track){ track=document.createElement('div'); track.className='main-track'; vp.prepend(track); }
-
-    // 如果没有 slides，且 config.json 给了 images，则注入
-    if(track.children.length===0 && Array.isArray(prod.images)){
-      prod.images.forEach((src,i)=>{
-        const slide=document.createElement('div'); slide.className='slide';
-        const img=document.createElement('img'); img.className='cover'; img.src=src;
-        img.alt=`${prod.name||prod.id} — ${i+1}`; img.draggable=false;
-        slide.appendChild(img); track.appendChild(slide);
-      });
-    }
-
-    // 为每张 slide 写入 data-price / data-na
-    const slides = track.querySelectorAll('.slide');
-    slides.forEach((sl,i)=>{
-      const num = getPrice({pricesMap:prices, prod, idx0:i});
-      sl.dataset.price = fmtOrNA(num, currency, locale);
-      sl.dataset.na = (num==null) ? '1' : '';
-    });
-
-    // 确保进度条存在
-    let progress = card.querySelector('.progress');
-    if(!progress){ progress=document.createElement('div'); progress.className='progress'; progress.innerHTML='<i></i>'; vp.appendChild(progress); }
-
-    // 初始价格（第一张）
-    const priceEl = card.querySelector('.price');
-    if(priceEl){
-      const first = track.querySelector('.slide');
-      const txt = first?.dataset?.price || fmtOrNA(getPrice({pricesMap:prices, prod, idx0:0}),currency,locale);
-      priceEl.textContent = txt;
-      priceEl.classList.toggle('is-na', (first?.dataset?.na==='1') || txt==='暂无报价');
-    }
+  left.addEventListener('click', ()=> goTo(getIndex()-1));
+  right.addEventListener('click',()=> goTo(getIndex()+1));
+  vp.addEventListener('keydown', e=>{
+    if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
+    if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
+    if(e.key==='Home'){ e.preventDefault(); goTo(0); }
+    if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
   });
+  vp.addEventListener('scroll', debounce(()=>update(getIndex()),80), {passive:true});
+  window.addEventListener('resize', debounce(()=>update(getIndex()),120));
+
+  // 首次更新
+  update(0);
 }
 
-/* ===== 初始化滑块（箭头/进度条/价格联动） ===== */
-function initSliders(){
-  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const behavior = prefersReduced ? 'auto' : 'smooth';
-
-  document.querySelectorAll('.card.product.u3').forEach(card=>{
-    const vp = card.querySelector('.main-viewport');
-    const track = card.querySelector('.main-track');
-    let slides = card.querySelectorAll('.slide');
-    if(!vp || !track || !slides.length) return;
-
-    // 进度条 & 箭头
-    let progress = card.querySelector('.progress');
-    if(!progress){ progress=document.createElement('div'); progress.className='progress'; progress.innerHTML='<i></i>'; vp.appendChild(progress); }
-    let fill = progress.querySelector('i');
-
-    let left  = card.querySelector('.nav-arrow.left');
-    let right = card.querySelector('.nav-arrow.right');
-    if(!left){ left=document.createElement('button'); left.className='nav-arrow left';
-      left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
-    if(!right){ right=document.createElement('button'); right.className='nav-arrow right';
-      right.setAttribute('aria-label','Next'); right.innerHTML='&#8250;'; vp.appendChild(right); }
-
-    const priceEl = card.querySelector('.price');
-    const getIndex = ()=> Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
-
-    function update(i=getIndex()){
-      slides = card.querySelectorAll('.slide');
-      left.classList.toggle('is-disabled', i<=0);
-      right.classList.toggle('is-disabled', i>=slides.length-1);
-
-      // 价格联动
-      if(priceEl){
-        const p = slides[i]?.dataset?.price || '暂无报价';
-        priceEl.textContent = p;
-        priceEl.classList.toggle('is-na', (slides[i]?.dataset?.na==='1') || p==='暂无报价');
-      }
-      // 进度条联动
-      fill.style.width = `${((i+1)/slides.length)*100}%`;
-    }
-
-    function goTo(i){
-      i = clamp(i,0,slides.length-1);
-      vp.scrollTo({ left: i*vp.clientWidth, behavior });
-      update(i);
-    }
-
-    left.addEventListener('click', ()=> goTo(getIndex()-1));
-    right.addEventListener('click',()=> goTo(getIndex()+1));
-
-    vp.addEventListener('keydown', e=>{
-      if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
-      if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
-      if(e.key==='Home'){ e.preventDefault(); goTo(0); }
-      if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
-    });
-
-    vp.addEventListener('scroll', debounce(()=>update(getIndex()),80), {passive:true});
-    window.addEventListener('resize', debounce(()=>update(getIndex()),120));
-
-    update(0);
-  });
-}
-
-/* ===== 启动 ===== */
+/* ========= 启动 ========= */
 (async function boot(){
-  await ensureSlidesAndSeedPrice(); // 补 slides + 写入 data-price
-  initSliders();                    // 安装联动（箭头/进度条/价格）
+  const prices = await fetchJSON('prices.json'); // 可选，拿不到就只显示“—”
+  document.querySelectorAll('.card.product.u3').forEach(card=> initCardSlider(card, prices));
 })();
