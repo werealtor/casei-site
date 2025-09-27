@@ -1,51 +1,98 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // 遍历每个产品卡片
-  document.querySelectorAll(".card.product.u3").forEach(card => {
-    const track = card.querySelector(".main-track");
-    const slides = Array.from(card.querySelectorAll(".slide"));
-    const progress = card.querySelector(".progress i");
-    const priceEl = card.querySelector(".price");
-    let currentIndex = 0;
-
-    // 创建左右箭头
-    const left = document.createElement("button");
-    left.className = "nav-arrow left";
-    left.textContent = "‹";
-
-    const right = document.createElement("button");
-    right.className = "nav-arrow right";
-    right.textContent = "›";
-
-    card.querySelector(".main-viewport").append(left, right);
-
-    // 更新显示
-    function update() {
-      // 位移滑块
-      track.style.transform = `translateX(-${currentIndex * 100}%)`;
-
-      // 更新进度条
-      const percent = ((currentIndex + 1) / slides.length) * 100;
-      progress.style.width = percent + "%";
-
-      // 更新价格
-      const activeSlide = slides[currentIndex];
-      const newPrice = activeSlide.dataset.price;
-      if (newPrice && priceEl) {
-        priceEl.textContent = `$${newPrice}`;
-      }
-    }
-
-    // 点击箭头事件
-    left.addEventListener("click", () => {
-      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-      update();
-    });
-    right.addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % slides.length;
-      update();
-    });
-
-    // 初始化
-    update();
+/* ========= 主题切换 ========= */
+const themeBtn = document.getElementById('theme-toggle');
+if (themeBtn) {
+  let theme = localStorage.getItem('theme') ||
+              (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.body.classList.toggle('dark', theme === 'dark');
+  themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  themeBtn.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark');
+    themeBtn.textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
   });
+}
+
+/* ========= 移动端菜单 ========= */
+const menuToggle = document.querySelector('.menu-toggle');
+const headerEl = document.querySelector('header');
+if (menuToggle && headerEl) {
+  menuToggle.addEventListener('click', () => {
+    headerEl.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', headerEl.classList.contains('open'));
+  });
+}
+
+/* ========= 上传预览 ========= */
+const uForm = document.getElementById('uForm');
+if (uForm) {
+  const fileInput = document.getElementById('file');
+  const nameEl = document.getElementById('fileName');
+  const err = document.getElementById('uErr');
+  const preview = document.getElementById('preview');
+  const MAX_SIZE = 10 * 1024 * 1024;
+
+  fileInput.addEventListener('change', () => {
+    if (!fileInput.files.length) { nameEl.textContent = 'PNG/JPEG · < 10MB'; return; }
+    const f = fileInput.files[0];
+    nameEl.textContent = `${f.name} · ${(f.size/1024/1024).toFixed(1)}MB`;
+  });
+
+  uForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = fileInput.files[0];
+    if (!f) { err.textContent = 'Please choose an image.'; return; }
+    if (!/^image\/(png|jpe?g)$/i.test(f.type)) { err.textContent = 'Only PNG/JPEG supported.'; return; }
+    if (f.size > MAX_SIZE) { err.textContent = 'File too large (max 10MB).'; return; }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+      err.textContent = '';
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+/* ========= 滑块价格联动 ========= */
+function bindPriceSlider(card, prices) {
+  const vp = card.querySelector('.main-viewport');
+  const slides = [...card.querySelectorAll('.slide')];
+  const priceEl = card.querySelector('.price');
+
+  if (!vp || !slides.length || !priceEl) return;
+
+  function updatePrice() {
+    const i = Math.round(vp.scrollLeft / vp.clientWidth);
+    const slide = slides[i];
+    const pid = slide.getAttribute('data-price-id') || priceEl.getAttribute('data-id');
+    if (pid && prices[pid] !== undefined) {
+      priceEl.textContent = `$${prices[pid]}`;
+    }
+  }
+
+  // 初始
+  updatePrice();
+
+  // 滚动时更新（节流一下）
+  let st;
+  vp.addEventListener('scroll', () => {
+    clearTimeout(st);
+    st = setTimeout(updatePrice, 100);
+  }, {passive:true});
+}
+
+/* ========= 动态加载价格并绑定 ========= */
+(async function(){
+  try {
+    const res = await fetch('prices.json', {cache:'no-store'});
+    const prices = await res.json();
+    document.querySelectorAll('.card.product').forEach(card=>{
+      bindPriceSlider(card, prices);
+    });
+  } catch(e){
+    console.warn('价格加载失败', e);
+  }
+})();
+
 });
