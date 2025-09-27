@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     vp.append(left,right);
 
     const fill = card.querySelector('.progress i');
-    const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);  // 优化: 使用 Math.round 避免浮点误差
+    const getIndex = () => Math.floor((vp.scrollLeft + vp.clientWidth / 2) / vp.clientWidth); // 修改為更精準的計算，避免誤差
     const clamp    = (n,min,max)=> Math.max(min, Math.min(max,n));
 
     const update = (i=getIndex())=>{
@@ -109,8 +109,8 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     const goTo = (i)=>{
       i = clamp(i, 0, slides.length-1);
       vp.scrollTo({ left: i*vp.clientWidth, behavior: scrollBehavior });
-      update(i);
-      showArrows();  // 强制显示箭头
+      update(i); // 強制更新
+      showArrows(); // 強制顯示箭頭
     };
 
     // 交互 → 暂停，5s 无交互恢复
@@ -129,8 +129,8 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     });
 
     // 滚动/尺寸
-    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>{update(getIndex()); showArrows();},100); stopAutoplayTemp(); }, {passive:true});
-    let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>{goTo(getIndex()); update(); showArrows();},120); });
+    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>{ update(getIndex()); showArrows(); },150); stopAutoplayTemp(); }, {passive:true}); // 延長debounce並添加showArrows
+    let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndex()),120); });
 
     // 箭头自动淡出
     let hideTimer;
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     // 自动轮播 API
     const api = {
       timer:null, resumeTimer:null, pausedByUser:false, visible:true,
-      start(){ if (prefersReduced) return; if (this.timer) return; this.timer=setInterval(()=>{ const i=getIndex(); goTo(i+1>=slides.length?0:i+1); }, AUTOPLAY_DELAY); },
+      start(){ if (prefersReduced) return; if (this.timer) return; this.timer=setInterval(()=>{ const i=getIndex(); goTo(i+1>=slides.length?0:i+1); update(i); }, AUTOPLAY_DELAY); }, // 添加update
       stop(){ if (this.timer){ clearInterval(this.timer); this.timer=null; } },
       allow(){ if (firstScreenGate) return false; if (document.hidden) return false; if (!this.visible) return false; if (this.pausedByUser) return false; return true; },
       syncAutoplay(){ this.stop(); if (this.allow()) this.start(); }
@@ -156,15 +156,5 @@ document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
     // 初始
     update(0); showArrows();
     api.syncAutoplay();
-
-    // 添加图片加载监听，确保所有图片加载后刷新
-    slides.forEach(slide => {
-      const img = slide.querySelector('img');
-      if (img.complete) {
-        update();
-      } else {
-        img.addEventListener('load', () => { update(); showArrows(); });
-      }
-    });
   });
 })();
