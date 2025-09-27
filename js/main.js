@@ -1,8 +1,8 @@
 /* ========= 主题切换 ========= */
 const themeBtn = document.getElementById('theme-toggle');
 if (themeBtn) {
-  const theme = localStorage.getItem('theme') ||
-    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  let theme = localStorage.getItem('theme') ||
+              (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.body.classList.toggle('dark', theme === 'dark');
   themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
   themeBtn.addEventListener('click', () => {
@@ -22,14 +22,14 @@ if (menuToggle && headerEl) {
   });
 }
 
-/* ========= 上传预览 ========= */
+/* ========= 上传预览（显示文件名 & 大小限制） ========= */
 const uForm = document.getElementById('uForm');
 if (uForm) {
   const fileInput = document.getElementById('file');
   const nameEl = document.getElementById('fileName');
   const err = document.getElementById('uErr');
   const preview = document.getElementById('preview');
-  const MAX_SIZE = 10 * 1024 * 1024;
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
   fileInput.addEventListener('change', () => {
     if (!fileInput.files.length) { nameEl.textContent = 'PNG/JPEG · < 10MB'; return; }
@@ -43,137 +43,121 @@ if (uForm) {
     if (!f) { err.textContent = 'Please choose an image.'; return; }
     if (!/^image\/(png|jpe?g)$/i.test(f.type)) { err.textContent = 'Only PNG/JPEG supported.'; return; }
     if (f.size > MAX_SIZE) { err.textContent = 'File too large (max 10MB).'; return; }
+
     const reader = new FileReader();
-    reader.onload = (ev) => { preview.src = ev.target.result; preview.style.display = 'block'; err.textContent = ''; };
+    reader.onload = (ev) => {
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+      err.textContent = '';
+    };
     reader.readAsDataURL(f);
   });
 }
 
-/* ========= 工具 ========= */
-const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
-const debounce=(fn,wait=90)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),wait)}};
-const fmtMoney=(num,currency='USD',locale=(navigator.language||'en-US'))=>{
-  try{ return new Intl.NumberFormat(locale,{style:'currency',currency,maximumFractionDigits:0}).format(num); }
-  catch{ return `$${num}`; }
+/* ========= 价格加载 ========= */
+const fmtUSD = (n) => {
+  try { return new Intl.NumberFormat(navigator.language || 'en-US', { style:'currency', currency:'USD', maximumFractionDigits:0 }).format(n); }
+  catch { return `$${n}`; }
 };
-async function fetchJSON(url){ try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); } catch{ return null; } }
+let PRICE_MAP = null;
 
-/* ========= 价格加载（带兜底） ========= */
-const FALLBACK_PRICES = {
-  classic: [19,19,19,19,19,19,19],
-  fashion: [25,26,27,28,29,30,31],
-  business: {1:29,2:31,3:33,4:34,5:36,6:38,7:40}
-};
 async function loadPrices() {
-  let prices = null;
+  if (PRICE_MAP) return PRICE_MAP;
   try {
-    const r = await fetch('prices.json', { cache: 'no-store' });
-    if (r.ok && (r.headers.get('content-type') || '').includes('application/json')) {
-      prices = await r.json();
-    }
-  } catch {}
-  if (!prices) prices = FALLBACK_PRICES;
-  window.__prices__ = prices;
-  return prices;
+    const res = await fetch('/prices.json', { cache: 'no-store' });
+    PRICE_MAP = await res.json();
+  } catch {
+    PRICE_MAP = { classic: 19, fashion: 25, business: 29 };
+  }
+  return PRICE_MAP;
 }
-function priceFromMap(map,id,idx0){
-  if(!map||!(id in map)) return null;
+function pickPrice(map, id, i) {
+  if (!map || !(id in map)) return null;
   const v = map[id];
-  if(typeof v==='number') return v;
-  if(Array.isArray(v)) return v[idx0] ?? v[v.length-1] ?? null;
-  if(v && typeof v==='object'){
-    const k1=String(idx0+1), k0=String(idx0);
-    if(v[k1]!=null) return v[k1];
-    if(v[k0]!=null) return v[k0];
-    const keys=Object.keys(v).sort((a,b)=>+a-+b);
-    return v[keys[0]] ?? null;
+  if (typeof v === 'number') return v;
+  if (Array.isArray(v)) return v[i] ?? v[v.length-1];
+  if (v && typeof v === 'object') {
+    const k = String(i+1);
+    return v[k] ?? v[Object.keys(v).sort((a,b)=>+a-+b)[0]];
   }
   return null;
 }
 
-/* ========= 初始化一个卡片 ========= */
-function initCardSlider(card, prices, currency='USD'){
-  const vp = card.querySelector('.main-viewport');
-  const track = card.querySelector('.main-track');
-  if(!vp || !track) return;
-
-  // 兜底：如果 main-track 为空，自动填充 1~7.jpg
-  if (track.children.length === 0) {
+/* ========= U3 Slider（箭头 + 进度条 + 价格联动） ========= */
+function setupSliders() {
+  document.querySelectorAll('.card.product.u3').forEach(card=>{
     const pid = card.dataset.product;
-    track.innerHTML = Array.from({length:7},(_,i)=>(
-      `<div class="slide"><img class="cover" src="assets/images/${pid}/${i+1}.jpg" alt="${pid} ${i+1}" draggable="false" /></div>`
-    )).join('');
-  }
+    const totalSlides = parseInt(card.dataset.slides || '7', 10);
 
-  // progress（确保是 viewport 子元素）
-  let progress = card.querySelector('.progress');
-  if(!progress){
-    progress = document.createElement('div');
-    progress.className = 'progress';
-    progress.innerHTML = '<i></i>';
-    vp.appendChild(progress);
-  } else if (progress.parentElement !== vp) {
-    vp.appendChild(progress);
-  }
-  const fill = progress.querySelector('i');
+    const vp    = card.querySelector('.main-viewport');
+    const track = card.querySelector('.main-track');
+    if (!vp || !track) return;
 
-  // arrows（确保是 viewport 子元素）
-  let left  = card.querySelector('.nav-arrow.left');
-  let right = card.querySelector('.nav-arrow.right');
-  if(!left){ left = document.createElement('button'); left.className='nav-arrow left'; left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
-  else if(left.parentElement!==vp){ vp.appendChild(left); }
-  if(!right){ right=document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.innerHTML='&#8250;'; vp.appendChild(right); }
-  else if(right.parentElement!==vp){ vp.appendChild(right); }
-
-  // 层级与定位保险
-  if (getComputedStyle(vp).position === 'static') vp.style.position = 'relative';
-  track.style.position = track.style.position || 'relative';
-  card.querySelectorAll('.slide, .slide .cover').forEach(el=>{
-    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
-    el.style.zIndex = 0; // 图片置底
-  });
-
-  const slides  = track.querySelectorAll('.slide');
-  const priceEl = card.querySelector('.price');
-  const pid     = card.dataset.product;
-  const getIndex = ()=> Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
-
-  function update(i=getIndex()){
-    left.classList.toggle('is-disabled', i<=0);
-    right.classList.toggle('is-disabled', i>=slides.length-1);
-    fill.style.width = `${((i+1)/slides.length)*100}%`;
-
-    if(priceEl){
-      const p = priceFromMap(prices, pid, i);
-      priceEl.textContent = p==null ? '—' : fmtMoney(p, currency);
-      priceEl.classList.toggle('is-na', p==null);
+    // 如无 slide，自动注入 1..N
+    if (track.children.length === 0) {
+      const html = Array.from({length: totalSlides}, (_,i)=>(
+        `<div class="slide"><img class="cover" src="assets/images/${pid}/${i+1}.jpg" alt="${pid} ${i+1}" draggable="false"></div>`
+      )).join('');
+      track.innerHTML = html;
     }
-  }
-  function goTo(i){
-    i = clamp(i, 0, slides.length-1);
-    vp.scrollTo({ left: i*vp.clientWidth, behavior: 'smooth' });
-    update(i);
-  }
 
-  left.addEventListener('click', ()=> goTo(getIndex()-1));
-  right.addEventListener('click',()=> goTo(getIndex()+1));
-  vp.addEventListener('keydown', e=>{
-    if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
-    if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
-    if(e.key==='Home'){ e.preventDefault(); goTo(0); }
-    if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
+    // 确保必要的层级
+    if (getComputedStyle(vp).position === 'static') vp.style.position = 'relative';
+    track.style.position = track.style.position || 'relative';
+    card.querySelectorAll('.slide,.slide .cover').forEach(el=>{
+      if (getComputedStyle(el).position === 'static') el.style.position='relative';
+      el.style.zIndex = '0';
+    });
+
+    // 统一清除旧箭头/进度条再创建
+    vp.querySelectorAll('.nav-arrow,.progress').forEach(el=>el.remove());
+
+    const left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;';
+    const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.innerHTML='&#8250;';
+    const progress = document.createElement('div'); progress.className='progress'; progress.innerHTML = '<i></i>';
+
+    vp.append(left, right, progress);
+    const fill = progress.querySelector('i');
+
+    const slides = track.querySelectorAll('.slide');
+    const priceEl = card.querySelector('.price');
+
+    const getIndex = () => Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
+    const goTo = (i)=>{
+      i = Math.max(0, Math.min(i, slides.length-1));
+      vp.scrollTo({ left: i * vp.clientWidth, behavior: 'smooth' });
+      update(i);
+    };
+    const update = (i=getIndex())=>{
+      left.classList.toggle('is-disabled', i<=0);
+      right.classList.toggle('is-disabled', i>=slides.length-1);
+      fill.style.width = `${((i+1)/slides.length)*100}%`;
+      if (PRICE_MAP && priceEl) {
+        const p = pickPrice(PRICE_MAP, pid, i);
+        if (p != null) priceEl.textContent = fmtUSD(p);
+      }
+    };
+
+    left.addEventListener('click', ()=> goTo(getIndex()-1));
+    right.addEventListener('click',()=> goTo(getIndex()+1));
+    vp.addEventListener('keydown', e=>{
+      if(e.key==='ArrowLeft'){ e.preventDefault(); goTo(getIndex()-1); }
+      if(e.key==='ArrowRight'){ e.preventDefault(); goTo(getIndex()+1); }
+    });
+    vp.addEventListener('scroll', (()=>{let t; return ()=>{ clearTimeout(t); t=setTimeout(()=>update(getIndex()), 80); };})(), {passive:true});
+    window.addEventListener('resize', (()=>{let t; return ()=>{ clearTimeout(t); t=setTimeout(()=>update(getIndex()), 120); };})());
+
+    update(0);
   });
-  vp.addEventListener('scroll', debounce(()=>update(getIndex()),80), {passive:true});
-  window.addEventListener('resize', debounce(()=>update(getIndex()),120));
-
-  update(0);
 }
 
-/* ========= 启动 ========= */
-(async function boot(){
-  const prices = await loadPrices();
-  const currency = 'USD';
-  document.querySelectorAll('.card.product.u3').forEach(card=>{
-    initCardSlider(card, prices, currency);
-  });
-})();
+// 初始化顺序：先拉价格，再装配滑块
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await loadPrices();
+  setupSliders();
+
+  // 注册 SW（可选）
+  if ('serviceWorker' in navigator) {
+    try { navigator.serviceWorker.register('/sw.js'); } catch {}
+  }
+});
