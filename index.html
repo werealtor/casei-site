@@ -6,12 +6,8 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
-
-  <!-- 预加载海报图（可选但推荐） -->
   <link rel="preload" as="image" href="assets/images/hero-poster.jpg" />
-
-  <!-- 样式（带版本号避免缓存） -->
-  <link rel="stylesheet" href="css/style.css?v=12" />
+  <link rel="stylesheet" href="css/style.css?v=20" />
 </head>
 <body>
   <!-- Header -->
@@ -73,7 +69,6 @@
                   <img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" />
                 </div>
               </div>
-              <!-- 只保留灰色底条，蓝色条在 CSS 中已隐藏 -->
               <div class="progress"><i></i></div>
             </div>
             <div class="body">
@@ -186,13 +181,13 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- 悬浮主题切换按钮 -->
+  <!-- Theme toggle -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
-  <!-- 主脚本（带版本号避免缓存） -->
-  <script src="js/main.js?v=12" defer></script>
+  <!-- Scripts -->
+  <script src="js/main.js?v=20" defer></script>
 
-  <!-- Service Worker 注册（含热更新） -->
+  <!-- SW 注册（可保留，如你已使用 sw.js v3） -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
@@ -214,9 +209,7 @@
             refreshing = true;
             window.location.reload();
           });
-        } catch (e) {
-          console.warn('SW register failed:', e);
-        }
+        } catch (e) { console.warn('SW register failed:', e); }
       });
     }
   </script>
