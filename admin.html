@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>后台配置 - Case&i</title>
+  <style>
+    body { font-family: -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,Roboto,Helvetica,Arial,sans-serif;
+           background:#f9f9f9; color:#333; margin:0; padding:20px; }
+    h1 { font-size:20px; margin-bottom:12px; }
+    textarea { width:100%; height:320px; border:1px solid #ccc; border-radius:8px; padding:10px;
+               font-family:monospace; font-size:14px; }
+    .actions { margin-top:12px; display:flex; gap:10px; }
+    button { padding:10px 16px; border:none; border-radius:8px; cursor:pointer; font-size:14px; }
+    .primary { background:#0b66ff; color:#fff; }
+    .danger { background:#e33; color:#fff; }
+  </style>
+</head>
+<body>
+  <h1>后台配置</h1>
+  <p>你可以在这里查看或修改 <code>config.json</code>，保存后下载。</p>
+
+  <textarea id="editor"></textarea>
+
+  <div class="actions">
+    <button id="downloadBtn" class="primary">下载 config.json</button>
+    <button id="clearCacheBtn" class="danger">清理缓存</button>
+  </div>
+
+<script>
+let config = {};
+const editor = document.getElementById('editor');
+
+// 加载 config.json
+async function load() {
+  try {
+    const res = await fetch('config.json?nocache=' + Date.now(), { cache:'no-store' });
+    config = await res.json();
+    editor.value = JSON.stringify(config, null, 2);
+  } catch(e) {
+    editor.value = '{\n  "settings": {},\n  "products": []\n}';
+  }
+}
+
+// 下载保存
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  try {
+    const obj = JSON.parse(editor.value);
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type:'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'config.json';
+    a.click();
+  } catch(e) {
+    alert('JSON 格式错误，请检查！');
+  }
+});
+
+// 清理 SW & 缓存
+document.getElementById('clearCacheBtn').addEventListener('click', async () => {
+  if ('serviceWorker' in navigator) {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    for (const reg of regs) await reg.unregister();
+  }
+  if ('caches' in window) {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => caches.delete(k)));
+  }
+  alert('缓存已清理，请刷新页面');
+});
+
+load();
+</script>
+</body>
+</html>
