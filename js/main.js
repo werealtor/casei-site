@@ -1,5 +1,5 @@
 /* =========================================
- * Case&i main.js — config驱动 + prices.json 自动定价 + 轮播 + 主题/菜单/上传
+ * Case&i main.js — config驱动 + prices.json 自动定价 + 缺价→“暂无报价”
  * ========================================= */
 
 /* ========= 主题切换 ========= */
@@ -65,6 +65,8 @@ const fmtMoney = (num, currency = 'USD', locale = (navigator.language || 'en-US'
   try { return new Intl.NumberFormat(locale, { style:'currency', currency, maximumFractionDigits:0 }).format(num); }
   catch { return `$${num}`; }
 };
+// 新增：根据数值/空值返回“金额”或“暂无报价”
+const fmtOrNA = (val, currency, locale) => (val == null || Number.isNaN(val)) ? '暂无报价' : fmtMoney(val, currency, locale);
 
 /* ========= 拉取 config.json / prices.json ========= */
 async function fetchJSON(url){
@@ -75,19 +77,34 @@ async function fetchJSON(url){
   } catch { return null; }
 }
 
-/* 从 prices.json 获取价格 */
+/**
+ * 从 prices.json 取单价或分图定价
+ * 允许格式：
+ * - number: 统一价格
+ * - array:  [19,20,21] 与索引(0/1/2) 或 文件序号(1/2/3)对应
+ * - object: {"1":19,"2":20,"3":21} 或 {"0":19,"1":20,"2":21}
+ *
+ * 返回：number | null（null 表示缺价）
+ */
 function getPriceForSlide(pricesMap, productId, slideIndexZero, fallbackNumber) {
-  if (!pricesMap || !(productId in pricesMap)) return fallbackNumber;
-  const val = pricesMap[productId];
-  if (typeof val === 'number') return val;
-  if (Array.isArray(val)) return (val[slideIndexZero] != null) ? val[slideIndexZero] : fallbackNumber;
-  if (val && typeof val === 'object') {
-    const idx1 = String(slideIndexZero + 1);
-    const idx0 = String(slideIndexZero);
-    if (val[idx1] != null) return val[idx1];
-    if (val[idx0] != null) return val[idx0];
+  let result = null;
+  if (pricesMap && (productId in pricesMap)) {
+    const val = pricesMap[productId];
+    if (typeof val === 'number') result = val;
+    else if (Array.isArray(val)) result = (val[slideIndexZero] != null) ? val[slideIndexZero] : null;
+    else if (val && typeof val === 'object') {
+      const idx1 = String(slideIndexZero + 1);
+      const idx0 = String(slideIndexZero);
+      if (val[idx1] != null) result = val[idx1];
+      else if (val[idx0] != null) result = val[idx0];
+    }
   }
-  return fallbackNumber;
+  if (result == null) {
+    // 尝试 fallback
+    if (typeof fallbackNumber === 'number' && !Number.isNaN(fallbackNumber)) return fallbackNumber;
+    return null;
+  }
+  return result;
 }
 
 /* ========= 从 config + prices 生成/更新 DOM ========= */
@@ -95,6 +112,7 @@ async function buildFromConfigAndPrices() {
   const cfg = await fetchJSON('config.json');
   const prices = await fetchJSON('prices.json');
   const currency = cfg?.settings?.currency || 'USD';
+  const locale = (navigator.language || 'en-US');
 
   if (!cfg || !Array.isArray(cfg.products)) {
     console.warn('config.json missing or invalid; will use existing DOM only.');
@@ -111,19 +129,23 @@ async function buildFromConfigAndPrices() {
     let track = card.querySelector('.main-track');
     if (!track) { track = document.createElement('div'); track.className='main-track'; vp.appendChild(track); }
 
-    // 渲染 slides
+    // 渲染 slides（优先用 config.images）
     if (Array.isArray(prod.images) && prod.images.length) {
       track.innerHTML = '';
       const perSlide = Array.isArray(prod.perSlidePrices) ? prod.perSlidePrices : null;
 
       prod.images.forEach((src, idx) => {
-        const priceNumber = (prices && prod.id in prices)
-          ? getPriceForSlide(prices, prod.id, idx, (perSlide ? perSlide[idx] : prod.price))
-          : (perSlide ? perSlide[idx] : prod.price);
+        const priceNumber = getPriceForSlide(
+          prices,
+          prod.id,
+          idx,
+          (perSlide ? perSlide[idx] : prod.price)
+        );
 
         const slide = document.createElement('div');
         slide.className = 'slide';
-        slide.dataset.price = fmtMoney(priceNumber, currency);
+        slide.dataset.price = fmtOrNA(priceNumber, currency, locale);
+        slide.dataset.na = (priceNumber == null) ? '1' : '';
 
         const img = document.createElement('img');
         img.className = 'cover';
@@ -135,22 +157,22 @@ async function buildFromConfigAndPrices() {
         track.appendChild(slide);
       });
     } else {
-      // 没有 cfg.images 时，为已有 slide 补价格
+      // 没有 cfg.images 则为已有 slide 补价格
       const slides = card.querySelectorAll('.slide');
       slides.forEach((s, idx) => {
-        const priceNumber = (prices && prod.id in prices)
-          ? getPriceForSlide(prices, prod.id, idx, prod.price)
-          : prod.price;
-        s.dataset.price = fmtMoney(priceNumber, currency);
+        const priceNumber = getPriceForSlide(prices, prod.id, idx, prod.price);
+        s.dataset.price = fmtOrNA(priceNumber, currency, locale);
+        s.dataset.na = (priceNumber == null) ? '1' : '';
       });
     }
 
     // 初始价格
     const priceEl = card.querySelector('.price');
     if (priceEl) {
-      const firstSlidePrice = card.querySelector('.slide')?.dataset?.price;
-      if (firstSlidePrice) priceEl.textContent = firstSlidePrice;
-      else if (typeof prod.price === 'number') priceEl.textContent = fmtMoney(prod.price, currency);
+      const firstSlide = card.querySelector('.slide');
+      const firstTxt = firstSlide?.dataset?.price || fmtOrNA(prod.price, currency, locale);
+      priceEl.textContent = firstTxt;
+      priceEl.classList.toggle('is-na', firstSlide?.dataset?.na === '1' || firstTxt === '暂无报价');
     }
 
     // 进度条缺则补
@@ -193,8 +215,9 @@ function initSliders() {
       right.classList.toggle('is-disabled', i >= slides.length - 1);
 
       if (priceEl) {
-        const p = slides[i]?.dataset?.price;
-        if (p) priceEl.textContent = p;
+        const p = slides[i]?.dataset?.price || '暂无报价';
+        priceEl.textContent = p;
+        priceEl.classList.toggle('is-na', slides[i]?.dataset?.na === '1' || p === '暂无报价');
       }
       fill.style.width = `${((i + 1) / slides.length) * 100}%`;
     }
