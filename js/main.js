@@ -55,7 +55,7 @@ if (uForm) {
 }
 
 /* ========= 小工具 ========= */
-function debounce(fn, wait = 50){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; } // 缩短debounce时间
+function debounce(fn, wait = 50){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; }
 const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
 
 /* ========= U3：箭头 + 价格联动 + 进度遮罩 ========= */
@@ -78,13 +78,13 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     if (!right) { right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.innerHTML='&#8250;'; vp.appendChild(right); }
 
     const priceEl = card.querySelector('.price');
-    const EPS = 0.1; // 添加浮点误差容忍
-    const getIndex = () => Math.round((vp.scrollLeft + EPS) / Math.max(1, vp.clientWidth)); // 提高精度
+    const EPS = 0.1;
+    const getIndex = () => Math.round((vp.scrollLeft + EPS) / Math.max(1, vp.clientWidth));
 
     function goTo(i){
       i = clamp(i, 0, slides.length-1);
       vp.scrollTo({ left: i*vp.clientWidth, behavior: scrollBehavior });
-      update(i);
+      requestAnimationFrame(() => update(i)); // 使用RAF即時更新
     }
 
     function update(i=getIndex()){
@@ -116,18 +116,20 @@ const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
     });
 
     // 滚动/尺寸
-    vp.addEventListener('scroll', debounce(()=>update(getIndex()),50), {passive:true}); // 缩短时间
+    vp.addEventListener('scroll', debounce(()=> requestAnimationFrame(()=>update(getIndex())),50), {passive:true});
     window.addEventListener('resize', debounce(()=>update(getIndex()),120));
+
+    // 圖片加載後強制更新
+    slides.forEach(slide => {
+      const img = slide.querySelector('img');
+      if (img.complete) {
+        update();
+      } else {
+        img.addEventListener('load', () => update());
+      }
+    });
 
     // 初始
     update(0);
-  });
-
-  // 页面加载后强制更新所有滑块
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.card.product.u3').forEach(card => {
-      const vp = card.querySelector('.main-viewport');
-      if (vp) vp.dispatchEvent(new Event('scroll')); // 模拟scroll事件强制更新
-    });
   });
 })();
