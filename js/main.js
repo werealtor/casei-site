@@ -56,6 +56,7 @@ const fmtMoney=(num,currency='USD',locale=(navigator.language||'en-US'))=>{
   try{ return new Intl.NumberFormat(locale,{style:'currency',currency,maximumFractionDigits:0}).format(num); }
   catch{ return `$${num}`; }
 };
+async function fetchJSON(url){ try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); } catch{ return null; } }
 
 /* ========= 价格加载（带兜底 & 全局缓存） ========= */
 const FALLBACK_PRICES = {
@@ -96,21 +97,27 @@ function priceFromMap(map,id,idx0){
   return null;
 }
 
+/* ========= 补丁版：初始化一个卡片的滑块（层级 & 结构修复） ========= */
 function initCardSlider(card, prices, currency='USD'){
   const vp = card.querySelector('.main-viewport');
   const track = card.querySelector('.main-track');
   if(!vp || !track) return;
 
-  // 确保结构齐全：progress & arrows 永远存在且在 vp 里
+  /* —— 关键：确保箭头 & 进度条是 viewport 的直接子元素，且层级最高 —— */
+  // 进度条
   let progress = card.querySelector('.progress');
   if(!progress){
     progress = document.createElement('div');
     progress.className = 'progress';
     progress.innerHTML = '<i></i>';
     vp.appendChild(progress);
+  } else if (progress.parentElement !== vp) {
+    // 如果误放到了别处，移动到 vp 下
+    vp.appendChild(progress);
   }
   const fill = progress.querySelector('i');
 
+  // 箭头
   let left  = card.querySelector('.nav-arrow.left');
   let right = card.querySelector('.nav-arrow.right');
   if(!left){
@@ -119,6 +126,8 @@ function initCardSlider(card, prices, currency='USD'){
     left.setAttribute('aria-label','Previous');
     left.innerHTML = '&#8249;';
     vp.appendChild(left);
+  } else if (left.parentElement !== vp) {
+    vp.appendChild(left);
   }
   if(!right){
     right = document.createElement('button');
@@ -126,16 +135,22 @@ function initCardSlider(card, prices, currency='USD'){
     right.setAttribute('aria-label','Next');
     right.innerHTML = '&#8250;';
     vp.appendChild(right);
+  } else if (right.parentElement !== vp) {
+    vp.appendChild(right);
   }
 
-  // 关键：滚动区域自身形成堆叠上下文，箭头/进度条 z-index 更高
-  vp.style.position = vp.style.position || 'relative';
+  // 再保险：viewport 创建堆叠上下文，图片层压到底
+  if (getComputedStyle(vp).position === 'static') vp.style.position = 'relative';
+  track.style.position = track.style.position || 'relative';
+  card.querySelectorAll('.slide, .slide .cover').forEach(el=>{
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    el.style.zIndex = 0; // 图片层置底
+  });
 
   const slides  = track.querySelectorAll('.slide');
   const priceEl = card.querySelector('.price');
   const pid     = card.dataset.product;
   const getIndex = ()=> Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
-  const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
 
   function update(i=getIndex()){
     left.classList.toggle('is-disabled', i<=0);
@@ -162,21 +177,16 @@ function initCardSlider(card, prices, currency='USD'){
     if(e.key==='Home'){ e.preventDefault(); goTo(0); }
     if(e.key==='End'){ e.preventDefault(); goTo(slides.length-1); }
   });
-  vp.addEventListener('scroll', (()=>{
-    let t; return ()=>{ clearTimeout(t); t=setTimeout(()=>update(getIndex()),80); };
-  })(), {passive:true});
-  window.addEventListener('resize', (()=>{
-    let t; return ()=>{ clearTimeout(t); t=setTimeout(()=>update(getIndex()),120); };
-  })());
+  vp.addEventListener('scroll', debounce(()=>update(getIndex()),80), {passive:true});
+  window.addEventListener('resize', debounce(()=>update(getIndex()),120));
 
-  // 初始状态
   update(0);
 }
 
 /* ========= 启动 ========= */
 (async function boot(){
-  const prices = await loadPrices();          // 关键：持久加载价格
-  const currency = 'USD';                     // 如需从 config.json 读取，可自行扩展
+  const prices = await loadPrices();          // 持久加载价格
+  const currency = 'USD';
 
   document.querySelectorAll('.card.product.u3').forEach(card=>{
     // 如果 track 为空，提供兜底：自动拼 1~7.jpg
