@@ -1,5 +1,5 @@
 // sw.js — Case&i SW (network-first + cache fallback)
-const CACHE = 'casei-cache-v7'; // ← 改这个版本号可强制更新
+const CACHE = 'casei-cache-v8'; // ← 改这个版本号可强制更新
 
 const PRECACHE = [
   '/', '/index.html',
