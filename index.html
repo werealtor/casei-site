@@ -6,8 +6,7 @@
   <title>Case&i — Minimal · Premium · Personal</title>
   <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
-  <link rel="preload" as="image" href="assets/images/hero-poster.jpg" />
-  <link rel="stylesheet" href="css/style.css?v=21" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <!-- Header -->
@@ -31,13 +30,8 @@
     <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
-          <video class="media"
-                 autoplay muted loop playsinline preload="metadata"
-                 poster="assets/images/hero-poster.jpg"
-                 aria-label="Case&i hero video">
-            <source src="assets/videos/hero.webm" type="video/webm" />
-            <source src="assets/videos/hero.mp4"  type="video/mp4" />
-            Your browser does not support the video tag.
+          <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
+            <source src="assets/videos/hero.mp4" type="video/mp4" />
           </video>
         </figure>
         <h1>Minimal · Premium · Personal</h1>
@@ -57,17 +51,11 @@
 
           <!-- Classic -->
           <article class="card product u3" data-product="classic">
-            <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
+            <div class="main-viewport">
               <div class="main-track">
-                <div class="slide" data-price="19">
-                  <img class="cover" src="assets/images/classic/1.jpg" alt="Classic — front" draggable="false" />
-                </div>
-                <div class="slide" data-price="21">
-                  <img class="cover" src="assets/images/classic/2.jpg" alt="Classic — back" draggable="false" />
-                </div>
-                <div class="slide" data-price="23">
-                  <img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" draggable="false" />
-                </div>
+                <div class="slide" data-price="$19"><img class="cover" src="assets/images/classic/1.jpg" alt="Classic — front" /></div>
+                <div class="slide" data-price="$20"><img class="cover" src="assets/images/classic/2.jpg" alt="Classic — back" /></div>
+                <div class="slide" data-price="$21"><img class="cover" src="assets/images/classic/3.jpg" alt="Classic — detail" /></div>
               </div>
               <div class="progress"><i></i></div>
             </div>
@@ -75,23 +63,17 @@
               <h3>Classic</h3>
               <p class="sub">Slim &amp; scratch-resistant</p>
               <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price">$19</div>
+              <div class="price" data-id="classic">$19</div>
             </div>
           </article>
 
           <!-- Fashion -->
           <article class="card product u3" data-product="fashion">
-            <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
+            <div class="main-viewport">
               <div class="main-track">
-                <div class="slide" data-price="25">
-                  <img class="cover" src="assets/images/fashion/1.jpg" alt="Fashion — front" draggable="false" />
-                </div>
-                <div class="slide" data-price="27">
-                  <img class="cover" src="assets/images/fashion/2.jpg" alt="Fashion — back" draggable="false" />
-                </div>
-                <div class="slide" data-price="29">
-                  <img class="cover" src="assets/images/fashion/3.jpg" alt="Fashion — detail" draggable="false" />
-                </div>
+                <div class="slide" data-price="$25"><img class="cover" src="assets/images/fashion/1.jpg" alt="Fashion — front" /></div>
+                <div class="slide" data-price="$27"><img class="cover" src="assets/images/fashion/2.jpg" alt="Fashion — back" /></div>
+                <div class="slide" data-price="$29"><img class="cover" src="assets/images/fashion/3.jpg" alt="Fashion — detail" /></div>
               </div>
               <div class="progress"><i></i></div>
             </div>
@@ -99,23 +81,17 @@
               <h3>Fashion</h3>
               <p class="sub">Trendy design &amp; anti-fingerprint</p>
               <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price">$25</div>
+              <div class="price" data-id="fashion">$25</div>
             </div>
           </article>
 
           <!-- Business -->
           <article class="card product u3" data-product="business">
-            <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
+            <div class="main-viewport">
               <div class="main-track">
-                <div class="slide" data-price="29">
-                  <img class="cover" src="assets/images/business/1.jpg" alt="Business — front" draggable="false" />
-                </div>
-                <div class="slide" data-price="32">
-                  <img class="cover" src="assets/images/business/2.jpg" alt="Business — back" draggable="false" />
-                </div>
-                <div class="slide" data-price="35">
-                  <img class="cover" src="assets/images/business/3.jpg" alt="Business — detail" draggable="false" />
-                </div>
+                <div class="slide" data-price="$29"><img class="cover" src="assets/images/business/1.jpg" alt="Business — front" /></div>
+                <div class="slide" data-price="$31"><img class="cover" src="assets/images/business/2.jpg" alt="Business — back" /></div>
+                <div class="slide" data-price="$33"><img class="cover" src="assets/images/business/3.jpg" alt="Business — detail" /></div>
               </div>
               <div class="progress"><i></i></div>
             </div>
@@ -123,100 +99,67 @@
               <h3>Business</h3>
               <p class="sub">Premium touch &amp; shockproof</p>
               <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price">$29</div>
+              <div class="price" data-id="business">$29</div>
             </div>
           </article>
 
         </div>
       </div>
-    </<!-- Customize -->
-<section id="custom">
-  <div class="container">
-    <h2 class="title">Customize Your Case</h2>
+    </section>
 
-    <form id="uForm" novalidate>
-      <div class="file-field">
-        <!-- 自定义的“选择图片”按钮（点它会触发隐藏的 #file） -->
-        <label for="file" class="input-like">
-          <span>Choose Image</span>
-          <small id="fileName">PNG/JPEG · &lt; 10MB</small>
-        </label>
-
-        <button type="submit" class="btn primary">Upload &amp; Preview</button>
+    <!-- Customize -->
+    <section id="custom">
+      <div class="container">
+        <h2 class="title">Customize Your Case</h2>
+        <form id="uForm" novalidate>
+          <div class="file-field">
+            <label for="file" class="input-like">
+              Choose Image
+              <small id="fileName">PNG/JPEG · &lt; 10MB</small>
+            </label>
+            <button type="submit" class="btn primary">Upload &amp; Preview</button>
+          </div>
+          <input type="file" id="file" accept="image/png,image/jpeg" />
+          <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
+          <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
+        </form>
       </div>
+    </section>
 
-      <!-- 彻底隐藏原生文件输入框 -->
-      <input type="file" id="file" accept="image/png,image/jpeg" />
-      <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
-      <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
-    </form>
-  </div>
-</section>
-
-<!-- About -->
-<section id="about">
-  <div class="container">
-    <h2 class="title">About Us</h2>
-    <p class="about-text">
-      Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
-      Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
-    </p>
-  </div>
-</section>
-
-<!-- Contact -->
-<section id="contact">
-  <div class="container">
-    <h2 class="title">Contact Us</h2>
-    <form class="contact-form" onsubmit="event.preventDefault();alert('Submitted (demo)');">
-      <input type="text"  name="name"  placeholder="Name"  required />
-      <input type="email" name="email" placeholder="Email" required />
-      <textarea name="message" rows="4" placeholder="Message"></textarea>
-      <div class="contact-actions">
-        <button type="submit" class="btn primary">Send</button>
+    <!-- About -->
+    <section id="about">
+      <div class="container">
+        <h2 class="title">About Us</h2>
+        <p class="about-text">
+          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
+          Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
+        </p>
       </div>
-    </form>
-  </div>
-</section>
+    </section>
 
-    
+    <!-- Contact -->
+    <section id="contact">
+      <div class="container">
+        <h2 class="title">Contact Us</h2>
+        <form class="contact-form" onsubmit="event.preventDefault();alert('Submitted (demo)');">
+          <input type="text" name="name" placeholder="Name" required />
+          <input type="email" name="email" placeholder="Email" required />
+          <textarea name="message" rows="4" placeholder="Message"></textarea>
+          <div class="contact-actions">
+            <button type="submit" class="btn primary">Send</button>
+          </div>
+        </form>
+      </div>
+    </section>
   </main>
 
   <footer>
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- Theme toggle -->
+  <!-- 悬浮主题切换按钮 -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
-  <!-- Scripts -->
-  <script src="js/main.js?v=21" defer></script>
-
-  <!-- 可选：SW 注册（若已部署 sw.js v3 可保留） -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', async () => {
-        try {
-          const reg = await navigator.serviceWorker.register('/sw.js');
-          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          reg.addEventListener('updatefound', () => {
-            const nw = reg.installing;
-            if (!nw) return;
-            nw.addEventListener('statechange', () => {
-              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-                nw.postMessage({ type: 'SKIP_WAITING' });
-              }
-            });
-          });
-          let refreshing = false;
-          navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (refreshing) return;
-            refreshing = true;
-            window.location.reload();
-          });
-        } catch (e) { console.warn('SW register failed:', e); }
-      });
-    }
-  </script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>
