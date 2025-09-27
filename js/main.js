@@ -22,14 +22,14 @@ if (menuToggle && headerEl) {
   });
 }
 
-/* ========= 上传预览 ========= */
+/* ========= 上传预览（增强：显示文件名 & 大小限制） ========= */
 const uForm = document.getElementById('uForm');
 if (uForm) {
   const fileInput = document.getElementById('file');
   const nameEl = document.getElementById('fileName');
   const err = document.getElementById('uErr');
   const preview = document.getElementById('preview');
-  const MAX_SIZE = 10 * 1024 * 1024;
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
   fileInput.addEventListener('change', () => {
     if (!fileInput.files.length) { nameEl.textContent = 'PNG/JPEG · < 10MB'; return; }
@@ -54,142 +54,117 @@ if (uForm) {
   });
 }
 
-/* ========= 首屏门控 ========= */
+/* ========= 首屏自动暂停（滚到产品区再启播） ========= */
 let firstScreenGate = true;
 const productsSection = document.getElementById('products');
-const FIRST_GATE_OFFSET = 120;
+const FIRST_GATE_OFFSET = 120; // 提前阈值
 function refreshFirstScreenGate() {
   if (!productsSection) { firstScreenGate = false; return; }
   const triggerY = productsSection.offsetTop - FIRST_GATE_OFFSET;
   firstScreenGate = window.scrollY < triggerY;
-  document.querySelectorAll('.card.product.u3').forEach(c => c._u3 && c._u3.syncAutoplay());
+  document.querySelectorAll('.card.product.u3').forEach(c => c._sliderAPI && c._sliderAPI.syncAutoplay());
 }
-addEventListener('scroll', refreshFirstScreenGate, { passive:true });
-addEventListener('resize', refreshFirstScreenGate);
+window.addEventListener('scroll', refreshFirstScreenGate, { passive:true });
+window.addEventListener('resize', refreshFirstScreenGate);
 document.addEventListener('DOMContentLoaded', refreshFirstScreenGate);
 
-/* ========= U3：箭头 + 进度条 + 自动轮播 ========= */
-(function onReady(fn){
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn, {once:true});
-  else fn();
-})(function initU3(){
-
-  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ========= U3：箭头 + 进度条 + 自动轮播（首屏门控/可见性/交互恢复） ========= */
+(function(){
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const scrollBehavior = prefersReduced ? 'auto' : 'smooth';
-  const AUTOPLAY_DELAY = 3000, RESUME_AFTER = 5000, OBS_THRESHOLD = 0.6, EPS = 0.001;
-  const clamp = (n,min,max)=> Math.max(min, Math.min(max,n));
-  const getIndex = (vp)=> Math.round((vp.scrollLeft + EPS) / Math.max(1, vp.clientWidth));
+  const AUTOPLAY_DELAY = 3000;
+  const RESUME_AFTER   = 5000;
+  const OBS_THRESHOLD  = 0.6;
 
-  function ensureControls(card){
-    const vp = card.querySelector('.main-viewport'); if (!vp) return null;
-    vp.style.position = vp.style.position || 'relative';
+  const io = ('IntersectionObserver' in window)
+    ? new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          const card = entry.target;
+          const api = card._sliderAPI; if(!api) return;
+          api.visible = entry.isIntersecting && entry.intersectionRatio >= OBS_THRESHOLD;
+          api.syncAutoplay();
+        });
+      }, { threshold:[OBS_THRESHOLD] })
+    : null;
 
-    let prog = card.querySelector('.progress');
-    if (!prog){ prog = document.createElement('div'); prog.className='progress'; prog.innerHTML='<i></i>'; vp.appendChild(prog); }
-    const fill = prog.querySelector('i');
-
-    let left = card.querySelector('.nav-arrow.left');
-    let right = card.querySelector('.nav-arrow.right');
-    if (!left || !right) {
-      left  = document.createElement('button'); right = document.createElement('button');
-      left.className='nav-arrow left'; right.className='nav-arrow right';
-      left.setAttribute('aria-label','Previous'); right.setAttribute('aria-label','Next');
-      left.innerHTML='&#8249;'; right.innerHTML='&#8250;';
-      vp.append(left,right);
-    }
-
-    // 图片放底层 & 不拦点击
-    card.querySelectorAll('.slide .cover').forEach(img=>{
-      img.style.zIndex='0'; img.style.pointerEvents='none';
-      img.style.position = img.style.position || 'absolute';
-      img.style.inset = img.style.inset || '0';
-      img.style.objectFit = img.style.objectFit || 'cover';
-      img.style.width = img.style.width || '100%';
-      img.style.height = img.style.height || '100%';
-    });
-
-    [prog,left,right].forEach(el=>{
-      el.style.position = el.style.position || 'absolute';
-      el.style.zIndex = el.style.zIndex || '99';
-    });
-
-    return { vp, fill, left, right };
-  }
-
-  function initCard(card){
-    if (card._u3Inited) return;
-    const refs = ensureControls(card); if (!refs) return;
-    const { vp, fill, left, right } = refs;
+  document.querySelectorAll('.card.product.u3').forEach(card=>{
+    const vp = card.querySelector('.main-viewport');
     const slides = card.querySelectorAll('.slide');
-    const len = slides.length || 1;
+    if (!vp || !slides.length) return;
 
-    const update = (i=getIndex(vp))=>{
-      left.classList.toggle('is-disabled',  i<=0);
-      right.classList.toggle('is-disabled', i>=len-1);
-      fill.style.width = `${((i+1)/len)*100}%`;
+    // 箭头
+    const left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.textContent='‹';
+    const right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.textContent='›';
+    vp.append(left,right);
+
+    const fill = card.querySelector('.progress i');
+    const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);  // 优化: 使用 Math.round 避免浮点误差
+    const clamp    = (n,min,max)=> Math.max(min, Math.min(max,n));
+
+    const update = (i=getIndex())=>{
+      left.classList.toggle('is-disabled', i<=0);
+      right.classList.toggle('is-disabled', i>=slides.length-1);
+      fill.style.width = `${((i+1)/slides.length)*100}%`;
     };
-
     const goTo = (i)=>{
-      i = clamp(i, 0, len-1);
+      i = clamp(i, 0, slides.length-1);
       vp.scrollTo({ left: i*vp.clientWidth, behavior: scrollBehavior });
       update(i);
+      showArrows();  // 强制显示箭头
     };
 
-    const api = {
-      timer:null, resumeTimer:null, pausedByUser:false, visible:true,
-      start(){ if (prefersReduced) return; if (this.timer) return;
-        this.timer = setInterval(()=>{ const i=getIndex(vp); goTo(i+1>=len?0:i+1); }, AUTOPLAY_DELAY); },
-      stop(){ if (this.timer){ clearInterval(this.timer); this.timer=null; } },
-      allow(){ if (firstScreenGate) return false; if (document.hidden) return false; if (!this.visible) return false; if (this.pausedByUser) return false; return true; },
-      syncAutoplay(){ this.stop(); if (this.allow()) this.start(); }
-    };
-    card._u3 = api;
-
-    const pause = ()=>{
+    // 交互 → 暂停，5s 无交互恢复
+    const stopAutoplayTemp = ()=>{
       api.pausedByUser = true; api.stop();
       clearTimeout(api.resumeTimer);
       api.resumeTimer = setTimeout(()=>{ api.pausedByUser=false; api.syncAutoplay(); }, RESUME_AFTER);
     };
-
-    left.addEventListener('click',  ()=>{ pause(); goTo(getIndex(vp)-1); });
-    right.addEventListener('click', ()=>{ pause(); goTo(getIndex(vp)+1); });
-
-    vp.setAttribute('tabindex','0');
+    left.addEventListener('click', ()=>{ stopAutoplayTemp(); goTo(getIndex()-1); });
+    right.addEventListener('click', ()=>{ stopAutoplayTemp(); goTo(getIndex()+1); });
     vp.addEventListener('keydown', e=>{
-      if(e.key==='ArrowLeft'){ e.preventDefault(); pause(); goTo(getIndex(vp)-1); }
-      if(e.key==='ArrowRight'){ e.preventDefault(); pause(); goTo(getIndex(vp)+1); }
-      if(e.key==='Home'){ e.preventDefault(); pause(); goTo(0); }
-      if(e.key==='End'){ e.preventDefault(); pause(); goTo(len-1); }
+      if(e.key==='ArrowLeft'){ e.preventDefault(); stopAutoplayTemp(); goTo(getIndex()-1); }
+      if(e.key==='ArrowRight'){ e.preventDefault(); stopAutoplayTemp(); goTo(getIndex()+1); }
+      if(e.key==='Home'){ e.preventDefault(); stopAutoplayTemp(); goTo(0); }
+      if(e.key==='End'){ e.preventDefault(); stopAutoplayTemp(); goTo(slides.length-1); }
     });
 
-    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>update(getIndex(vp)),90); }, {passive:true});
-    let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>goTo(getIndex(vp)),120); });
+    // 滚动/尺寸
+    let st; vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>{update(getIndex()); showArrows();},100); stopAutoplayTemp(); }, {passive:true});
+    let rt; window.addEventListener('resize', ()=>{ clearTimeout(rt); rt=setTimeout(()=>{goTo(getIndex()); update(); showArrows();},120); });
 
-    if ('IntersectionObserver' in window){
-      const io = new IntersectionObserver(es=>{
-        es.forEach(e=>{ api.visible = e.isIntersecting && e.intersectionRatio>=0.6; api.syncAutoplay(); });
-      }, { threshold:[0.6] });
-      io.observe(card);
-    }
+    // 箭头自动淡出
+    let hideTimer;
+    const showArrows = ()=>{
+      [left,right].forEach(a=>a.classList.add('is-visible'));
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(()=>[left,right].forEach(a=>a.classList.remove('is-visible')),1500);
+    };
+    ['mousemove','keydown','click','scroll'].forEach(evt=> vp.addEventListener(evt, showArrows, {passive:true}));
 
+    // 自动轮播 API
+    const api = {
+      timer:null, resumeTimer:null, pausedByUser:false, visible:true,
+      start(){ if (prefersReduced) return; if (this.timer) return; this.timer=setInterval(()=>{ const i=getIndex(); goTo(i+1>=slides.length?0:i+1); }, AUTOPLAY_DELAY); },
+      stop(){ if (this.timer){ clearInterval(this.timer); this.timer=null; } },
+      allow(){ if (firstScreenGate) return false; if (document.hidden) return false; if (!this.visible) return false; if (this.pausedByUser) return false; return true; },
+      syncAutoplay(){ this.stop(); if (this.allow()) this.start(); }
+    };
+    card._sliderAPI = api;
+    if (io) io.observe(card);
     document.addEventListener('visibilitychange', ()=> api.syncAutoplay());
 
-    update(0);
+    // 初始
+    update(0); showArrows();
     api.syncAutoplay();
 
-    card._u3Inited = true;
-  }
-
-  document.querySelectorAll('.card.product.u3').forEach(initCard);
-
-  const mo = new MutationObserver(muts=>{
-    muts.forEach(m=>{
-      m.addedNodes && m.addedNodes.forEach(n=>{
-        if (!(n instanceof HTMLElement)) return;
-        if (n.matches && n.matches('.card.product.u3')) initCard(n);
-        n.querySelectorAll && n.querySelectorAll('.card.product.u3').forEach(initCard);
-      });
+    // 添加图片加载监听，确保所有图片加载后刷新
+    slides.forEach(slide => {
+      const img = slide.querySelector('img');
+      if (img.complete) {
+        update();
+      } else {
+        img.addEventListener('load', () => { update(); showArrows(); });
+      }
     });
   });
-  mo.observe(document.body, { childList:true, subtree:true });
-});
+})();
