@@ -148,4 +148,17 @@ footer{border-top:1px solid var(--line);padding:18px 0 calc(20px + env(safe-area
   z-index: 0 !important;
   pointer-events: none !important;
 }
+/* 确保箭头和进度条浮在图片之上 */
+.nav-arrow,
+.progress {
+  z-index: 5;
+  position: absolute;
+  pointer-events: auto;
+}
+
+/* 图片不要压住 overlay */
+.slide .cover {
+  position: relative;
+  z-index: 1;
+}
 
