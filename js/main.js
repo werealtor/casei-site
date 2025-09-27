@@ -12,7 +12,7 @@ if (themeBtn) {
   });
 }
 
-/* ========= 移动端菜单（汉堡） ========= */
+/* ========= 移动端菜单 ========= */
 const menuToggle = document.querySelector('.menu-toggle');
 const headerEl = document.querySelector('header');
 if (menuToggle && headerEl) {
@@ -43,7 +43,6 @@ if (uForm) {
     if (!f) { err.textContent = 'Please choose an image.'; return; }
     if (!/^image\/(png|jpe?g)$/i.test(f.type)) { err.textContent = 'Only PNG/JPEG supported.'; return; }
     if (f.size > MAX_SIZE) { err.textContent = 'File too large (max 10MB).'; return; }
-
     const reader = new FileReader();
     reader.onload = (ev) => { preview.src = ev.target.result; preview.style.display = 'block'; err.textContent = ''; };
     reader.readAsDataURL(f);
@@ -57,7 +56,29 @@ const fmtMoney=(num,currency='USD',locale=(navigator.language||'en-US'))=>{
   try{ return new Intl.NumberFormat(locale,{style:'currency',currency,maximumFractionDigits:0}).format(num); }
   catch{ return `$${num}`; }
 };
-async function fetchJSON(url){ try{ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); } catch{ return null; } }
+
+/* ========= 价格加载（带兜底 & 全局缓存） ========= */
+const FALLBACK_PRICES = {
+  classic: [19,19,19,19,19,19,19],
+  fashion: [25,26,27,28,29,30,31],
+  business: {1:29,2:31,3:33,4:34,5:36,6:38,7:40}
+};
+async function loadPrices() {
+  let prices = null;
+  try {
+    const r = await fetch('prices.json', { cache: 'no-store' });
+    if (r.ok && (r.headers.get('content-type') || '').includes('application/json')) {
+      prices = await r.json();
+    } else {
+      console.warn('[prices.json] status/type:', r.status, r.headers.get('content-type'));
+    }
+  } catch (e) {
+    console.warn('[prices.json] fetch failed:', e);
+  }
+  if (!prices) prices = FALLBACK_PRICES;
+  window.__prices__ = prices;
+  return prices;
+}
 
 /* ========= 价格映射 ========= */
 function priceFromMap(map,id,idx0){
@@ -81,7 +102,7 @@ function initCardSlider(card, prices, currency='USD'){
   const track = card.querySelector('.main-track');
   if(!vp || !track) return;
 
-  // 保障结构：progress、左右箭头（加在 viewport 内，层级高，不会被图挡住）
+  // 确保结构齐全（progress & arrows）
   let progress = card.querySelector('.progress');
   if(!progress){ progress = document.createElement('div'); progress.className='progress'; progress.innerHTML='<i></i>'; vp.appendChild(progress); }
   let fill = progress.querySelector('i');
@@ -100,15 +121,11 @@ function initCardSlider(card, prices, currency='USD'){
   function update(i=getIndex()){
     left.classList.toggle('is-disabled', i<=0);
     right.classList.toggle('is-disabled', i>=slides.length-1);
-
-    // 进度条
     fill.style.width = `${((i+1)/slides.length)*100}%`;
-
-    // 价格联动
     if(priceEl){
       const p = priceFromMap(prices, pid, i);
-      if(p==null){ priceEl.textContent = '—'; priceEl.classList.add('is-na'); }
-      else { priceEl.textContent = fmtMoney(p, currency); priceEl.classList.remove('is-na'); }
+      priceEl.textContent = p==null ? '—' : fmtMoney(p, currency);
+      priceEl.classList.toggle('is-na', p==null);
     }
   }
   function goTo(i){
@@ -117,7 +134,6 @@ function initCardSlider(card, prices, currency='USD'){
     update(i);
   }
 
-  // 交互绑定
   left.addEventListener('click', ()=> goTo(getIndex()-1));
   right.addEventListener('click',()=> goTo(getIndex()+1));
   vp.addEventListener('keydown', e=>{
@@ -129,18 +145,16 @@ function initCardSlider(card, prices, currency='USD'){
   vp.addEventListener('scroll', debounce(()=>update(getIndex()),80), {passive:true});
   window.addEventListener('resize', debounce(()=>update(getIndex()),120));
 
-  // 初始状态
   update(0);
 }
 
 /* ========= 启动 ========= */
 (async function boot(){
-  const cfg = await fetchJSON('config.json');         // 用于读取货币设置（可选）
-  const prices = await fetchJSON('prices.json');      // 价格映射（可选）
-  const currency = cfg?.settings?.currency || 'USD';
+  const prices = await loadPrices();          // 关键：持久加载价格
+  const currency = 'USD';                     // 如需从 config.json 读取，可自行扩展
 
   document.querySelectorAll('.card.product.u3').forEach(card=>{
-    // 如果 track 为空，给出最保守的兜底（1~7.jpg）
+    // 如果 track 为空，提供兜底：自动拼 1~7.jpg
     const track = card.querySelector('.main-track');
     if(track && track.children.length===0){
       const pid = card.dataset.product;
