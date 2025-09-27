@@ -79,12 +79,11 @@ section{padding:32px 0}
 .slide{position:relative;flex:0 0 100%;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--tone);scroll-snap-align:center;scroll-snap-stop:always;z-index:0}
 .slide .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;-webkit-user-drag:none;user-select:none;pointer-events:none;z-index:0}
 
-/* arrows（层级最高，避免被图片覆盖，常显测试） */
-.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.9);font-size:28px;font-weight:600;cursor:pointer;transition:color .15s ease,transform .12s ease;user-select:none;z-index:30; opacity: 1;} /* 常显 */
+/* arrows（层级最高，避免被图片覆盖） */
+.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.9);font-size:28px;font-weight:600;cursor:pointer;user-select:none;z-index:30; opacity:1;} /* 常顯，移除過渡 */
 .nav-arrow.left{left:12px}.nav-arrow.right{right:12px}
 @media(hover:none){.nav-arrow{opacity:1}}
-.nav-arrow:active{transform:translateY(-50%) scale(.92)}
-.nav-arrow.is-disabled{opacity: 0.3;} /* 禁用时半透明，而非隐藏 */
+.nav-arrow.is-disabled{display:none}
 
 /* progress：灰色底条 + 白色遮罩条（随进度变化），层级高于图片 */
 .progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(0,0,0,.08);overflow:hidden;z-index:20}
