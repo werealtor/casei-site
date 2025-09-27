@@ -1,64 +1,82 @@
-// sw.js — Case&i SW (network-first + cache fallback)
-const CACHE = 'casei-cache-v9'; // ← 改这个版本号可强制更新
+// Case&i — Service Worker (v10)
+// Strategy: network-first with cache fallback + versioned cache
 
+const CACHE = 'casei-cache-v10';
 const PRECACHE = [
   '/', '/index.html',
   '/css/style.css',
   '/js/main.js',
-  '/icon-192.png', '/icon-512.png',
-  '/manifest.webmanifest'
+  '/prices.json',
+  '/manifest.webmanifest',
+  '/icon-192.png',
+  '/icon-512.png',
+  // 资源较大/可选：按需启用
+  // '/assets/videos/hero.mp4',
 ];
 
-// 安装：预缓存基础资源
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch(()=>{})
+// ----- install: 预缓存基础资源 -----
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch(() => {})
   );
-  self.skipWaiting(); // 让新 SW 立即进入 waiting
+  self.skipWaiting();
 });
 
-// 激活：清理旧缓存
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
+// ----- activate: 清理旧缓存 -----
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
     )
   );
-  self.clients.claim(); // 立刻接管页面
+  self.clients.claim();
 });
 
-// 前端可发送 {type:'SKIP_WAITING'} 让新 SW 立即接管
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
-
-// 获取：网络优先，失败用缓存（跳过大媒体与 Range 请求）
-self.addEventListener('fetch', (e) => {
-  const req = e.request;
+// ----- fetch: 同源请求走网络优先，失败回退缓存 -----
+// 同时对导航请求提供离线兜底，对图片给 1px 占位，其他用简单文本
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
   if (req.method !== 'GET') return;
 
-  // 跳过 Range 请求（视频音频拖动）
-  if (req.headers.has('range')) return;
-
   const url = new URL(req.url);
+  const sameOrigin = url.origin === self.location.origin;
 
-  // 可选：跳过大媒体文件，避免缓存爆掉
-  if (/\.(mp4|webm|ogv|ogg|mp3|wav)$/i.test(url.pathname)) return;
+  // 仅对同源资源接管
+  if (!sameOrigin) return;
 
-  e.respondWith((async () => {
+  event.respondWith((async () => {
     try {
-      // 网络优先
-      const net = await fetch(req, { cache: 'no-store' });
-      // 成功后写入缓存
-      const cache = await caches.open(CACHE);
-      cache.put(req, net.clone());
+      const net = await fetch(req);
+      // 仅缓存成功的基本同源响应
+      if (net && net.status === 200 && net.type === 'basic') {
+        const cache = await caches.open(CACHE);
+        cache.put(req, net.clone());
+      }
       return net;
-    } catch {
-      // 失败回退缓存
-      const hit = await caches.match(req);
-      return hit || new Response('You are offline.', {
+    } catch (err) {
+      // 网络失败 → 回退缓存
+      const cached = await caches.match(req);
+      if (cached) return cached;
+
+      // 导航/HTML 兜底
+      const accept = req.headers.get('accept') || '';
+      if (accept.includes('text/html')) {
+        const fallback = await caches.match('/index.html');
+        if (fallback) return fallback;
+      }
+
+      // 图片兜底：返回 1px 透明 PNG
+      if (req.destination === 'image') {
+        const onePx =
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
+        return new Response(
+          Uint8Array.from(atob(onePx), c => c.charCodeAt(0)),
+          { headers: { 'Content-Type': 'image/png' } }
+        );
+      }
+
+      // 其他类型：简单离线提示
+      return new Response('You are offline.', {
         status: 200,
         headers: { 'Content-Type': 'text/plain; charset=utf-8' }
       });
