@@ -136,3 +136,16 @@ body.dark .progress{background:rgba(255,255,255,.08)}
 /* Footer & Theme btn */
 footer{border-top:1px solid var(--line);padding:18px 0 calc(20px + env(safe-area-inset-bottom,0));color:var(--muted);text-align:center}
 .floating-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0) + 16px);right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:2147483647}
+/* 保证箭头和进度条浮在图片上方 */
+.card.product.u3 .nav-arrow,
+.card.product.u3 .progress {
+  position: absolute !important;
+  z-index: 99 !important;
+  pointer-events: auto !important;
+}
+
+.card.product.u3 .slide .cover {
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
