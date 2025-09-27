@@ -112,10 +112,10 @@ const debounce = (fn, wait = 90) => { let t; return (...a) => { clearTimeout(t);
       if (priceEl) {
         const s = slides[i];
         const p = s?.dataset?.price;
-        if (p) priceEl.textContent = `$${p}`;
+        if (p) priceEl.textContent = p; // p 已含 $ 符号，例如 "$25"
       }
 
-      // 进度条（蓝色遮罩宽度）
+      // 进度条宽度
       fill.style.width = `${((i + 1) / slides.length) * 100}%`;
     }
 
