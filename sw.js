@@ -49,11 +49,3 @@ self.addEventListener('fetch', (e) => {
     }
   })());
 });
-const update = (i=getIndex())=>{
-  left.classList.toggle('is-disabled', i<=0);
-  right.classList.toggle('is-disabled', i>=slides.length-1);
-  fill.style.width = `${((i+1)/slides.length)*100}%`;
-  showArrows(); // 每次更新都強制顯示箭頭
-};
-
-vp.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>{ update(getIndex()); showArrows(); },150); stopAutoplayTemp(); }, {passive:true}); // 在scroll後強制顯示
