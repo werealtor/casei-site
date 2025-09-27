@@ -1,5 +1,5 @@
 /* =========================================
- * Case&i main.js — config驱动 + 轮播 + 主题/菜单/上传
+ * Case&i main.js — config驱动 + prices.json 自动定价 + 轮播 + 主题/菜单/上传
  * ========================================= */
 
 /* ========= 主题切换 ========= */
@@ -36,7 +36,7 @@ if (uForm) {
   const MAX_SIZE = 10 * 1024 * 1024;
 
   fileInput.addEventListener('change', () => {
-    if (!fileInput.files.length) { nameEl.textContent = 'PNG/JPEG · < 10MB'; return; }
+    if (!fileInput.files.length) { nameEl.textContent = 'PNG/JPEG · < 10 MB'; return; }
     const f = fileInput.files[0];
     nameEl.textContent = `${f.name} · ${(f.size/1024/1024).toFixed(1)}MB`;
   });
@@ -66,102 +66,120 @@ const fmtMoney = (num, currency = 'USD', locale = (navigator.language || 'en-US'
   catch { return `$${num}`; }
 };
 
-/* ========= 从 config.json 应用配置到 DOM ========= */
-async function loadAndApplyConfig() {
+/* ========= 拉取 config.json / prices.json ========= */
+async function fetchJSON(url){
   try {
-    const res = await fetch('config.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('config not found');
-    const cfg = await res.json();  // { products:[{id,name,price,images, perSlidePrices? }], settings:{currency,...} }
-
-    const currency = cfg?.settings?.currency || 'USD';
-
-    (cfg.products || []).forEach(prod => {
-      const card = document.querySelector(`.card.product[data-product="${prod.id}"]`);
-      if (!card) return;
-
-      const vp = card.querySelector('.main-viewport');
-      const track = card.querySelector('.main-track') || (() => {
-        const t = document.createElement('div'); t.className = 'main-track'; vp.appendChild(t); return t;
-      })();
-
-      // 生成 slides（带 data-price）
-      if (Array.isArray(prod.images) && prod.images.length) {
-        track.innerHTML = ''; // 清空旧内容
-        const perSlide = Array.isArray(prod.perSlidePrices) ? prod.perSlidePrices : null;
-
-        prod.images.forEach((src, idx) => {
-          const priceForSlide = perSlide ? perSlide[idx] : prod.price;
-          const slide = document.createElement('div');
-          slide.className = 'slide';
-          slide.dataset.price = fmtMoney(priceForSlide, currency);
-
-          const img = document.createElement('img');
-          img.className = 'cover';
-          img.src = src;
-          img.alt = `${prod.name || prod.id} — ${idx+1}`;
-          img.draggable = false;
-
-          slide.appendChild(img);
-          track.appendChild(slide);
-        });
-      }
-
-      // 价格显示（用产品基础价，滑动时再联动）
-      const priceEl = card.querySelector('.price');
-      if (priceEl && typeof prod.price === 'number') {
-        priceEl.textContent = fmtMoney(prod.price, currency);
-      }
-
-      // 进度条缺则补
-      let progress = card.querySelector('.progress');
-      if (!progress) {
-        progress = document.createElement('div');
-        progress.className = 'progress';
-        progress.innerHTML = '<i></i>';
-        vp.appendChild(progress);
-      }
-    });
-
-  } catch (e) {
-    // 配置缺失或失败时静默继续，保留原 HTML
-    console.warn('config.json not applied:', e.message);
-  }
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`fetch ${url} failed`);
+    return await res.json();
+  } catch { return null; }
 }
 
-/* ========= 初始化滑块（箭头/进度条/价格联动） ========= */
+/* 从 prices.json 获取价格 */
+function getPriceForSlide(pricesMap, productId, slideIndexZero, fallbackNumber) {
+  if (!pricesMap || !(productId in pricesMap)) return fallbackNumber;
+  const val = pricesMap[productId];
+  if (typeof val === 'number') return val;
+  if (Array.isArray(val)) return (val[slideIndexZero] != null) ? val[slideIndexZero] : fallbackNumber;
+  if (val && typeof val === 'object') {
+    const idx1 = String(slideIndexZero + 1);
+    const idx0 = String(slideIndexZero);
+    if (val[idx1] != null) return val[idx1];
+    if (val[idx0] != null) return val[idx0];
+  }
+  return fallbackNumber;
+}
+
+/* ========= 从 config + prices 生成/更新 DOM ========= */
+async function buildFromConfigAndPrices() {
+  const cfg = await fetchJSON('config.json');
+  const prices = await fetchJSON('prices.json');
+  const currency = cfg?.settings?.currency || 'USD';
+
+  if (!cfg || !Array.isArray(cfg.products)) {
+    console.warn('config.json missing or invalid; will use existing DOM only.');
+    return;
+  }
+
+  cfg.products.forEach(prod => {
+    const card = document.querySelector(`.card.product[data-product="${prod.id}"]`);
+    if (!card) return;
+    const vp = card.querySelector('.main-viewport');
+    if (!vp) return;
+
+    // 主轨道
+    let track = card.querySelector('.main-track');
+    if (!track) { track = document.createElement('div'); track.className='main-track'; vp.appendChild(track); }
+
+    // 渲染 slides
+    if (Array.isArray(prod.images) && prod.images.length) {
+      track.innerHTML = '';
+      const perSlide = Array.isArray(prod.perSlidePrices) ? prod.perSlidePrices : null;
+
+      prod.images.forEach((src, idx) => {
+        const priceNumber = (prices && prod.id in prices)
+          ? getPriceForSlide(prices, prod.id, idx, (perSlide ? perSlide[idx] : prod.price))
+          : (perSlide ? perSlide[idx] : prod.price);
+
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        slide.dataset.price = fmtMoney(priceNumber, currency);
+
+        const img = document.createElement('img');
+        img.className = 'cover';
+        img.src = src;
+        img.alt = `${prod.name || prod.id} — ${idx+1}`;
+        img.draggable = false;
+
+        slide.appendChild(img);
+        track.appendChild(slide);
+      });
+    } else {
+      // 没有 cfg.images 时，为已有 slide 补价格
+      const slides = card.querySelectorAll('.slide');
+      slides.forEach((s, idx) => {
+        const priceNumber = (prices && prod.id in prices)
+          ? getPriceForSlide(prices, prod.id, idx, prod.price)
+          : prod.price;
+        s.dataset.price = fmtMoney(priceNumber, currency);
+      });
+    }
+
+    // 初始价格
+    const priceEl = card.querySelector('.price');
+    if (priceEl) {
+      const firstSlidePrice = card.querySelector('.slide')?.dataset?.price;
+      if (firstSlidePrice) priceEl.textContent = firstSlidePrice;
+      else if (typeof prod.price === 'number') priceEl.textContent = fmtMoney(prod.price, currency);
+    }
+
+    // 进度条缺则补
+    let progress = card.querySelector('.progress');
+    if (!progress) { progress = document.createElement('div'); progress.className='progress'; progress.innerHTML='<i></i>'; vp.appendChild(progress); }
+  });
+}
+
+/* ========= 初始化滑块 ========= */
 function initSliders() {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const behavior = prefersReduced ? 'auto' : 'smooth';
 
   document.querySelectorAll('.card.product.u3').forEach(card => {
     const vp = card.querySelector('.main-viewport');
-    const track  = card.querySelector('.main-track');
     const slides = card.querySelectorAll('.slide');
-    if (!vp || !track || !slides.length) return;
+    if (!vp || !slides.length) return;
 
-    // 进度条（缺则补）
     let progress = card.querySelector('.progress');
-    if (!progress) {
-      progress = document.createElement('div');
-      progress.className = 'progress';
-      progress.innerHTML = '<i></i>';
-      vp.appendChild(progress);
-    }
+    if (!progress) { progress = document.createElement('div'); progress.className='progress'; progress.innerHTML='<i></i>'; vp.appendChild(progress); }
     let fill = progress.querySelector('i');
-    if (!fill) {
-      fill = document.createElement('i');
-      progress.appendChild(fill);
-    }
+    if (!fill) { fill = document.createElement('i'); progress.appendChild(fill); }
 
-    // 箭头（缺则补）
     let left  = card.querySelector('.nav-arrow.left');
     let right = card.querySelector('.nav-arrow.right');
     if (!left)  { left  = document.createElement('button'); left.className='nav-arrow left';  left.setAttribute('aria-label','Previous'); left.innerHTML='&#8249;'; vp.appendChild(left); }
     if (!right) { right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next');     right.innerHTML='&#8250;'; vp.appendChild(right); }
 
-    // 价格元素
     const priceEl = card.querySelector('.price');
-
     const getIndex = () => Math.round(vp.scrollLeft / Math.max(1, vp.clientWidth));
 
     function goTo(i){
@@ -171,24 +189,18 @@ function initSliders() {
     }
 
     function update(i = getIndex()){
-      // 箭头状态
       left.classList.toggle('is-disabled',  i <= 0);
       right.classList.toggle('is-disabled', i >= slides.length - 1);
 
-      // 价格联动：读当前 slide 的 data-price（形如 "$25" 或 "¥199"）
       if (priceEl) {
         const p = slides[i]?.dataset?.price;
         if (p) priceEl.textContent = p;
       }
-
-      // 进度条宽度
       fill.style.width = `${((i + 1) / slides.length) * 100}%`;
     }
 
-    // 事件
     left.addEventListener('click',  () => goTo(getIndex() - 1));
     right.addEventListener('click', () => goTo(getIndex() + 1));
-
     vp.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(getIndex() - 1); }
       if (e.key === 'ArrowRight') { e.preventDefault(); goTo(getIndex() + 1); }
@@ -199,13 +211,12 @@ function initSliders() {
     vp.addEventListener('scroll', debounce(() => update(getIndex()), 80), { passive: true });
     window.addEventListener('resize', debounce(() => update(getIndex()), 120));
 
-    // 初始化
     update(0);
   });
 }
 
-/* ========= 启动流程：先应用配置，再初始化滑块 ========= */
+/* ========= 启动 ========= */
 (async function boot(){
-  await loadAndApplyConfig();  // 成功则用配置渲染，失败则走原 DOM
+  await buildFromConfigAndPrices();
   initSliders();
 })();
