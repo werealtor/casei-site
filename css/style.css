@@ -49,7 +49,7 @@ nav a:hover{background:var(--tone)}
 .btn.primary{background:var(--brand);color:#fff}
 .btn:hover{background:var(--brand);color:#fff}
 
-/* Section spacing */
+/* Sections */
 section{padding:32px 0}
 .title{font-size:22px;text-align:center;margin-bottom:16px}
 .about-text{max-width:820px;margin:0 auto;text-align:center;color:var(--muted)}
@@ -73,21 +73,38 @@ section{padding:32px 0}
 .price{font-weight:700;margin-top:4px}
 
 /* ===== U3 Slider ===== */
-.main-viewport{position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;border-bottom:1px solid var(--line);border-radius:12px 12px 0 0;background:var(--bg);z-index:0}
+.main-viewport{
+  position:relative; /* 关键：让箭头/进度条可以绝对定位 */
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;
+  border-bottom:1px solid var(--line);border-radius:12px 12px 0 0;background:var(--bg);z-index:1;
+}
 .main-viewport::-webkit-scrollbar{display:none}
-.main-track{display:flex;width:100%;align-items:stretch;position:relative;z-index:0}
-.slide{position:relative;flex:0 0 100%;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--tone);scroll-snap-align:center;scroll-snap-stop:always;z-index:0}
-.slide .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;-webkit-user-drag:none;user-select:none;pointer-events:none;z-index:0}
+.main-track{display:flex;width:100%;align-items:stretch;position:relative;z-index:1}
+.slide{
+  position:relative;flex:0 0 100%;width:100%;aspect-ratio:16/9;overflow:hidden;
+  background:var(--tone);scroll-snap-align:center;scroll-snap-stop:always;z-index:0
+}
+.slide .cover{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;
+  -webkit-user-drag:none;user-select:none;pointer-events:none;z-index:0
+}
 
-/* arrows（置顶避免被图遮） */
-.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.95);font-size:28px;font-weight:600;cursor:pointer;opacity:1;transition:opacity .18s ease,color .15s ease,transform .12s ease;user-select:none;z-index:30}
+/* arrows：层级最高，避免被图片覆盖 */
+.nav-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:rgba(255,255,255,.95);
+  font-size:28px;font-weight:600;cursor:pointer;opacity:0;user-select:none;
+  transition:opacity .18s ease,transform .12s ease;z-index:60;
+}
 .nav-arrow.left{left:12px}.nav-arrow.right{right:12px}
+.card.product:hover .nav-arrow,.card.product .main-viewport:hover .nav-arrow{opacity:1}
+@media(hover:none){.nav-arrow{opacity:1}}
 .nav-arrow:active{transform:translateY(-50%) scale(.92)}
 .nav-arrow.is-disabled{display:none}
 
-/* progress：灰底条 + 蓝色填充 */
-.progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(0,0,0,.08);overflow:hidden;z-index:20}
-body.dark .progress{background:rgba(255,255,255,.08)}
+/* progress：灰底 + 蓝色填充，位于图片之上 */
+.progress{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(0,0,0,.08);overflow:hidden;z-index:50}
+body.dark .progress{background:rgba(255,255,255,.12)}
 .progress i{display:block;height:100%;width:0;background:var(--brand);transition:width .25s ease}
 
 /* Customize */
@@ -116,54 +133,3 @@ body.dark .progress{background:rgba(255,255,255,.08)}
 /* Footer & Theme btn */
 footer{border-top:1px solid var(--line);padding:18px 0 calc(20px + env(safe-area-inset-bottom,0));color:var(--muted);text-align:center}
 .floating-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0) + 16px);right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:2147483647}
-/* === Arrow & Progress z-index hotfix === */
-.card.product .main-viewport{
-  position: relative !important;
-  overflow-x: auto;           /* 保持滚动 */
-  overflow-y: hidden;
-  z-index: 0 !important;      /* 创建基准堆叠上下文 */
-}
-.card.product .main-track,
-.card.product .slide,
-.card.product .slide .cover{
-  position: relative;
-  z-index: 0 !important;      /* 所有图片层压到同一底层 */
-}
-.card.product .slide .cover{
-  pointer-events: none !important; /* 避免拦截点击，箭头可点 */
-}
-
-/* 让控制元素永远浮在最上面 */
-.card.product .nav-arrow{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1000 !important;   /* 高于一切图片 */
-  background: none;
-  border: 0;
-  color: rgba(255,255,255,.95);
-  font-size: 28px;
-  font-weight: 600;
-  cursor: pointer;
-  opacity: 1;                 /* 移动端始终可见 */
-  pointer-events: auto;
-}
-.card.product .nav-arrow.left{ left: 12px }
-.card.product .nav-arrow.right{ right: 12px }
-
-.card.product .progress{
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  height: 3px;
-  background: rgba(0,0,0,.08);
-  z-index: 900 !important;    /* 仅次于箭头 */
-  overflow: hidden;
-}
-body.dark .card.product .progress{ background: rgba(255,255,255,.1) }
-.card.product .progress i{
-  display: block;
-  height: 100%;
-  width: 0;
-  background: var(--brand);
-  transition: width .25s ease;
-}
