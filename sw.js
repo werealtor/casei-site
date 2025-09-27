@@ -1,84 +1,100 @@
-// Case&i — Optimized SW (network-first with cache fallback, versioning, and expiration)
-const CACHE_VERSION = 'v2'; // 版本化缓存名称，便于更新时清理旧版
-const CACHE = `casei-cache-${CACHE_VERSION}`;
+// Case&i — Service Worker v3
+// 改进：
+// 1) 跳过 Range 请求 & 媒体文件，解决视频播放和缓存冲突
+// 2) 分类缓存策略：HTML 网络优先；CSS/JS/字体 SWR；其它网络优先回退缓存
+// 3) 支持热更新：postMessage({type:'SKIP_WAITING'})
+
+const CACHE = 'casei-cache-v3';
 const PRECACHE = [
   '/', '/index.html',
   '/css/style.css',
   '/js/main.js',
-  // 扩展预缓存静态资源，提高首次加载速度
-  '/assets/videos/hero.mp4',
-  '/assets/videos/hero.webm',
-  '/assets/images/classic/1.jpg',
-  '/assets/images/classic/2.jpg',
-  '/assets/images/classic/3.jpg',
-  '/assets/images/fashion/1.jpg',
-  '/assets/images/fashion/2.jpg',
-  '/assets/images/fashion/3.jpg',
-  '/assets/images/business/1.jpg',
-  '/assets/images/business/2.jpg',
-  '/assets/images/business/3.jpg',
-  '/assets/images/hero-poster.jpg',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/manifest.webmanifest'
+  '/icon-192.png', '/icon-512.png'
 ];
 
-// install：预缓存基础资源
+// 安装：预缓存基础资源（尽量保持列表精简，避免 404 导致安装失败）
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch((err) => console.warn('Precache failed:', err))
+    caches.open(CACHE).then((c) => c.addAll(PRECACHE)).catch(()=>{})
   );
-  self.skipWaiting(); // 立即激活新SW
+  self.skipWaiting();
 });
 
-// activate：清理旧缓存，并处理更新
+// 激活：清理旧缓存
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    Promise.all([
-      caches.keys().then(keys =>
-        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-      ),
-      // 通知客户端更新（可选：发送消息给客户端刷新）
-      self.clients.claim().then(() => {
-        return self.clients.matchAll({ type: 'window' }).then(clients => {
-          clients.forEach(client => client.postMessage({ type: 'UPDATE_AVAILABLE' }));
-        });
-      })
-    ])
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
   );
+  self.clients.claim();
 });
 
-// fetch：网络优先，失败回退缓存；成功后写入缓存，并添加过期逻辑
+// 热更新：页面可发送 postMessage 让新 SW 立即接管
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// 抓取：按类型应用策略
 self.addEventListener('fetch', (e) => {
   const req = e.request;
+
+  // 只处理 GET
   if (req.method !== 'GET') return;
 
+  // 跳过 Range 请求（媒体流式播放常用）
+  if (req.headers.has('range')) return;
+
+  const url = new URL(req.url);
+  const isHTML   = req.mode === 'navigate' || (req.destination === 'document');
+  const isStatic = ['style', 'script', 'font'].includes(req.destination);
+  const isMedia  = /\.(mp4|webm|ogg|mp3|wav)$/i.test(url.pathname);
+
+  // 媒体文件交给浏览器直连，避免缓存/Range 问题
+  if (isMedia) return;
+
+  // HTML：网络优先，失败回退缓存
+  if (isHTML) {
+    e.respondWith((async () => {
+      try {
+        const net = await fetch(req, { cache: 'no-store' });
+        const cache = await caches.open(CACHE);
+        cache.put(req, net.clone());
+        return net;
+      } catch {
+        const hit = await caches.match(req);
+        return hit || new Response('You are offline.', {
+          status: 200,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        });
+      }
+    })());
+    return;
+  }
+
+  // 静态资源（CSS/JS/字体）：Stale-While-Revalidate
+  if (isStatic) {
+    e.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      const cached = await cache.match(req);
+      const fetching = fetch(req).then(res => { cache.put(req, res.clone()); return res; }).catch(()=>null);
+      return cached || (await fetching) || new Response('', { status: 504 });
+    })());
+    return;
+  }
+
+  // 其它：网络优先，失败回退缓存
   e.respondWith((async () => {
-    const cache = await caches.open(CACHE);
     try {
       const net = await fetch(req);
-      // 更新缓存，并设置过期时间（例如1天）
-      const cloned = net.clone();
-      const responseWithExpiry = new Response(cloned.body, {
-        status: net.status,
-        statusText: net.statusText,
-        headers: net.headers
-      });
-      responseWithExpiry.headers.set('sw-cache-expires', Date.now() + 86400000); // 1天过期
-      cache.put(req, responseWithExpiry);
+      const cache = await caches.open(CACHE);
+      cache.put(req, net.clone());
       return net;
     } catch {
-      const hit = await cache.match(req);
-      if (hit) {
-        // 检查缓存是否过期
-        const expiry = hit.headers.get('sw-cache-expires');
-        if (expiry && Date.now() > parseInt(expiry)) {
-          cache.delete(req); // 删除过期缓存
-          return new Response('Cache expired.', { status: 504 });
-        }
-        return hit;
-      }
-      return new Response('You are offline.', {
+      const hit = await caches.match(req);
+      return hit || new Response('You are offline.', {
         status: 200,
         headers: { 'Content-Type': 'text/plain; charset=utf-8' }
       });
