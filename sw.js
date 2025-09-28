@@ -1,7 +1,7 @@
 // Case&i — Service Worker (v10)
 // Strategy: network-first with cache fallback + versioned cache
 
-const CACHE = 'casei-cache-v13';
+const CACHE = 'casei-cache-v14';
 const PRECACHE = [
   '/', '/index.html',
   '/css/style.css',
