@@ -142,4 +142,43 @@ body.dark .progress{background:rgba(255,255,255,.1)}
   background: #0b66ff; /* 蓝色进度 */
   transition: width 0.3s ease;
 }
+/* ====== U3 进度条（灰底 + 蓝色条）====== */
+.progress{
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 4px;
+  background: rgba(0,0,0,.08);
+  border-radius: 2px;
+  overflow: hidden;
+  z-index: 9998;           /* 盖住图片 */
+  pointer-events: none;
+}
+body.dark .progress{ background: rgba(255,255,255,.12); }
+.progress .bar{
+  height: 100%; width: 0%;
+  background: #0b66ff;     /* 蓝色进度条 */
+  transition: width .3s ease;
+}
 
+/* ====== U3 箭头（始终可交互，避免被覆盖）====== */
+.nav-arrow{
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; border-radius: 50%;
+  background: rgba(0,0,0,.45);
+  color: #fff; font-size: 22px; font-weight: 600;
+  cursor: pointer;
+  z-index: 9999;           /* 高于进度条与图片 */
+  opacity: 1;
+  transition: transform .12s ease, opacity .2s ease;
+}
+.nav-arrow.left{ left: 10px; }
+.nav-arrow.right{ right: 10px; }
+.nav-arrow:is(:hover,:active){ transform: translateY(-50%) scale(.96); }
+.nav-arrow.is-disabled{ opacity:.35; pointer-events:none; }
+
+/* 确保视口建立定位上下文，图片不拦截点击 */
+.card.product .main-viewport{ position: relative; }
+.card.product .slide .cover{ pointer-events: none; z-index: 0; }
