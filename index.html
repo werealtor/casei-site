@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <!-- Hero Video -->
+    <!-- Hero Video（置于 container 中，左右留白与卡片一致） -->
     <div class="container">
       <div class="hero-video">
         <video id="heroVideo" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
@@ -110,13 +110,24 @@
   <section id="custom">
     <div class="container">
       <h2>Customize Your Case</h2>
-      <form id="custom-form">
+      <form id="custom-form" class="section-card">
         <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
-        <input type="file" id="image-upload" accept="image/png, image/jpeg" />
-        <div class="preview">
+
+        <div class="file-row" style="margin-top:8px;">
+          <label class="file-control" for="image-upload" aria-label="Choose file">
+            <span>📁 Choose File</span>
+            <span id="file-name" class="file-name">no file selected</span>
+          </label>
+          <input type="file" id="image-upload" accept="image/png, image/jpeg" style="display:none;" />
+        </div>
+
+        <div class="preview" style="margin-top:12px;">
           <img id="preview-image" src="" alt="User uploaded case preview" />
         </div>
-        <button type="submit" class="btn">Upload</button>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary block round">Upload</button>
+        </div>
       </form>
     </div>
   </section>
@@ -125,7 +136,9 @@
   <section id="about">
     <div class="container">
       <h2>About Us</h2>
-      <p>Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.</p>
+      <div class="section-card">
+        <p>Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.</p>
+      </div>
     </div>
   </section>
 
@@ -133,11 +146,16 @@
   <section id="contact">
     <div class="container">
       <h2>Contact Us</h2>
-      <form id="contact-form">
-        <input type="text" placeholder="Name" required />
-        <input type="email" placeholder="Email" required />
-        <textarea placeholder="Message" required></textarea>
-        <button type="submit" class="btn breath">Send</button>
+      <form id="contact-form" class="section-card">
+        <div class="input-row">
+          <input type="text" id="name" placeholder="Name" required />
+          <input type="email" id="email" placeholder="Email" required />
+          <textarea id="message" placeholder="Message" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn primary block round">Send</button>
+        </div>
+        <p class="form-help">We usually reply within 24 hours.</p>
       </form>
     </div>
   </section>
@@ -148,7 +166,7 @@
   </footer>
 
   <!-- Floating Dark Mode Toggle -->
-  <button id="dark-mode-toggle"></button>
+  <button id="dark-mode-toggle" aria-label="Toggle dark mode"></button>
 
   <script src="js/main.js"></script>
 </body>
