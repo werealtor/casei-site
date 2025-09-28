@@ -50,24 +50,11 @@
   });
 })();
 
-/* ========= 价格加载：优先 config.json，其次 prices.json ========= */
+/* ========= 读取 config.json（唯一数据源） ========= */
 async function loadPriceMap(){
-  // try config.json
   try {
-    const r = await fetch('config.json?v=' + Date.now(), { cache: 'no-store' });
-    if (r.ok) {
-      const cfg = await r.json();
-      if (cfg && Array.isArray(cfg.products)) {
-        const m = {};
-        cfg.products.forEach(p => { if (p?.id && p.price) m[p.id] = p.price; });
-        if (Object.keys(m).length) return m;
-      }
-    }
-  } catch {}
-  // fallback prices.json
-  try {
-    const r2 = await fetch('prices.json?v=' + Date.now(), { cache: 'no-store' });
-    if (r2.ok) return await r2.json();
+    const r = await fetch('config.json?v='+Date.now(), {cache:'no-store'});
+    if (r.ok) return await r.json();
   } catch {}
   return {};
 }
@@ -78,27 +65,48 @@ const pickPrice = (conf, i0) => {
   return null;
 };
 
-/* ========= 为每张产品卡片绑定：箭头 + 进度条 + 价格联动 ========= */
+/* ========= 自动生成 7 张图 ========= */
+const IMAGE_COUNT = 7;
+function buildSevenSlides(card){
+  const track = card.querySelector('.main-track');
+  if (!track) return;
+  if (track.querySelector('.slide')) return; // 已有则跳过
+  const pid = card.dataset.product;
+  const frag = document.createDocumentFragment();
+  for (let i=1; i<=IMAGE_COUNT; i++){
+    const slide = document.createElement('div');
+    slide.className = 'slide';
+    const img = document.createElement('img');
+    img.className = 'cover';
+    img.alt = `${pid} — ${i}`;
+    img.src = `assets/images/${pid}/${i}.jpg`;
+    img.addEventListener('error', () => { slide.remove(); }); // 缺图自动移除
+    slide.appendChild(img);
+    frag.appendChild(slide);
+  }
+  track.appendChild(frag);
+}
+
+/* ========= 绑定滑块（箭头 + 进度条 + 价格联动） ========= */
 function wireSlider(card, priceMap){
   const vp = card.querySelector('.main-viewport');
   const track = card.querySelector('.main-track');
   if (!vp || !track) return;
 
-  // 关键元素兜底（以防 HTML 被改坏）
-  let prog = vp.querySelector('.progress'); if(!prog){ prog = document.createElement('div'); prog.className='progress'; prog.innerHTML='<i></i>'; vp.appendChild(prog); }
+  // 补齐关键节点
+  let prog = vp.querySelector('.progress'); if(!prog){ prog=document.createElement('div'); prog.className='progress'; prog.innerHTML='<i></i>'; vp.appendChild(prog); }
   const bar = prog.querySelector('i');
-
   let left = vp.querySelector('.nav-arrow.left');
   let right= vp.querySelector('.nav-arrow.right');
   if(!left){ left=document.createElement('button'); left.className='nav-arrow left'; left.setAttribute('aria-label','Previous'); left.textContent='‹'; vp.appendChild(left); }
   if(!right){ right=document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.textContent='›'; vp.appendChild(right); }
 
-  // 强制层级，避免被图片盖住
+  // 保证层级
   vp.style.position = 'relative';
   prog.style.zIndex = '20';
   left.style.zIndex = right.style.zIndex = '30';
 
-  const slides = track.querySelectorAll('.slide');
+  let slides = track.querySelectorAll('.slide');
   const priceEl = card.querySelector('.price');
   const pid = card.dataset.product;
   const conf = priceMap[pid];
@@ -107,12 +115,14 @@ function wireSlider(card, priceMap){
   const smooth = prefersReduced ? 'auto' : 'smooth';
   const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
   const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
-  const goTo = (i) => { i = clamp(i,0,slides.length-1); vp.scrollTo({left:i*vp.clientWidth, behavior:smooth}); update(i); };
+  const goTo = (i) => { i = clamp(i,0,slides.length-1); vp.scrollTo({left:i*vp.clientWidth, behavior:smooth}); setTimeout(()=>update(i),60); };
 
   function update(i = getIndex()){
-    if (bar && slides.length) bar.style.width = ((i+1)/slides.length)*100 + '%';
+    slides = track.querySelectorAll('.slide'); // 可能有缺图被移除
+    const len = slides.length;
+    if (bar && len) bar.style.width = ((i+1)/len)*100 + '%';
     left.classList.toggle('is-disabled', i<=0);
-    right.classList.toggle('is-disabled', i>=slides.length-1);
+    right.classList.toggle('is-disabled', i>=len-1);
     if (priceEl) {
       const p = pickPrice(conf, i);
       if (typeof p === 'number') priceEl.textContent = `$${p}`;
@@ -127,8 +137,11 @@ function wireSlider(card, priceMap){
   update(0);
 }
 
-/* ========= 启动 ========= */
+/* ========= 启动：每卡 7 图 + 绑定 ========= */
 document.addEventListener('DOMContentLoaded', async () => {
   const priceMap = await loadPriceMap();
-  document.querySelectorAll('.card.product.u3').forEach(card => wireSlider(card, priceMap));
+  document.querySelectorAll('.card.product.u3').forEach(card => {
+    buildSevenSlides(card);
+    wireSlider(card, priceMap);
+  });
 });
