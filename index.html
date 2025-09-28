@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
+  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
   <meta name="theme-color" content="#ffffff" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -25,7 +26,7 @@
   </header>
 
   <main>
-    <!-- Hero（可放你的视频；不需要可删） -->
+    <!-- Hero -->
     <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
@@ -46,49 +47,8 @@
     <section id="products">
       <div class="container">
         <h2 class="title">Our Products</h2>
-
-        <div class="grid products-grid">
-          <!-- Classic -->
-          <article class="card product u3" data-product="classic">
-            <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
-              <div class="main-track"></div>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Classic</h3>
-              <p class="sub">Slim &amp; scratch-resistant</p>
-              <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" data-id="classic">$—</div>
-            </div>
-          </article>
-
-          <!-- Fashion -->
-          <article class="card product u3" data-product="fashion">
-            <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
-              <div class="main-track"></div>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Fashion</h3>
-              <p class="sub">Trendy design &amp; anti-fingerprint</p>
-              <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" data-id="fashion">$—</div>
-            </div>
-          </article>
-
-          <!-- Business -->
-          <article class="card product u3" data-product="business">
-            <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
-              <div class="main-track"></div>
-              <div class="progress"><i></i></div>
-            </div>
-            <div class="body">
-              <h3>Business</h3>
-              <p class="sub">Premium touch &amp; shockproof</p>
-              <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" data-id="business">$—</div>
-            </div>
-          </article>
+        <div class="grid products-grid" id="products-grid">
+          <!-- JS will inject product cards here -->
         </div>
       </div>
     </section>
@@ -99,8 +59,7 @@
         <h2 class="title">Customize Your Case</h2>
         <form id="uForm" novalidate>
           <div class="file-field">
-            <label for="file" class="input-like">
-              Choose Image
+            <label for="file" class="input-like">Choose Image
               <small id="fileName">PNG/JPEG · &lt; 10MB</small>
             </label>
             <button type="submit" class="btn primary">Upload &amp; Preview</button>
@@ -143,8 +102,9 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
+  <!-- 悬浮主题切换按钮 -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
   <script src="js/main.js" defer></script>
 </body>
-</html> 
+</html>
