@@ -17,6 +17,7 @@ body.dark{
   --tone:#1b1c1f; --tone-rgb:27,28,31; --brand:#4c9aff; --shadow:0 1px 10px rgba(0,0,0,.28);
 }
 
+/* Base */
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
@@ -126,18 +127,9 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
   background: var(--bg);
   text-align: center;
 }
-#site-footer p {
-  margin: 4px 0;
-}
-#site-footer .region {
-  font-size: 14px;
-  color: var(--text);
-}
-#site-footer .legal {
-  font-size: 12.5px;
-  color: var(--muted);
-  line-height: 1.4;
-}
+#site-footer p { margin: 4px 0; }
+#site-footer .region { font-size: 14px; color: var(--text); }
+#site-footer .legal  { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
 
 /* Dark mode toggle */
 #dark-mode-toggle {
@@ -146,3 +138,17 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
   border-radius:50%;border:0;background:rgba(var(--tone-rgb),.92);box-shadow:var(--shadow);font-size:20px;cursor:pointer;z-index:1000
 }
 #dark-mode-toggle:hover{filter:brightness(.95)}
+
+/* ===== Mobile fix: 禁止触发 iOS 视频控件，保持 16:9 和圆角 ===== */
+@media (max-width: 768px) {
+  .hero-box { padding: 0 16px; }
+  .hero-media{
+    pointer-events: none;        /* 防止点击弹出原生控制条 */
+    -webkit-touch-callout: none; /* 禁止长按菜单 */
+    -webkit-user-select: none;
+    user-select: none;
+    border-radius: 16px;         /* 与卡片一致的圆角 */
+    aspect-ratio: 16/9;          /* 强制 16:9 */
+    object-fit: cover;
+  }
+}
