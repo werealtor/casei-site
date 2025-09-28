@@ -65,6 +65,10 @@ function setupProducts(products) {
       } else {
         priceEl.textContent = `$${product.price}`;
       }
+
+      // 调整箭头可用性
+      leftBtn.disabled = index === 0;
+      rightBtn.disabled = index === slides.length - 1;
     }
 
     // 箭头事件
