@@ -3,8 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Minimal, premium phone cases by Case&i. Customize your style with high-quality designs." />
+  <meta name="keywords" content="phone cases, minimal design, custom cases, AIXX Inc" />
+  <meta property="og:title" content="Case&i — Minimal · Premium · Personal" />
+  <meta property="og:description" content="Your style, your case." />
+  <meta property="og:image" content="assets/images/classic/1.jpg" />
   <title>Case&i — Minimal · Premium · Personal</title>
   <link rel="stylesheet" href="css/style.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Case&i",
+    "url": "https://xxkit.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://xxkit.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
 </head>
 <body>
   <!-- Header -->
@@ -23,8 +41,8 @@
       <h1>Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
       <nav class="nav">
-        <button class="btn">Shop Products</button>
-        <button class="btn alt">Customize Now</button>
+        <a href="#products" class="btn">Shop Products</a>
+        <a href="#custom" class="btn alt">Customize Now</a>
       </nav>
     </div>
   </header>
@@ -50,6 +68,18 @@
             </div>
             <div class="price" data-id="classic">$--</div>
           </div>
+          <script type="application/ld+json">
+          {
+            "@type": "Product",
+            "name": "Classic Phone Case",
+            "image": "assets/images/classic/1.jpg",
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "USD",
+              "price": "19"
+            }
+          }
+          </script>
         </article>
 
         <!-- Fashion -->
@@ -67,6 +97,18 @@
             </div>
             <div class="price" data-id="fashion">$--</div>
           </div>
+          <script type="application/ld+json">
+          {
+            "@type": "Product",
+            "name": "Fashion Phone Case",
+            "image": "assets/images/fashion/1.jpg",
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "USD",
+              "price": "25"
+            }
+          }
+          </script>
         </article>
 
         <!-- Business -->
@@ -84,6 +126,18 @@
             </div>
             <div class="price" data-id="business">$--</div>
           </div>
+          <script type="application/ld+json">
+          {
+            "@type": "Product",
+            "name": "Business Phone Case",
+            "image": "assets/images/business/1.jpg",
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "USD",
+              "price": "29"
+            }
+          }
+          </script>
         </article>
 
       </div>
@@ -118,9 +172,9 @@
     <div class="container">
       <h2>Contact Us</h2>
       <form id="contact-form">
-        <input type="text" placeholder="Name" />
-        <input type="email" placeholder="Email" />
-        <textarea placeholder="Message"></textarea>
+        <input type="text" placeholder="Name" required />
+        <input type="email" placeholder="Email" required />
+        <textarea placeholder="Message" required></textarea>
         <button type="submit" class="btn">Send</button>
       </form>
     </div>
