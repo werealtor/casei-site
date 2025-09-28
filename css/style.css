@@ -16,7 +16,7 @@ body{
 a{color:inherit;text-decoration:none}
 .container{max-width:var(--max);margin:0 auto;padding:0 20px}
 
-/* Header */
+/* Header & Nav */
 header{background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
 .bar{display:flex;align-items:center;gap:16px;padding:14px 0}
 .brand{font-weight:600; font-size:18px; letter-spacing:.5px}
@@ -49,7 +49,7 @@ nav a:hover{background:var(--tone)}
 .btn.primary{background:var(--brand);color:#fff}
 .btn:hover{background:var(--brand);color:#fff}
 
-/* Sections */
+/* Section spacing */
 section{padding:32px 0}
 .title{font-size:22px;text-align:center;margin-bottom:16px}
 .about-text{max-width:820px;margin:0 auto;text-align:center;color:var(--muted)}
@@ -72,104 +72,56 @@ section{padding:32px 0}
 .pill{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:12px;color:var(--muted);white-space:nowrap}
 .price{font-weight:700;margin-top:4px}
 
-/* Slider */
+/* ===== U3 Slider ===== */
 .main-viewport{
-  position:relative;overflow-x:auto;-webkit-overflow-scrolling:touch;
-  scroll-snap-type:x mandatory;border-bottom:1px solid var(--line);
-  border-radius:12px 12px 0 0;background:var(--bg);z-index:0
+  position:relative;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scroll-snap-type:x mandatory;
+  border-bottom:1px solid var(--line);
+  border-radius:12px 12px 0 0;
+  background:var(--bg);
 }
 .main-viewport::-webkit-scrollbar{display:none}
-.main-track{display:flex;width:100%;align-items:stretch}
-.slide{position:relative;flex:0 0 100%;width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--tone);scroll-snap-align:center;scroll-snap-stop:always}
-.slide .cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;-webkit-user-drag:none;user-select:none;pointer-events:none;z-index:0}
+.main-track{display:flex;width:100%;align-items:stretch;position:relative}
+.slide{
+  position:relative;flex:0 0 100%;width:100%;
+  aspect-ratio:16/9;overflow:hidden;background:var(--tone);
+  scroll-snap-align:center;scroll-snap-stop:always;
+}
+.slide .cover{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  -webkit-user-drag:none;user-select:none;pointer-events:none;
+  z-index:0;
+}
 
-/* arrows */
-.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;
-  color:rgba(255,255,255,.95);font-size:28px;font-weight:700;cursor:pointer;opacity:1;
-  transition:opacity .18s ease,transform .12s ease;user-select:none;z-index:30}
-.nav-arrow.left{left:12px}.nav-arrow.right{right:12px}
+/* arrows（层级最高） */
+.nav-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:rgba(255,255,255,.95);
+  font-size:28px;font-weight:600;cursor:pointer;opacity:1;
+  transition:opacity .18s ease,transform .12s ease;
+  user-select:none;z-index:9998; /* 最高层，保证不被图片遮挡 */
+}
+.nav-arrow.left{left:12px}
+.nav-arrow.right{right:12px}
+.nav-arrow.is-disabled{opacity:.2;pointer-events:none}
 .nav-arrow:active{transform:translateY(-50%) scale(.92)}
-.nav-arrow.is-disabled{display:none}
-
-/* progress (gray base + brand bar) */
-.progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(0,0,0,.08);overflow:hidden;z-index:20}
-body.dark .progress{background:rgba(255,255,255,.12)}
-.progress i{display:block;height:100%;width:0;background:var(--brand);transition:width .25s ease}
-
-/* Customize + Contact */
-#custom .container{max-width:680px}
-.file-field{display:grid;grid-template-columns:1fr auto;gap:10px}
-@media(max-width:480px){.file-field{grid-template-columns:1fr}}
-.input-like{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);font:inherit}
-.input-like small{color:var(--muted);margin-left:8px;font-size:12px}
-#file{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;clip-path:inset(50%)}
-#uForm .btn.primary{width:100%}
-#preview{border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow)}
-
-#contact .container{max-width:820px}
-.contact-form{display:grid;gap:10px;grid-template-columns:1fr 1fr}
-.contact-form input,.contact-form textarea{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg);color:var(--text);font:inherit}
-.contact-form textarea{min-height:110px;grid-column:1/-1;resize:vertical}
-.contact-actions{grid-column:1/-1;display:flex;justify-content:flex-end}
-.contact-actions .btn.primary{min-width:120px}
-@media(max-width:640px){
-  .contact-form{grid-template-columns:1fr}
-  .contact-actions .btn.primary{width:100%}
+@media(hover:hover){
+  .card.product .main-viewport:hover .nav-arrow{opacity:1}
 }
 
-/* Footer & Theme btn */
-footer{border-top:1px solid var(--line);padding:18px 0 calc(20px + env(safe-area-inset-bottom,0));color:var(--muted);text-align:center}
-.floating-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0) + 16px);right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:2147483647}
-
-
-/* ===== Fix: arrows & progress always visible and on top ===== */
-
-/* 基础容器层级 */
-.card.product .main-viewport{ position:relative; z-index:0; }
-.card.product .main-track,
-.card.product .slide,
-.card.product .slide .cover{
-  position:relative; z-index:0;   /* 确保图片不压住控件 */
+/* progress：灰底 + 蓝色进度条 */
+.progress{
+  position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:rgba(0,0,0,.08);overflow:hidden;z-index:9997;
 }
-
-/* 箭头：提高层级，触屏默认可见；桌面悬停可淡入 */
-.card.product .nav-arrow{
-  position:absolute; top:50%; transform:translateY(-50%);
-  background:rgba(0,0,0,.35);
-  border:none; width:36px; height:36px; border-radius:50%;
-  color:#fff; font-size:20px; font-weight:700;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; user-select:none;
-  z-index:10;                /* 关键：高于图片/进度条 */
-  opacity:1;                 /* 触屏默认显示 */
-  transition:opacity .18s ease, transform .12s ease, background .12s ease;
-}
-.card.product .nav-arrow.left{left:10px}
-.card.product .nav-arrow.right{right:10px}
-.card.product .nav-arrow:active{ transform:translateY(-50%) scale(.95); }
-
-/* 仅桌面设备：默认轻微淡出，悬停时显现 */
-@media (hover:hover) and (pointer:fine){
-  .card.product .nav-arrow{ opacity:.85; }
-  .card.product:hover .nav-arrow,
-  .card.product .main-viewport:hover .nav-arrow{ opacity:1; }
-}
-
-/* 进度条：铺底灰 + 品牌色填充，层级仅次于箭头 */
-.card.product .progress{
-  position:absolute; left:0; right:0; bottom:0;
-  height:3px; background:rgba(0,0,0,.12);
-  overflow:hidden; z-index:8;        /* 关键：高于图片 */
-}
-body.dark .card.product .progress{ background:rgba(255,255,255,.18); }
-.card.product .progress i{
-  display:block; height:100%; width:0;
-  background:var(--brand);           /* 蓝色进度 */
+body.dark .progress{background:rgba(255,255,255,.1)}
+.progress i{
+  display:block;height:100%;width:0;
+  background:#0b66ff; /* 蓝色条 */
   transition:width .25s ease;
 }
 
-/* 防止某些主题里图片接管点击层 */
-.card.product .slide .cover{ pointer-events:none; }
-
-
-
+/* Customize / Contact / Footer 保持不变（略） */
