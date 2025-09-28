@@ -209,8 +209,5 @@ footer {
   transition: background .3s ease;
 }
 #dark-mode-toggle:hover {
-  background: darken(var(--brand), 10%);
-}
-#dark-mode-toggle::before {
-  content: '🌙'; /* Moon icon for dark mode toggle; you can change to sun/moon based on state if desired */
+  filter: brightness(0.9);
 }
