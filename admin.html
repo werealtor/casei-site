@@ -1,75 +1,176 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>后台配置 - Case&i</title>
-  <style>
-    body { font-family: -apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,Roboto,Helvetica,Arial,sans-serif;
-           background:#f9f9f9; color:#333; margin:0; padding:20px; }
-    h1 { font-size:20px; margin-bottom:12px; }
-    textarea { width:100%; height:320px; border:1px solid #ccc; border-radius:8px; padding:10px;
-               font-family:monospace; font-size:14px; }
-    .actions { margin-top:12px; display:flex; gap:10px; }
-    button { padding:10px 16px; border:none; border-radius:8px; cursor:pointer; font-size:14px; }
-    .primary { background:#0b66ff; color:#fff; }
-    .danger { background:#e33; color:#fff; }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case&i — Minimal · Premium · Personal</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>后台配置</h1>
-  <p>你可以在这里查看或修改 <code>config.json</code>，保存后下载。</p>
+  <!-- Header -->
+  <header>
+    <div class="bar container">
+      <div class="brand">Case&i</div>
+      <nav>
+        <a href="#products">Products</a>
+        <a href="#custom">Customize</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="menu-toggle" aria-label="Toggle Menu">
+        <span class="menu-icon"></span>
+      </button>
+    </div>
+  </header>
 
-  <textarea id="editor"></textarea>
+  <!-- Hero -->
+  <section class="hero container">
+    <div class="media-wrap">
+      <video class="media" autoplay muted loop playsinline>
+        <source src="assets/hero.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <h1>Minimal · Premium · Personal</h1>
+    <p class="sub">Case&i by <strong>AIXx Inc</strong></p>
+    <div class="cta">
+      <a href="#products" class="btn primary">Shop Products</a>
+      <a href="#custom" class="btn">Customize Now</a>
+    </div>
+  </section>
 
-  <div class="actions">
-    <button id="downloadBtn" class="primary">下载 config.json</button>
-    <button id="clearCacheBtn" class="danger">清理缓存</button>
-  </div>
+  <!-- Products -->
+  <section id="products">
+    <div class="container">
+      <h2 class="title">Our Products</h2>
+      <div class="grid products-grid">
 
-<script>
-let config = {};
-const editor = document.getElementById('editor');
+        <!-- Classic -->
+        <article class="card product u3" data-product="classic">
+          <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
+            <div class="main-track">
+              <div class="slide"><img src="assets/images/classic/1.jpg" class="cover" alt="Classic 1"></div>
+              <div class="slide"><img src="assets/images/classic/2.jpg" class="cover" alt="Classic 2"></div>
+              <div class="slide"><img src="assets/images/classic/3.jpg" class="cover" alt="Classic 3"></div>
+            </div>
+            <button class="nav-arrow left" aria-label="Previous">‹</button>
+            <button class="nav-arrow right" aria-label="Next">›</button>
+            <div class="progress"><i></i></div>
+          </div>
+          <div class="body">
+            <h3>Classic</h3>
+            <p class="sub">Slim &amp; scratch-resistant</p>
+            <div class="pillrow">
+              <span class="pill">Lightweight</span>
+              <span class="pill">Durable</span>
+            </div>
+            <div class="price" data-id="classic">$—</div>
+          </div>
+        </article>
 
-// 加载 config.json
-async function load() {
-  try {
-    const res = await fetch('config.json?nocache=' + Date.now(), { cache:'no-store' });
-    config = await res.json();
-    editor.value = JSON.stringify(config, null, 2);
-  } catch(e) {
-    editor.value = '{\n  "settings": {},\n  "products": []\n}';
-  }
-}
+        <!-- Fashion -->
+        <article class="card product u3" data-product="fashion">
+          <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
+            <div class="main-track">
+              <div class="slide"><img src="assets/images/fashion/1.jpg" class="cover" alt="Fashion 1"></div>
+              <div class="slide"><img src="assets/images/fashion/2.jpg" class="cover" alt="Fashion 2"></div>
+              <div class="slide"><img src="assets/images/fashion/3.jpg" class="cover" alt="Fashion 3"></div>
+            </div>
+            <button class="nav-arrow left" aria-label="Previous">‹</button>
+            <button class="nav-arrow right" aria-label="Next">›</button>
+            <div class="progress"><i></i></div>
+          </div>
+          <div class="body">
+            <h3>Fashion</h3>
+            <p class="sub">Trendy design &amp; anti-fingerprint</p>
+            <div class="pillrow">
+              <span class="pill">Trendy</span>
+              <span class="pill">Easy to clean</span>
+            </div>
+            <div class="price" data-id="fashion">$—</div>
+          </div>
+        </article>
 
-// 下载保存
-document.getElementById('downloadBtn').addEventListener('click', () => {
-  try {
-    const obj = JSON.parse(editor.value);
-    const blob = new Blob([JSON.stringify(obj, null, 2)], { type:'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'config.json';
-    a.click();
-  } catch(e) {
-    alert('JSON 格式错误，请检查！');
-  }
-});
+        <!-- Business -->
+        <article class="card product u3" data-product="business">
+          <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
+            <div class="main-track">
+              <div class="slide"><img src="assets/images/business/1.jpg" class="cover" alt="Business 1"></div>
+              <div class="slide"><img src="assets/images/business/2.jpg" class="cover" alt="Business 2"></div>
+              <div class="slide"><img src="assets/images/business/3.jpg" class="cover" alt="Business 3"></div>
+            </div>
+            <button class="nav-arrow left" aria-label="Previous">‹</button>
+            <button class="nav-arrow right" aria-label="Next">›</button>
+            <div class="progress"><i></i></div>
+          </div>
+          <div class="body">
+            <h3>Business</h3>
+            <p class="sub">Premium touch &amp; shockproof</p>
+            <div class="pillrow">
+              <span class="pill">Professional</span>
+              <span class="pill">Shock resistant</span>
+            </div>
+            <div class="price" data-id="business">$—</div>
+          </div>
+        </article>
 
-// 清理 SW & 缓存
-document.getElementById('clearCacheBtn').addEventListener('click', async () => {
-  if ('serviceWorker' in navigator) {
-    const regs = await navigator.serviceWorker.getRegistrations();
-    for (const reg of regs) await reg.unregister();
-  }
-  if ('caches' in window) {
-    const keys = await caches.keys();
-    await Promise.all(keys.map(k => caches.delete(k)));
-  }
-  alert('缓存已清理，请刷新页面');
-});
+      </div>
+    </div>
+  </section>
 
-load();
-</script>
+  <!-- Customize -->
+  <section id="custom">
+    <div class="container">
+      <h2 class="title">Customize Your Case</h2>
+      <form id="uForm" novalidate>
+        <div class="file-field">
+          <label for="file" class="input-like">
+            Choose Image
+            <small id="fileName">PNG/JPEG · &lt; 10MB</small>
+          </label>
+          <button type="submit" class="btn primary">Upload &amp; Preview</button>
+        </div>
+        <input type="file" id="file" accept="image/png,image/jpeg" />
+        <p id="uErr" class="sub err" role="alert" aria-live="polite"></p>
+        <img id="preview" alt="Preview" style="display:none;max-width:100%;" />
+      </form>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <h2 class="title">About Us</h2>
+      <p class="about-text">
+        Case&i is created by <strong>AIXx Inc</strong>. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <h2 class="title">Contact Us</h2>
+      <form class="contact-form">
+        <input type="text" name="name" placeholder="Name" required />
+        <input type="email" name="email" placeholder="Email" required />
+        <textarea name="message" placeholder="Message"></textarea>
+        <div class="contact-actions">
+          <button type="submit" class="btn primary">Send</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <small>© 2025 AIXx Inc · All rights reserved · xxkit.com</small>
+    </div>
+  </footer>
+
+  <!-- Floating button -->
+  <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme">🌙</button>
+
+  <script src="main.js"></script>
 </body>
 </html>
