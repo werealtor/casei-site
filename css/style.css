@@ -205,14 +205,14 @@ header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
 .progress .bar {
   height: 100%;
   width: 0%;
-  background: #333333;
+  background: #cccccc;
   transition: width .3s ease;
 }
 body.dark .progress {
   background: #333333;
 }
 body.dark .progress .bar {
-  background: #bbbbbb;
+  background: #888888;
 }
 
 /* Card body */
@@ -302,21 +302,24 @@ footer {
 
 /* Floating Dark Mode Toggle */
 #dark-mode-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   background: var(--tone);
   color: var(--text);
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  font-size: 16px;
+  width: 50px;
+  height: 50px;
+  font-size: 20px;
   cursor: pointer;
+  box-shadow: var(--shadow);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
   transition: background .3s ease;
-  box-shadow: none;
-  position: static;
 }
 #dark-mode-toggle:hover {
   filter: brightness(0.9);
-} 
+}
