@@ -26,24 +26,26 @@
 </head>
 <body>
   <!-- Header -->
-  <header id="site-header">
+  <header id="site-header" aria-labelledby="site-title">
     <div class="top-nav-container">
       <a href="#" class="logo">Case&i</a>
-      <button class="menu-icon">&#9776;</button>
-      <nav class="top-nav">
+      <button class="menu-icon" aria-expanded="false" aria-controls="top-nav">&#9776;</button>
+      <nav class="top-nav" id="top-nav" role="navigation">
         <a href="#products">Products</a>
         <a href="#custom">Customize</a>
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
       </nav>
     </div>
-    <div class="hero-video">
-      <video autoplay loop muted playsinline src="Assets/videos/assets/hero.mp4"></video>
+    <div class="hero-video" aria-label="Promotional video">
+      <video autoplay loop muted playsinline src="Assets/videos/assets/hero.mp4">
+        <track kind="captions" srclang="en" label="English captions" />
+      </video>
     </div>
     <div class="container">
-      <h1>Minimal · Premium · Personal</h1>
+      <h1 id="site-title">Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
-      <nav class="nav">
+      <nav class="nav" role="navigation">
         <a href="#products" class="btn">Shop Products</a>
         <a href="#custom" class="btn alt">Customize Now</a>
       </nav>
@@ -51,14 +53,14 @@
   </header>
 
   <!-- Products -->
-  <section id="products">
+  <section id="products" aria-labelledby="products-title">
     <div class="container">
-      <h2 class="title">Our Products</h2>
-      <div class="grid products-grid">
+      <h2 class="title" id="products-title">Our Products</h2>
+      <div class="grid products-grid" role="list">
 
         <!-- Classic -->
-        <article class="card product u3" data-product="classic">
-          <div class="main-viewport">
+        <article class="card product u3" data-product="classic" role="listitem">
+          <div class="main-viewport" role="region" aria-label="Classic product gallery">
             <div class="main-track"></div>
             <div class="progress"><div class="bar"></div></div>
           </div>
@@ -86,8 +88,8 @@
         </article>
 
         <!-- Fashion -->
-        <article class="card product u3" data-product="fashion">
-          <div class="main-viewport">
+        <article class="card product u3" data-product="fashion" role="listitem">
+          <div class="main-viewport" role="region" aria-label="Fashion product gallery">
             <div class="main-track"></div>
             <div class="progress"><div class="bar"></div></div>
           </div>
@@ -115,8 +117,8 @@
         </article>
 
         <!-- Business -->
-        <article class="card product u3" data-product="business">
-          <div class="main-viewport">
+        <article class="card product u3" data-product="business" role="listitem">
+          <div class="main-viewport" role="region" aria-label="Business product gallery">
             <div class="main-track"></div>
             <div class="progress"><div class="bar"></div></div>
           </div>
@@ -148,9 +150,9 @@
   </section>
 
   <!-- Customize -->
-  <section id="custom">
+  <section id="custom" aria-labelledby="custom-title">
     <div class="container">
-      <h2>Customize Your Case</h2>
+      <h2 id="custom-title">Customize Your Case</h2>
       <form id="custom-form">
         <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
         <input type="file" id="image-upload" accept="image/png, image/jpeg" />
@@ -163,21 +165,24 @@
   </section>
 
   <!-- About Us -->
-  <section id="about">
+  <section id="about" aria-labelledby="about-title">
     <div class="container">
-      <h2>About Us</h2>
+      <h2 id="about-title">About Us</h2>
       <p>Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.</p>
     </div>
   </section>
 
   <!-- Contact Us -->
-  <section id="contact">
+  <section id="contact" aria-labelledby="contact-title">
     <div class="container">
-      <h2>Contact Us</h2>
+      <h2 id="contact-title">Contact Us</h2>
       <form id="contact-form">
-        <input type="text" placeholder="Name" required />
-        <input type="email" placeholder="Email" required />
-        <textarea placeholder="Message" required></textarea>
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Name" required />
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Email" required />
+        <label for="message">Message</label>
+        <textarea id="message" placeholder="Message" required></textarea>
         <button type="submit" class="btn">Send</button>
       </form>
     </div>
@@ -189,8 +194,8 @@
   </footer>
 
   <!-- Floating Dark Mode Toggle -->
-  <button id="dark-mode-toggle"></button>
+  <button id="dark-mode-toggle" aria-label="Toggle dark mode"></button>
 
   <script src="js/main.js"></script>
 </body>
-</html> 
+</html>
