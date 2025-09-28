@@ -127,13 +127,19 @@ header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
   right: 0;
   bottom: 0;
   height: 4px;
-  background: rgba(var(--brand), 0.2);
+  background: #f0f0f0;
 }
 .progress .bar {
   height: 100%;
   width: 0%;
-  background: var(--brand);
+  background: #cccccc;
   transition: width .3s ease;
+}
+body.dark .progress {
+  background: #333333;
+}
+body.dark .progress .bar {
+  background: #888888;
 }
 
 /* Card body */
