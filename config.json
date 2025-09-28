@@ -1,5 +1,7 @@
 {
-  "settings": { "currency": "USD" },
+  "settings": {
+    "currency": "USD"
+  },
   "products": [
     {
       "id": "classic",
