@@ -1,13 +1,26 @@
 async function init() {
   try {
-    const res = await fetch("config.json");
-    if (!res.ok) {
-      throw new Error('Config load failed');
-    }
+    const res = await fetch("config.json", { cache: "no-store" });
+    if (!res.ok) throw new Error('Config load failed');
     const data = await res.json();
     setupProducts(data.products);
   } catch (err) {
     console.error("加载 config.json 失败:", err);
+  }
+
+  // Hero video autoplay reliability (especially iOS)
+  const v = document.getElementById('heroVideo');
+  if (v) {
+    v.muted = true;
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    document.addEventListener('visibilitychange', tryPlay, { once: true });
+
+    // respect system preference for reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      v.removeAttribute('autoplay');
+      v.pause();
+    }
   }
 }
 
@@ -20,7 +33,7 @@ function setupProducts(products) {
     const progress = card.querySelector(".progress .bar");
     const priceEl = card.querySelector(".price");
 
-    // 注入 slides
+    // Inject slides
     track.innerHTML = "";
     product.images.forEach((src, i) => {
       const slide = document.createElement("div");
@@ -33,7 +46,7 @@ function setupProducts(products) {
       track.appendChild(slide);
     });
 
-    // 添加箭头
+    // Arrows
     const viewport = card.querySelector(".main-viewport");
     const leftBtn = document.createElement("button");
     leftBtn.className = "nav-arrow left";
@@ -46,7 +59,7 @@ function setupProducts(products) {
     viewport.appendChild(leftBtn);
     viewport.appendChild(rightBtn);
 
-    // 状态
+    // State
     let index = 0;
     const slides = track.children;
     let interval;
@@ -55,70 +68,49 @@ function setupProducts(products) {
       index = Math.max(0, Math.min(newIndex, slides.length - 1));
       track.style.transform = `translateX(-${index * 100}%)`;
 
-      // 更新进度条
-      if (progress) {
-        progress.style.width = ((index + 1) / slides.length) * 100 + "%";
-      }
+      // Progress
+      if (progress) progress.style.width = ((index + 1) / slides.length) * 100 + "%";
 
-      // 更新价格
+      // Price
       if (Array.isArray(product.price)) {
         priceEl.textContent = `$${product.price[index]}`;
       } else {
         priceEl.textContent = `$${product.price}`;
       }
 
-      // 调整箭头可用性
       leftBtn.disabled = index === 0;
       rightBtn.disabled = index === slides.length - 1;
     }
 
-    // 箭头事件
     leftBtn.addEventListener("click", () => update(index - 1));
     rightBtn.addEventListener("click", () => update(index + 1));
 
-    // 自动轮播
-    function startAutoPlay() {
-      interval = setInterval(() => update(index + 1), 3000);
-    }
+    // Autoplay
+    function startAutoPlay() { interval = setInterval(() => update(index + 1), 3000); }
+    function stopAutoPlay() { clearInterval(interval); }
     startAutoPlay();
 
-    // 鼠标悬停暂停
-    viewport.addEventListener('mouseenter', () => clearInterval(interval));
+    // Pause on hover / resume
+    viewport.addEventListener('mouseenter', stopAutoPlay);
     viewport.addEventListener('mouseleave', startAutoPlay);
 
-    // 触摸支持
-    let startX = 0;
-    let isDragging = false;
-    viewport.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX;
-      isDragging = true;
-      clearInterval(interval);
-    });
-    viewport.addEventListener('touchmove', e => {
-      if (!isDragging) return;
-      const delta = e.touches[0].clientX - startX;
-      if (Math.abs(delta) > 50) {
-        // 可以添加预览位移，但为简单起见，仅在end处理
-      }
-    });
+    // Touch swipe
+    let startX = 0, isDragging = false;
+    viewport.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; stopAutoPlay(); });
     viewport.addEventListener('touchend', e => {
       if (!isDragging) return;
       isDragging = false;
       const delta = e.changedTouches[0].clientX - startX;
-      if (delta > 50) {
-        update(index - 1);
-      } else if (delta < -50) {
-        update(index + 1);
-      }
+      if (delta > 50) update(index - 1);
+      else if (delta < -50) update(index + 1);
       startAutoPlay();
     });
 
-    // 初始化
     update(0);
   });
 }
 
-// 文件上传预览
+// Upload preview
 document.addEventListener("DOMContentLoaded", () => {
   init();
 
@@ -128,60 +120,35 @@ document.addEventListener("DOMContentLoaded", () => {
   if (upload && preview) {
     upload.addEventListener("change", e => {
       const file = e.target.files[0];
-      if (file) {
-        // 客户端验证文件类型
-        if (!['image/png', 'image/jpeg'].includes(file.type)) {
-          alert('Invalid file type. Only PNG and JPEG are allowed.');
-          return;
-        }
-        // 客户端验证文件大小 (<10MB)
-        if (file.size > 10 * 1024 * 1024) {
-          alert('File too large. Maximum size is 10MB.');
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = ev => {
-          preview.src = ev.target.result;
-          preview.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-      }
+      if (!file) return;
+      if (!['image/png', 'image/jpeg'].includes(file.type)) { alert('Only PNG/JPEG allowed.'); return; }
+      if (file.size > 10 * 1024 * 1024) { alert('Max 10MB.'); return; }
+      const reader = new FileReader();
+      reader.onload = ev => { preview.src = ev.target.result; preview.style.display = "block"; };
+      reader.readAsDataURL(file);
     });
   }
 
-  // 暗模式切换
+  // Dark mode toggle
   const toggleBtn = document.getElementById('dark-mode-toggle');
   const body = document.body;
+  const setIcon = () => { toggleBtn.innerHTML = body.classList.contains('dark') ? '🌞' : '🌙'; };
+  if (localStorage.getItem('darkMode') === 'enabled') body.classList.add('dark');
+  setIcon();
 
-  // 检查 localStorage 中的偏好并设置图标
-  if (localStorage.getItem('darkMode') === 'enabled') {
-    body.classList.add('dark');
-    toggleBtn.innerHTML = '🌞';
-  } else {
-    toggleBtn.innerHTML = '🌙';
-  }
-
-  // 按钮事件监听
   if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
       body.classList.toggle('dark');
-      if (body.classList.contains('dark')) {
-        localStorage.setItem('darkMode', 'enabled');
-        toggleBtn.innerHTML = '🌞';
-      } else {
-        localStorage.setItem('darkMode', 'disabled');
-        toggleBtn.innerHTML = '🌙';
-      }
+      if (body.classList.contains('dark')) localStorage.setItem('darkMode', 'enabled');
+      else localStorage.setItem('darkMode', 'disabled');
+      setIcon();
     });
   }
 
-  // 顶部菜单切换
+  // Mobile menu
   const menuIcon = document.querySelector('.menu-icon');
   const topNav = document.querySelector('.top-nav');
-
-  if (menuIcon) {
-    menuIcon.addEventListener('click', () => {
-      topNav.classList.toggle('active');
-    });
+  if (menuIcon && topNav) {
+    menuIcon.addEventListener('click', () => topNav.classList.toggle('active'));
   }
 });
