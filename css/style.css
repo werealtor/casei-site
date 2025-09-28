@@ -33,18 +33,7 @@ body {
 a { color: inherit; text-decoration: none; }
 .container { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
 
-/* Header 吸顶 + 滚动阴影 */
-#site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  background: var(--bg);
-  transition: box-shadow .25s ease, border-color .25s ease;
-}
-#site-header.scrolled {
-  box-shadow: 0 6px 24px rgba(0,0,0,.06);
-  border-bottom-color: transparent;
-}
+
 
 /* 顶部导航容器 */
 .top-nav-container {
