@@ -132,14 +132,14 @@ header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
 .progress .bar {
   height: 100%;
   width: 0%;
-  background: #cccccc;
+  background: #333333;
   transition: width .3s ease;
 }
 body.dark .progress {
   background: #333333;
 }
 body.dark .progress .bar {
-  background: #888888;
+  background: #bbbbbb;
 }
 
 /* Card body */
