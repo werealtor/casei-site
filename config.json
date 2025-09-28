@@ -4,6 +4,8 @@
     {
       "id": "classic",
       "name": "Classic",
+      "badges": ["Lightweight","Durable"],
+      "subtitle": "Slim & scratch-resistant",
       "images": [
         "assets/images/classic/1.jpg",
         "assets/images/classic/2.jpg",
@@ -18,6 +20,8 @@
     {
       "id": "fashion",
       "name": "Fashion",
+      "badges": ["Trendy","Easy to clean"],
+      "subtitle": "Trendy design & anti-fingerprint",
       "images": [
         "assets/images/fashion/1.jpg",
         "assets/images/fashion/2.jpg",
@@ -32,6 +36,8 @@
     {
       "id": "business",
       "name": "Business",
+      "badges": ["Professional","Shock resistant"],
+      "subtitle": "Premium touch & shockproof",
       "images": [
         "assets/images/business/1.jpg",
         "assets/images/business/2.jpg",
@@ -41,7 +47,7 @@
         "assets/images/business/6.jpg",
         "assets/images/business/7.jpg"
       ],
-      "price": { "1": 29, "2": 31, "3": 33, "4": 34, "5": 36, "6": 38, "7": 40 }
+      "price": [29, 31, 33, 34, 36, 38, 40]
     }
   ]
 }
