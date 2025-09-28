@@ -24,6 +24,7 @@ body.dark {
 }
 html {
   overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -118,6 +119,7 @@ header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
   height: 100%;
   object-fit: cover;
   user-select: none;
+  loading: lazy;
 }
 
 /* Arrows */
