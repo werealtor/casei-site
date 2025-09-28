@@ -51,7 +51,10 @@ h1,h2,h3,.title{
 
 @media (max-width:768px){
   .menu-icon{display:block}
-  .top-nav-wrap{position:fixed;inset:0;z-index:1000;pointer-events:none}
+  .top-nav-wrap{
+    display: block; /* 修改：添加 display: block 以生成盒子模型，使 position: fixed 生效 */
+    position:fixed;inset:0;z-index:1000;pointer-events:none
+  }
   .top-nav-wrap::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(8px);opacity:0;transition:opacity .25s}
   .top-nav{
     position:absolute;left:0;right:0;top:58px;background:var(--bg);border-top:1px solid var(--line);
