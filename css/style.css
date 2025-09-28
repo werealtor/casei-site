@@ -22,6 +22,9 @@ body.dark {
   margin: 0;
   padding: 0;
 }
+html {
+  overflow-y: scroll;
+}
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text);
