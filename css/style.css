@@ -124,7 +124,7 @@ header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
   right: 0;
   bottom: 0;
   height: 4px;
-  background: #eee;
+  background: var(--line);
 }
 .progress .bar {
   height: 100%;
