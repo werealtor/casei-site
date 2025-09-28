@@ -170,9 +170,5 @@ footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a
     box-shadow: var(--shadow);
     display: block;
 
-    pointer-events: none;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
   }
 }
