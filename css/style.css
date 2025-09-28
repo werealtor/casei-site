@@ -209,10 +209,10 @@ header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
   transition: width .3s ease;
 }
 body.dark .progress {
-  background: #333333;
+  background: #444444;
 }
 body.dark .progress .bar {
-  background: #888888;
+  background: #aaaaaa;
 }
 
 /* Card body */
