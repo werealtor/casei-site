@@ -176,4 +176,10 @@ footer {
   text-align: center;
   color: var(--muted);
   font-size: 14px;
-} 
+}
+
+/* Button Hover */
+.btn:hover {
+  background: var(--brand);
+  color: #fff;
+}
