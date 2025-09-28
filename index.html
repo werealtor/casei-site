@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
-  <meta name="description" content="Case&i by AIXX Inc — Minimal design, premium quality, and personal customization." />
+  <meta name="theme-color" content="#ffffff" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <!-- Header -->
   <header id="site-header">
     <div class="container bar">
-      <div class="brand">Case&amp;i</div>
+      <div class="brand">Case&i</div>
       <button class="menu-toggle" aria-label="Open menu" aria-controls="primary-nav" aria-expanded="false">
         <span class="menu-icon" aria-hidden="true"></span>
       </button>
@@ -25,21 +25,16 @@
   </header>
 
   <main>
-    <!-- Hero（带视频） -->
-    <section id="hero" class="hero">
+    <!-- Hero（可放你的视频；不需要可删） -->
+    <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
-          <video
-            class="media"
-            autoplay muted loop playsinline preload="metadata"
-            poster="assets/images/hero-poster.jpg"
-            aria-label="Case&i hero video">
+          <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
             <source src="assets/videos/hero.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
           </video>
         </figure>
         <h1>Minimal · Premium · Personal</h1>
-        <p class="sub">Case&amp;i by <strong>AIXX Inc</strong></p>
+        <p class="sub">Case&i by <strong>AIXX Inc</strong></p>
         <div class="cta">
           <a class="btn primary" href="#products">Shop Products</a>
           <a class="btn" href="#custom">Customize Now</a>
@@ -51,20 +46,19 @@
     <section id="products">
       <div class="container">
         <h2 class="title">Our Products</h2>
-        <div class="grid products-grid">
 
+        <div class="grid products-grid">
           <!-- Classic -->
           <article class="card product u3" data-product="classic">
             <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
-              <div class="main-track"><!-- JS 注入 1..7 slides --></div>
-              <div class="progress"><div class="bar"></div></div>
-              <!-- 箭头由 JS 注入 -->
+              <div class="main-track"></div>
+              <div class="progress"><i></i></div>
             </div>
             <div class="body">
               <h3>Classic</h3>
               <p class="sub">Slim &amp; scratch-resistant</p>
               <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" data-id="classic">$--</div>
+              <div class="price" data-id="classic">$—</div>
             </div>
           </article>
 
@@ -72,13 +66,13 @@
           <article class="card product u3" data-product="fashion">
             <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
               <div class="main-track"></div>
-              <div class="progress"><div class="bar"></div></div>
+              <div class="progress"><i></i></div>
             </div>
             <div class="body">
               <h3>Fashion</h3>
               <p class="sub">Trendy design &amp; anti-fingerprint</p>
               <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" data-id="fashion">$--</div>
+              <div class="price" data-id="fashion">$—</div>
             </div>
           </article>
 
@@ -86,16 +80,15 @@
           <article class="card product u3" data-product="business">
             <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
               <div class="main-track"></div>
-              <div class="progress"><div class="bar"></div></div>
+              <div class="progress"><i></i></div>
             </div>
             <div class="body">
               <h3>Business</h3>
               <p class="sub">Premium touch &amp; shockproof</p>
               <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" data-id="business">$--</div>
+              <div class="price" data-id="business">$—</div>
             </div>
           </article>
-
         </div>
       </div>
     </section>
@@ -124,7 +117,7 @@
       <div class="container">
         <h2 class="title">About Us</h2>
         <p class="about-text">
-          Case&amp;i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
+          Case&i is created by <strong>AIXX Inc</strong>. We believe in minimal design and strive for better quality and durability.
           Visit <a href="https://xxkit.com" target="_blank" rel="noopener">xxkit.com</a> to learn more.
         </p>
       </div>
@@ -150,7 +143,6 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- 主题切换 -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
   <script src="js/main.js" defer></script>
