@@ -67,3 +67,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     update(0); // 初始化
   });
 });
+function update(i) {
+  if (bar) bar.style.width = ((i + 1) / slides.length) * 100 + "%";
+
+  if (product.price && Array.isArray(product.price)) {
+    const priceVal = product.price[Math.min(i, product.price.length - 1)];
+    priceEl.textContent = `$${priceVal}`;
+  }
+}
