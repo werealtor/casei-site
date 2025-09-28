@@ -174,4 +174,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // 顶部菜单切换
+  const menuIcon = document.querySelector('.menu-icon');
+  const topNav = document.querySelector('.top-nav');
+
+  if (menuIcon) {
+    menuIcon.addEventListener('click', () => {
+      topNav.classList.toggle('active');
+    });
+  }
 });
