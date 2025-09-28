@@ -26,12 +26,13 @@
   </header>
 
   <main>
-    <!-- Hero (保留视频) -->
+    <!-- Hero（带视频） -->
     <section class="hero" id="home">
       <div class="container">
         <figure class="media-wrap">
-          <video class="media" autoplay muted loop playsinline preload="metadata" aria-label="Case&i hero video">
+          <video class="media" autoplay muted loop playsinline preload="metadata" poster="assets/images/hero-poster.jpg" aria-label="Case&i hero video">
             <source src="assets/videos/hero.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
         </figure>
         <h1>Minimal · Premium · Personal</h1>
@@ -52,14 +53,15 @@
           <!-- Classic -->
           <article class="card product u3" data-product="classic">
             <div class="main-viewport" aria-label="Classic gallery" role="region" tabindex="0">
-              <div class="main-track"></div>
-              <div class="progress"><i></i></div>
+              <div class="main-track"><!-- JS 注入 1..7 slides --></div>
+              <div class="progress"><div class="bar"></div></div>
+              <!-- 箭头由 JS 注入 -->
             </div>
             <div class="body">
               <h3>Classic</h3>
               <p class="sub">Slim &amp; scratch-resistant</p>
               <div class="pillrow"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-              <div class="price" data-id="classic">$—</div>
+              <div class="price" data-id="classic">$--</div>
             </div>
           </article>
 
@@ -67,13 +69,13 @@
           <article class="card product u3" data-product="fashion">
             <div class="main-viewport" aria-label="Fashion gallery" role="region" tabindex="0">
               <div class="main-track"></div>
-              <div class="progress"><i></i></div>
+              <div class="progress"><div class="bar"></div></div>
             </div>
             <div class="body">
               <h3>Fashion</h3>
               <p class="sub">Trendy design &amp; anti-fingerprint</p>
               <div class="pillrow"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-              <div class="price" data-id="fashion">$—</div>
+              <div class="price" data-id="fashion">$--</div>
             </div>
           </article>
 
@@ -81,13 +83,13 @@
           <article class="card product u3" data-product="business">
             <div class="main-viewport" aria-label="Business gallery" role="region" tabindex="0">
               <div class="main-track"></div>
-              <div class="progress"><i></i></div>
+              <div class="progress"><div class="bar"></div></div>
             </div>
             <div class="body">
               <h3>Business</h3>
               <p class="sub">Premium touch &amp; shockproof</p>
               <div class="pillrow"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-              <div class="price" data-id="business">$—</div>
+              <div class="price" data-id="business">$--</div>
             </div>
           </article>
 
@@ -145,9 +147,9 @@
     <div class="container"><small>© 2025 AIXX Inc · All rights reserved · xxkit.com</small></div>
   </footer>
 
-  <!-- 主题切换 -->
+  <!-- 主题按钮 -->
   <button id="theme-toggle" class="floating-btn" aria-label="Toggle theme" title="Toggle theme">🌙</button>
 
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
