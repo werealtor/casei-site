@@ -1,132 +1,137 @@
-/* ---- tiny utils ---- */
-const $ = (sel, root=document) => root.querySelector(sel);
-const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
-const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
+/* tiny utils */
+const $ = (s, el=document)=>el.querySelector(s);
+const $$ = (s, el=document)=>Array.from(el.querySelectorAll(s));
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
 
-/* ---- nav toggle ---- */
+/* nav toggle */
 (() => {
   const header = $('#site-header');
   const btn = $('.menu-toggle', header);
   btn?.addEventListener('click', () => {
-    const expanded = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', String(!expanded));
-    header.classList.toggle('open', !expanded);
+    const exp = btn.getAttribute('aria-expanded')==='true';
+    btn.setAttribute('aria-expanded', String(!exp));
+    header.classList.toggle('open', !exp);
   });
 })();
 
-/* ---- theme toggle ---- */
+/* theme toggle */
 (() => {
-  const toggle = $('#theme-toggle');
-  const apply = m => document.body.classList.toggle('dark', m==='dark');
-  apply(localStorage.getItem('theme'));
-  toggle?.addEventListener('click', () => {
-    const next = document.body.classList.contains('dark') ? 'light' : 'dark';
-    localStorage.setItem('theme', next); apply(next);
+  const btn = $('#theme-toggle');
+  if(!btn) return;
+  const saved = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  document.body.classList.toggle('dark', saved==='dark');
+  btn.textContent = saved==='dark' ? '☀️' : '🌙';
+  btn.addEventListener('click', ()=>{
+    const dark = !document.body.classList.contains('dark');
+    document.body.classList.toggle('dark', dark);
+    localStorage.setItem('theme', dark?'dark':'light');
+    btn.textContent = dark ? '☀️' : '🌙';
   });
 })();
 
-/* ---- upload preview (demo) ---- */
+/* upload preview (demo) */
 (() => {
-  const form = $('#uForm'), file = $('#file'), nameEl = $('#fileName'), err = $('#uErr'), prev = $('#preview');
-  if(!form) return;
-  file.addEventListener('change', () => {
-    const f = file.files?.[0]; if(!f) return;
-    nameEl.textContent = f.name;
+  const form = $('#uForm'); if(!form) return;
+  const file = $('#file'), nameEl = $('#fileName'), err = $('#uErr'), prev = $('#preview');
+  const MAX = 10*1024*1024;
+  file.addEventListener('change', ()=>{
+    const f=file.files?.[0]; nameEl.textContent = f ? `${f.name} · ${(f.size/1024/1024).toFixed(1)}MB` : 'PNG/JPEG · < 10MB';
   });
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', e=>{
     e.preventDefault(); err.textContent='';
-    const f = file.files?.[0];
-    if(!f){ err.textContent='Please choose an image.'; return;}
-    if(!/image\/(png|jpeg)/.test(f.type) || f.size>10*1024*1024){
-      err.textContent='PNG/JPEG and < 10MB required.'; return;
-    }
-    const r = new FileReader();
-    r.onload = () => { prev.src = r.result; prev.style.display='block'; };
+    const f=file.files?.[0];
+    if(!f){ err.textContent='Please choose an image.'; return; }
+    if(!/^image\/(png|jpe?g)$/i.test(f.type)){ err.textContent='Only PNG/JPEG supported.'; return; }
+    if(f.size>MAX){ err.textContent='File too large (max 10MB).'; return; }
+    const r=new FileReader();
+    r.onload = ev=>{ prev.src=ev.target.result; prev.style.display='block'; };
     r.readAsDataURL(f);
   });
 })();
 
-/* ---- products from config.json ---- */
+/* build products from config.json */
 (async () => {
-  const grid = $('#products-grid');
+  const grid = $('#products-grid') || $('.products-grid');
   if(!grid) return;
 
-  const cfg = await fetch('config.json', {cache:'no-store'}).then(r=>r.json());
+  const cfg = await fetch('config.json', {cache:'no-store'}).then(r=>r.json()).catch(()=>null);
+  if(!cfg?.products?.length) return;
 
-  // build cards
-  cfg.products.forEach(p => {
-    const card = document.createElement('article');
-    card.className = 'card product u3';
-    card.dataset.product = p.id;
+  cfg.products.forEach(p=>{
+    // 若 index.html 已有卡片，就用现成的；否则注入一张
+    let card = $(`.card.product[data-product="${p.id}"]`, grid);
+    if(!card){
+      card = document.createElement('article');
+      card.className='card product u3';
+      card.dataset.product = p.id;
+      card.innerHTML = `
+        <div class="main-viewport" role="region" aria-label="${p.name} gallery" tabindex="0">
+          <div class="main-track"></div>
+          <div class="progress"><i></i></div>
+        </div>
+        <div class="body">
+          <h3>${p.name}</h3>
+          <p class="sub">${p.subtitle??''}</p>
+          <div class="pillrow">${(p.badges||[]).map(b=>`<span class="pill">${b}</span>`).join('')}</div>
+          <div class="price" data-id="${p.id}">$—</div>
+        </div>`;
+      grid.appendChild(card);
+    }
 
-    card.innerHTML = `
-      <div class="main-viewport" role="region" aria-label="${p.name} gallery" tabindex="0">
-        <div class="main-track"></div>
-        <div class="progress"><i></i></div>
-      </div>
-      <div class="body">
-        <h3>${p.name}</h3>
-        <p class="sub">${p.subtitle ?? ''}</p>
-        <div class="pillrow">${(p.badges||[]).map(b=>`<span class="pill">${b}</span>`).join('')}</div>
-        <div class="price" data-id="${p.id}">$—</div>
-      </div>
-    `;
-    grid.appendChild(card);
+    const vp = $('.main-viewport', card);
+    const track = $('.main-track', card);
+    const priceEl = $('.price', card);
+    const prog = $('.progress', card) || (()=>{ const d=document.createElement('div'); d.className='progress'; d.innerHTML='<i></i>'; vp.appendChild(d); return d; })();
+    const bar  = $('i', prog);
 
     // slides
-    const track = $('.main-track', card);
-    p.images.forEach((src, i) => {
+    track.innerHTML='';
+    (p.images||[]).forEach((src, i)=>{
       const slide = document.createElement('div');
-      slide.className = 'slide';
+      slide.className='slide';
       slide.dataset.price = Array.isArray(p.price) ? p.price[i] : p.price?.[String(i+1)];
       slide.innerHTML = `<img class="cover" src="${src}" alt="${p.name} — ${i+1}" draggable="false" />`;
       track.appendChild(slide);
     });
 
-    // arrows
-    const vp = $('.main-viewport', card);
-    const left = document.createElement('button');
-    left.className = 'nav-arrow left'; left.setAttribute('aria-label','Prev'); left.textContent = '‹';
-    const right = document.createElement('button');
-    right.className = 'nav-arrow right'; right.setAttribute('aria-label','Next'); right.textContent = '›';
-    vp.append(left,right);
+    // arrows（缺就补）
+    let left  = $('.nav-arrow.left', card);
+    let right = $('.nav-arrow.right', card);
+    if(!left){  left=document.createElement('button');  left.className='nav-arrow left';  left.setAttribute('aria-label','Prev');  left.textContent='‹'; vp.appendChild(left); }
+    if(!right){ right=document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.textContent='›'; vp.appendChild(right); }
 
-    // ensure z-index is above images (Safari/iOS)
-    [left,right,$('.progress',card)].forEach(el=>{ if(el){ el.style.zIndex = '9990'; }});
+    // z-index 兜底（防止被图片盖住）
+    vp.style.position='relative';
+    $$('.slide .cover', card).forEach(img=>{ img.style.zIndex='0'; img.style.pointerEvents='none'; });
+    [left,right].forEach(a=>{ a.style.zIndex='9999'; a.style.pointerEvents='auto'; a.style.opacity='1'; });
+    prog.style.zIndex='9998';
 
-    // slider logic
     const slides = $$('.slide', track);
-    const bar = $('.progress i', card);
-    const priceEl = $('.price', card);
+    const getIndex = ()=> Math.round(vp.scrollLeft / vp.clientWidth);
 
-    const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
-    const goTo = (i) => {
+    const goTo = i=>{
       i = clamp(i, 0, slides.length-1);
-      vp.scrollTo({ left: vp.clientWidth * i, behavior: 'smooth' });
+      vp.scrollTo({ left: vp.clientWidth * i, behavior:'smooth' });
       update(i);
     };
 
-    function update(i = getIndex()){
-      // progress
-      if (bar) bar.style.width = ((i+1)/slides.length)*100 + '%';
+    function update(i=getIndex()){
+      if (bar) bar.style.width = ((i+1)/(slides.length||1))*100 + '%';
 
-      // price
       const val = slides[i]?.dataset.price;
       if (val && priceEl) priceEl.textContent = `$${val}`;
 
-      // arrow state
       left.classList.toggle('is-disabled', i<=0);
       right.classList.toggle('is-disabled', i>=slides.length-1);
     }
 
-    left.onclick  = () => goTo(getIndex()-1);
-    right.onclick = () => goTo(getIndex()+1);
+    left.onclick  = ()=> goTo(getIndex()-1);
+    right.onclick = ()=> goTo(getIndex()+1);
 
-    let _t; 
-    vp.addEventListener('scroll', () => { clearTimeout(_t); _t = setTimeout(()=>update(getIndex()), 90); }, {passive:true});
-    window.addEventListener('resize', () => { clearTimeout(_t); _t = setTimeout(()=>goTo(getIndex()), 120); });
+    let t; 
+    vp.addEventListener('scroll', ()=>{ clearTimeout(t); t=setTimeout(()=>update(getIndex()), 90); }, {passive:true});
+    window.addEventListener('resize', ()=>{ clearTimeout(t); t=setTimeout(()=>goTo(getIndex()), 120); });
 
-    // init
     update(0);
   });
 })();
