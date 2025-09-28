@@ -109,7 +109,11 @@ header p { color: var(--muted); font-size: 14px; margin-top: 4px; }
   opacity: 0;
   transition: opacity .2s ease;
 }
-.main-viewport:hover .nav-arrow { opacity: 1; }
+.main-viewport:hover .nav-arrow { opacity: 0.3; }
+.main-viewport:hover .nav-arrow:not(:disabled) { opacity: 1; }
+.nav-arrow:disabled {
+  cursor: not-allowed;
+}
 .nav-arrow.left { left: 10px; }
 .nav-arrow.right { right: 10px; }
 
