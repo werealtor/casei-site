@@ -1,6 +1,6 @@
 async function init() {
   try {
-    // 加上版本号避免 CDN/浏览器缓存
+    // 避免缓存：加版本号
     const res = await fetch("config.json?v=2", { cache: "no-store" });
     if (!res.ok) throw new Error('Config load failed');
     const data = await res.json();
@@ -9,15 +9,15 @@ async function init() {
     console.error("加载 config.json 失败:", err);
   }
 
-  // Hero video：确保 iOS/移动端可靠自动播放
+  // Hero video: 确保 iOS/移动端能自动播放
   const v = document.getElementById('heroVideo');
   if (v) {
-    v.muted = true; // iOS 自动播放要求静音
+    v.muted = true; // iOS 自动播放必须静音
     const tryPlay = () => v.play().catch(() => {});
     tryPlay();
     document.addEventListener('visibilitychange', tryPlay, { once: true });
 
-    // 尊重“减少动态效果”系统偏好
+    // 系统偏好“减少动态”则禁用自动播放
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       v.removeAttribute('autoplay');
       v.pause();
@@ -47,7 +47,7 @@ function setupProducts(products) {
       track.appendChild(slide);
     });
 
-    // 添加左右箭头
+    // 添加箭头
     const viewport = card.querySelector(".main-viewport");
     const leftBtn = document.createElement("button");
     leftBtn.className = "nav-arrow left";
@@ -75,7 +75,7 @@ function setupProducts(products) {
       // 进度条
       if (progress) progress.style.width = ((index + 1) / slides.length) * 100 + "%";
 
-      // 价格（支持数组/单价）
+      // 价格
       if (priceEl) {
         if (Array.isArray(product.price)) {
           priceEl.textContent = `$${product.price[index]}`;
@@ -86,12 +86,12 @@ function setupProducts(products) {
         }
       }
 
-      // 箭头可用性
+      // 箭头状态
       leftBtn.disabled = index === 0;
       rightBtn.disabled = index === slides.length - 1;
     }
 
-    // 点击事件
+    // 箭头点击
     leftBtn.addEventListener("click", () => update(index - 1));
     rightBtn.addEventListener("click", () => update(index + 1));
 
@@ -126,7 +126,7 @@ function setupProducts(products) {
   });
 }
 
-// 入口
+// 页面加载后初始化
 document.addEventListener("DOMContentLoaded", () => {
   init();
 
@@ -163,8 +163,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 移动端菜单
   const menuIcon = document.querySelector('.menu-icon');
-  const topNav = document.querySelector('.top-nav');
-  if (menuIcon && topNav) {
-    menuIcon.addEventListener('click', () => topNav.classList.toggle('active'));
+  const navWrap  = document.querySelector('.top-nav-wrap');
+  const topNav   = document.querySelector('.top-nav');
+
+  function closeMenu() {
+    navWrap?.classList.remove('active');
+    document.body.classList.remove('menu-open');
+    if (menuIcon) menuIcon.setAttribute('aria-expanded', 'false');
   }
+
+  if (menuIcon && navWrap && topNav) {
+    menuIcon.addEventListener('click', () => {
+      const active = navWrap.classList.toggle('active');
+      document.body.classList.toggle('menu-open', active);
+      menuIcon.setAttribute('aria-expanded', active ? 'true' : 'false');
+    });
+
+    topNav.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', closeMenu);
+    });
+
+    navWrap.addEventListener('click', (e) => {
+      if (e.target === navWrap) closeMenu();
+    });
+
+    window.addEventListener('resize', closeMenu);
+  }
+
+  // 滚动阴影
+  const header = document.getElementById('site-header');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY || document.documentElement.scrollTop;
+    header?.classList.toggle('scrolled', y > 4);
+  }, { passive: true });
 });
