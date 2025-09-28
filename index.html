@@ -3,47 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Minimal, premium phone cases by Case&i. Customize your style with high-quality designs." />
-  <meta name="keywords" content="phone cases, minimal design, custom cases, AIXX Inc" />
-  <meta property="og:title" content="Case&i — Minimal · Premium · Personal" />
-  <meta property="og:description" content="Your style, your case." />
-  <meta property="og:image" content="assets/images/classic/1.jpg" />
   <title>Case&i — Minimal · Premium · Personal</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <!-- Header -->
   <header id="site-header">
-    <div class="top-nav-container">
-      <a href="#" class="logo">Case&i</a>
-      <button class="menu-icon" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
-      <div class="top-nav-wrap">
-        <nav class="top-nav">
-          <a href="#products">Products</a>
-          <a href="#custom">Customize</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-        </nav>
-      </div>
-    </div>
-
-    <!-- Hero Video（置于 container 中，左右留白与卡片一致） -->
     <div class="container">
-      <div class="hero-video">
-        <video id="heroVideo" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
-      </div>
-    </div>
-
-    <!-- Hero CTA -->
-    <div class="hero-cta">
       <h1>Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
       <nav class="nav">
-        <a href="#products" class="btn breath">Shop Products</a>
-        <a href="#custom" class="btn alt breath">Customize Now</a>
+        <button class="btn">Shop Products</button>
+        <button class="btn alt">Customize Now</button>
       </nav>
     </div>
   </header>
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="container">
+      <h2>Your Style, Your Case</h2>
+      <p>High-quality phone cases designed for minimalism and durability.</p>
+    </div>
+  </section>
 
   <!-- Products -->
   <section id="products">
@@ -110,63 +92,22 @@
   <section id="custom">
     <div class="container">
       <h2>Customize Your Case</h2>
-      <form id="custom-form" class="section-card">
+      <form id="custom-form">
         <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
-
-        <div class="file-row" style="margin-top:8px;">
-          <label class="file-control" for="image-upload" aria-label="Choose file">
-            <span>📁 Choose File</span>
-            <span id="file-name" class="file-name">no file selected</span>
-          </label>
-          <input type="file" id="image-upload" accept="image/png, image/jpeg" style="display:none;" />
+        <input type="file" id="image-upload" accept="image/png, image/jpeg" />
+        <div class="preview">
+          <img id="preview-image" src="" alt="Preview" />
         </div>
-
-        <div class="preview" style="margin-top:12px;">
-          <img id="preview-image" src="" alt="User uploaded case preview" />
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn primary block round">Upload</button>
-        </div>
-      </form>
-    </div>
-  </section>
-
-  <!-- About Us -->
-  <section id="about">
-    <div class="container">
-      <h2>About Us</h2>
-      <div class="section-card">
-        <p>Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact Us -->
-  <section id="contact">
-    <div class="container">
-      <h2>Contact Us</h2>
-      <form id="contact-form" class="section-card">
-        <div class="input-row">
-          <input type="text" id="name" placeholder="Name" required />
-          <input type="email" id="email" placeholder="Email" required />
-          <textarea id="message" placeholder="Message" required></textarea>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn primary block round">Send</button>
-        </div>
-        <p class="form-help">We usually reply within 24 hours.</p>
+        <button type="submit" class="btn">Upload</button>
       </form>
     </div>
   </section>
 
   <!-- Footer -->
   <footer id="site-footer">
-    <p>&copy; 2025 AIXX Inc · All rights reserved · <a href="https://xxkit.com">xxkit.com</a></p>
+    <p>&copy; 2025 Case&i · AIXX Inc</p>
+    <p><a href="https://xxkit.com">xxkit.com</a></p>
   </footer>
-
-  <!-- Floating Dark Mode Toggle -->
-  <button id="dark-mode-toggle" aria-label="Toggle dark mode"></button>
 
   <script src="js/main.js"></script>
 </body>
