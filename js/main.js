@@ -1,176 +1,169 @@
-async function init() {
-  try {
+// Case&i main JS
+(function(){
+  const $ = (sel, ctx=document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+  // Smooth scroll
+  $$(".btn[data-scroll]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const to = btn.getAttribute("data-scroll");
+      const el = $(to);
+      if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    });
+  });
+
+  // Load config
+  async function loadConfig(){
     const res = await fetch("config.json");
-    if (!res.ok) {
-      throw new Error('Config load failed');
-    }
-    const data = await res.json();
-    setupProducts(data.products);
-  } catch (err) {
-    console.error("加载 config.json 失败:", err);
+    if(!res.ok) throw new Error("Failed to load config.json");
+    return res.json();
   }
-}
 
-function setupProducts(products) {
-  products.forEach(product => {
-    const card = document.querySelector(`.card[data-product="${product.id}"]`);
-    if (!card) return;
-
-    const track = card.querySelector(".main-track");
-    const progress = card.querySelector(".progress .bar");
-    const priceEl = card.querySelector(".price");
-
-    // 注入 slides
+  // Build product carousel
+  function buildProductCard(card, images, price){
+    const track = $(".main-track", card);
     track.innerHTML = "";
-    product.images.forEach((src, i) => {
+    images.forEach(src => {
       const slide = document.createElement("div");
       slide.className = "slide";
       const img = document.createElement("img");
-      img.src = src;
-      img.alt = `${product.name} ${i+1}`;
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.src = `images/${src}`;
+      img.alt = `${card.dataset.product} preview`;
       slide.appendChild(img);
       track.appendChild(slide);
     });
 
-    // 添加箭头
-    const viewport = card.querySelector(".main-viewport");
-    const leftBtn = document.createElement("button");
-    leftBtn.className = "nav-arrow left";
-    leftBtn.innerHTML = "‹";
-    leftBtn.setAttribute('aria-label', 'Previous slide');
-    const rightBtn = document.createElement("button");
-    rightBtn.className = "nav-arrow right";
-    rightBtn.innerHTML = "›";
-    rightBtn.setAttribute('aria-label', 'Next slide');
-    viewport.appendChild(leftBtn);
-    viewport.appendChild(rightBtn);
+    const priceEl = $(".price", card);
+    if (priceEl) priceEl.textContent = `$${price.toFixed(2)}`;
 
-    // 状态
     let index = 0;
-    const slides = track.children;
-    let interval;
+    const total = images.length;
+    const left = $(".nav-arrow.left", card);
+    const right = $(".nav-arrow.right", card);
+    const bar = $(".progress .bar", card);
 
-    function update(newIndex) {
-      index = Math.max(0, Math.min(newIndex, slides.length - 1));
-      track.style.transform = `translateX(-${index * 100}%)`;
-
-      // 更新进度条
-      if (progress) {
-        progress.style.width = ((index + 1) / slides.length) * 100 + "%";
-      }
-
-      // 更新价格
-      if (Array.isArray(product.price)) {
-        priceEl.textContent = `$${product.price[index]}`;
-      } else {
-        priceEl.textContent = `$${product.price}`;
-      }
-
-      // 调整箭头可用性
-      leftBtn.disabled = index === 0;
-      rightBtn.disabled = index === slides.length - 1;
+    function update(){
+      const w = card.querySelector(".main-viewport").clientWidth;
+      track.style.transform = `translateX(-${index * w}px)`;
+      const pct = total > 1 ? (index/(total-1))*100 : 100;
+      bar.style.width = `${pct}%`;
+      left.disabled = index <= 0;
+      right.disabled = index >= total - 1;
     }
 
-    // 箭头事件
-    leftBtn.addEventListener("click", () => update(index - 1));
-    rightBtn.addEventListener("click", () => update(index + 1));
+    const ro = new ResizeObserver(update);
+    ro.observe($(".main-viewport", card));
 
-    // 自动轮播
-    function startAutoPlay() {
-      interval = setInterval(() => update(index + 1), 3000);
-    }
-    startAutoPlay();
+    left.addEventListener("click", () => { if(index>0){ index--; update(); }});
+    right.addEventListener("click", () => { if(index<total-1){ index++; update(); }});
 
-    // 鼠标悬停暂停
-    viewport.addEventListener('mouseenter', () => clearInterval(interval));
-    viewport.addEventListener('mouseleave', startAutoPlay);
-
-    // 触摸支持
     let startX = 0;
-    let isDragging = false;
-    viewport.addEventListener('touchstart', e => {
-      startX = e.touches[0].clientX;
-      isDragging = true;
-      clearInterval(interval);
-    });
-    viewport.addEventListener('touchmove', e => {
-      if (!isDragging) return;
-      const delta = e.touches[0].clientX - startX;
-      if (Math.abs(delta) > 50) {
-        // 可以添加预览位移，但为简单起见，仅在end处理
-      }
-    });
-    viewport.addEventListener('touchend', e => {
-      if (!isDragging) return;
-      isDragging = false;
-      const delta = e.changedTouches[0].clientX - startX;
-      if (delta > 50) {
-        update(index - 1);
-      } else if (delta < -50) {
-        update(index + 1);
-      }
-      startAutoPlay();
+    const viewport = $(".main-viewport", card);
+    viewport.addEventListener("touchstart", (e)=> startX = e.touches[0].clientX, {passive:true});
+    viewport.addEventListener("touchend", (e)=>{
+      const dx = e.changedTouches[0].clientX - startX;
+      if (dx > 40 && index>0) { index--; update(); }
+      else if (dx < -40 && index<total-1) { index++; update(); }
     });
 
-    // 初始化
-    update(0);
+    viewport.tabIndex = 0;
+    viewport.addEventListener("keydown", (e)=>{
+      if(e.key === "ArrowLeft" && index>0){ index--; update(); }
+      if(e.key === "ArrowRight" && index<total-1){ index++; update(); }
+    });
+
+    update();
+  }
+
+  // Dark mode toggle
+  const toggleBtn = $("#dark-mode-toggle");
+  function applyTheme(mode){
+    if (mode === "dark") {
+      document.body.classList.add("dark");
+      toggleBtn.textContent = "☀";
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.remove("dark");
+      toggleBtn.textContent = "☾";
+      localStorage.setItem("theme", "light");
+    }
+  }
+  applyTheme(localStorage.getItem("theme") || "light");
+  toggleBtn.addEventListener("click", ()=>{
+    const next = document.body.classList.contains("dark") ? "light" : "dark";
+    applyTheme(next);
   });
-}
 
-// 文件上传预览
-document.addEventListener("DOMContentLoaded", () => {
-  init();
-
-  const upload = document.getElementById("image-upload");
-  const preview = document.getElementById("preview-image");
-
-  if (upload && preview) {
-    upload.addEventListener("change", e => {
-      const file = e.target.files[0];
-      if (file) {
-        // 客户端验证文件类型
-        if (!['image/png', 'image/jpeg'].includes(file.type)) {
-          alert('Invalid file type. Only PNG and JPEG are allowed.');
-          return;
-        }
-        // 客户端验证文件大小 (<10MB)
-        if (file.size > 10 * 1024 * 1024) {
-          alert('File too large. Maximum size is 10MB.');
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = ev => {
-          preview.src = ev.target.result;
-          preview.style.display = "block";
-        };
-        reader.readAsDataURL(file);
+  // Upload preview
+  const form = $("#custom-form");
+  if(form){
+    form.addEventListener("submit", (e)=>{
+      e.preventDefault();
+      alert("Image selected locally. In production, connect this to your upload API.");
+    });
+    const file = $("#image-upload");
+    const preview = $("#preview-image");
+    file.addEventListener("change", ()=>{
+      const f = file.files && file.files[0];
+      if (!f) return;
+      if (f.size > 10*1024*1024) {
+        alert("Please choose a file under 10MB.");
+        file.value = "";
+        return;
       }
+      const reader = new FileReader();
+      reader.onload = (ev)=>{
+        preview.src = ev.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(f);
     });
   }
 
-  // 暗模式切换
-  const toggleBtn = document.getElementById('dark-mode-toggle');
-  const body = document.body;
-
-  // 检查 localStorage 中的偏好并设置图标
-  if (localStorage.getItem('darkMode') === 'enabled') {
-    body.classList.add('dark');
-    toggleBtn.innerHTML = '🌞';
-  } else {
-    toggleBtn.innerHTML = '🌙';
-  }
-
-  // 按钮事件监听
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      body.classList.toggle('dark');
-      if (body.classList.contains('dark')) {
-        localStorage.setItem('darkMode', 'enabled');
-        toggleBtn.innerHTML = '🌞';
-      } else {
-        localStorage.setItem('darkMode', 'disabled');
-        toggleBtn.innerHTML = '🌙';
-      }
+  // Mobile menu toggle
+  const menuBtn = document.querySelector(".menu-toggle");
+  const nav = document.querySelector(".nav");
+  if (menuBtn && nav) {
+    menuBtn.addEventListener("click", () => {
+      const opened = nav.classList.toggle("open");
+      menuBtn.setAttribute("aria-expanded", opened ? "true" : "false");
     });
   }
-}); 
+
+  // Contact form simple check
+  const cform = document.getElementById("contact-form");
+  if (cform) {
+    cform.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("contact-name").value.trim();
+      const email = document.getElementById("contact-email").value.trim();
+      const msg = document.getElementById("contact-message").value.trim();
+      const tip = document.getElementById("contact-tip");
+      if (!name || !email || !msg) {
+        tip.textContent = "Please fill out all fields.";
+        return;
+      }
+      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+        tip.textContent = "Please enter a valid email.";
+        return;
+      }
+      tip.textContent = "Thanks! We have received your message (demo).";
+      cform.reset();
+    });
+  }
+
+  // Init
+  loadConfig().then(cfg => {
+    const hero = document.querySelector(".hero-media video");
+    if (hero && cfg.hero) hero.setAttribute("poster", `images/${cfg.hero}`);
+
+    $$(".card.product").forEach(card => {
+      const id = card.dataset.product;
+      const images = (cfg.products && cfg.products[id]) || [];
+      const price = (cfg.prices && cfg.prices[id]) || 0;
+      buildProductCard(card, images, price);
+    });
+  }).catch(err => { console.error(err); });
+})();
