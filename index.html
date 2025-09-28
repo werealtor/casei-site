@@ -9,31 +9,31 @@
   <meta property="og:description" content="Your style, your case." />
   <meta property="og:image" content="assets/images/classic/1.jpg" />
   <title>Case&i — Minimal · Premium · Personal</title>
-  <link rel="stylesheet" href="/css/style.css?v=2" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <!-- Header -->
   <header id="site-header">
     <div class="top-nav-container">
       <a href="#" class="logo">Case&i</a>
-      <button class="menu-icon" aria-label="Toggle menu">&#9776;</button>
-      <nav class="top-nav">
-        <a href="#products">Products</a>
-        <a href="#custom">Customize</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </nav>
+      <button class="menu-icon" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      <div class="top-nav-wrap">
+        <nav class="top-nav">
+          <a href="#products">Products</a>
+          <a href="#custom">Customize</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
     </div>
 
-    <!-- Hero -->
+    <!-- Hero Video -->
     <div class="hero-video">
-      <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="assets/images/hero-poster.jpg">
-        <source src="assets/videos/hero.webm" type="video/webm" />
-        <source src="assets/videos/hero.mp4" type="video/mp4" />
-      </video>
+      <video id="heroVideo" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
     </div>
 
-    <div class="container hero-cta">
+    <!-- Hero CTA -->
+    <div class="hero-cta">
       <h1>Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
       <nav class="nav">
@@ -114,7 +114,7 @@
         <div class="preview">
           <img id="preview-image" src="" alt="User uploaded case preview" />
         </div>
-        <button type="submit" class="btn breath">Upload</button>
+        <button type="submit" class="btn">Upload</button>
       </form>
     </div>
   </section>
@@ -146,8 +146,8 @@
   </footer>
 
   <!-- Floating Dark Mode Toggle -->
-  <button id="dark-mode-toggle" aria-label="Toggle dark mode"></button>
+  <button id="dark-mode-toggle"></button>
 
-  <script src="/js/main.js?v=2"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
