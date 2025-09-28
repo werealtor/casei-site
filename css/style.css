@@ -120,3 +120,56 @@ body.dark .progress{background:rgba(255,255,255,.12)}
 /* Footer & Theme btn */
 footer{border-top:1px solid var(--line);padding:18px 0 calc(20px + env(safe-area-inset-bottom,0));color:var(--muted);text-align:center}
 .floating-btn{position:fixed;bottom:calc(env(safe-area-inset-bottom,0) + 16px);right:16px;width:52px;height:52px;border-radius:50%;background:var(--bg);border:1px solid var(--line);box-shadow:0 6px 18px rgba(0,0,0,.15);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:2147483647}
+
+
+/* ===== Fix: arrows & progress always visible and on top ===== */
+
+/* 基础容器层级 */
+.card.product .main-viewport{ position:relative; z-index:0; }
+.card.product .main-track,
+.card.product .slide,
+.card.product .slide .cover{
+  position:relative; z-index:0;   /* 确保图片不压住控件 */
+}
+
+/* 箭头：提高层级，触屏默认可见；桌面悬停可淡入 */
+.card.product .nav-arrow{
+  position:absolute; top:50%; transform:translateY(-50%);
+  background:rgba(0,0,0,.35);
+  border:none; width:36px; height:36px; border-radius:50%;
+  color:#fff; font-size:20px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; user-select:none;
+  z-index:10;                /* 关键：高于图片/进度条 */
+  opacity:1;                 /* 触屏默认显示 */
+  transition:opacity .18s ease, transform .12s ease, background .12s ease;
+}
+.card.product .nav-arrow.left{left:10px}
+.card.product .nav-arrow.right{right:10px}
+.card.product .nav-arrow:active{ transform:translateY(-50%) scale(.95); }
+
+/* 仅桌面设备：默认轻微淡出，悬停时显现 */
+@media (hover:hover) and (pointer:fine){
+  .card.product .nav-arrow{ opacity:.85; }
+  .card.product:hover .nav-arrow,
+  .card.product .main-viewport:hover .nav-arrow{ opacity:1; }
+}
+
+/* 进度条：铺底灰 + 品牌色填充，层级仅次于箭头 */
+.card.product .progress{
+  position:absolute; left:0; right:0; bottom:0;
+  height:3px; background:rgba(0,0,0,.12);
+  overflow:hidden; z-index:8;        /* 关键：高于图片 */
+}
+body.dark .card.product .progress{ background:rgba(255,255,255,.18); }
+.card.product .progress i{
+  display:block; height:100%; width:0;
+  background:var(--brand);           /* 蓝色进度 */
+  transition:width .25s ease;
+}
+
+/* 防止某些主题里图片接管点击层 */
+.card.product .slide .cover{ pointer-events:none; }
+
+
+
