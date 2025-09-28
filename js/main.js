@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 移动端菜单
+  // 移动端菜单（抽屉）
   const menuIcon = document.querySelector('.menu-icon');
   const navWrap  = document.querySelector('.top-nav-wrap');
   const topNav   = document.querySelector('.top-nav');
@@ -179,14 +179,17 @@ document.addEventListener("DOMContentLoaded", () => {
       menuIcon.setAttribute('aria-expanded', active ? 'true' : 'false');
     });
 
+    // 点击链接自动收起
     topNav.querySelectorAll('a[href^="#"]').forEach(a => {
       a.addEventListener('click', closeMenu);
     });
 
+    // 点击毛玻璃背景关闭
     navWrap.addEventListener('click', (e) => {
       if (e.target === navWrap) closeMenu();
     });
 
+    // 旋转/尺寸变化时关闭
     window.addEventListener('resize', closeMenu);
   }
 
