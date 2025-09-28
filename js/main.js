@@ -1,6 +1,9 @@
 async function init() {
   try {
     const res = await fetch("config.json");
+    if (!res.ok) {
+      throw new Error('Config load failed');
+    }
     const data = await res.json();
     setupProducts(data.products);
   } catch (err) {
@@ -34,15 +37,18 @@ function setupProducts(products) {
     const leftBtn = document.createElement("button");
     leftBtn.className = "nav-arrow left";
     leftBtn.innerHTML = "‹";
+    leftBtn.setAttribute('aria-label', 'Previous slide');
     const rightBtn = document.createElement("button");
     rightBtn.className = "nav-arrow right";
     rightBtn.innerHTML = "›";
+    rightBtn.setAttribute('aria-label', 'Next slide');
     viewport.appendChild(leftBtn);
     viewport.appendChild(rightBtn);
 
     // 状态
     let index = 0;
     const slides = track.children;
+    let interval;
 
     function update(newIndex) {
       index = Math.max(0, Math.min(newIndex, slides.length - 1));
@@ -65,6 +71,43 @@ function setupProducts(products) {
     leftBtn.addEventListener("click", () => update(index - 1));
     rightBtn.addEventListener("click", () => update(index + 1));
 
+    // 自动轮播
+    function startAutoPlay() {
+      interval = setInterval(() => update(index + 1), 3000);
+    }
+    startAutoPlay();
+
+    // 鼠标悬停暂停
+    viewport.addEventListener('mouseenter', () => clearInterval(interval));
+    viewport.addEventListener('mouseleave', startAutoPlay);
+
+    // 触摸支持
+    let startX = 0;
+    let isDragging = false;
+    viewport.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+      clearInterval(interval);
+    });
+    viewport.addEventListener('touchmove', e => {
+      if (!isDragging) return;
+      const delta = e.touches[0].clientX - startX;
+      if (Math.abs(delta) > 50) {
+        // 可以添加预览位移，但为简单起见，仅在end处理
+      }
+    });
+    viewport.addEventListener('touchend', e => {
+      if (!isDragging) return;
+      isDragging = false;
+      const delta = e.changedTouches[0].clientX - startX;
+      if (delta > 50) {
+        update(index - 1);
+      } else if (delta < -50) {
+        update(index + 1);
+      }
+      startAutoPlay();
+    });
+
     // 初始化
     update(0);
   });
@@ -81,6 +124,16 @@ document.addEventListener("DOMContentLoaded", () => {
     upload.addEventListener("change", e => {
       const file = e.target.files[0];
       if (file) {
+        // 客户端验证文件类型
+        if (!['image/png', 'image/jpeg'].includes(file.type)) {
+          alert('Invalid file type. Only PNG and JPEG are allowed.');
+          return;
+        }
+        // 客户端验证文件大小 (<10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          alert('File too large. Maximum size is 10MB.');
+          return;
+        }
         const reader = new FileReader();
         reader.onload = ev => {
           preview.src = ev.target.result;
