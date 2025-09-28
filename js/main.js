@@ -90,4 +90,25 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // 暗模式切换
+  const toggleBtn = document.getElementById('dark-mode-toggle');
+  const body = document.body;
+
+  // 检查 localStorage 中的偏好
+  if (localStorage.getItem('darkMode') === 'enabled') {
+    body.classList.add('dark');
+  }
+
+  // 按钮事件监听
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      if (body.classList.contains('dark')) {
+        localStorage.setItem('darkMode', 'enabled');
+      } else {
+        localStorage.setItem('darkMode', 'disabled');
+      }
+    });
+  }
 });
