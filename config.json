@@ -15,6 +15,8 @@
         "assets/images/classic/6.jpg",
         "assets/images/classic/7.jpg"
       ],
+      "titles": ["Classic — Matte Black", "Classic — Frosted Clear", "Classic — Navy Blue"，"Classic — Matte Black", "Classic — Frosted Clear", "Classic — Navy Blue"，"Classic — Matte Black"],
+      "subtitles": ["Slim & scratch-resistant", "Frosted texture, anti-fingerprint", "Deep navy, soft-touch"，"Slim & scratch-resistant", "Frosted texture, anti-fingerprint", "Deep navy, soft-touch""Slim & scratch-resistant"], 
       "price": [19, 20, 21, 22, 23, 24, 25]
     },
     {
@@ -29,6 +31,9 @@
         "assets/images/fashion/6.jpg",
         "assets/images/fashion/7.jpg"
       ],
+       "titles": ["Classic — Matte Black", "Classic — Frosted Clear", "Classic — Navy Blue"，"Classic — Matte Black", "Classic — Frosted Clear", "Classic — Navy Blue"，"Classic — Matte Black"],
+      "subtitles": ["Slim & scratch-resistant", "Frosted texture, anti-fingerprint", "Deep navy, soft-touch"，"Slim & scratch-resistant", "Frosted texture, anti-fingerprint", "Deep navy, soft-touch""Slim & scratch-resistant"], 
+
       "price": [25, 26, 27, 28, 29, 30, 31]
     },
     {
@@ -43,6 +48,9 @@
         "assets/images/business/6.jpg",
         "assets/images/business/7.jpg"
       ],
+       "titles": ["Classic — Matte Black", "Classic — Frosted Clear", "Classic — Navy Blue"，"Classic — Matte Black", "Classic — Frosted Clear", "Classic — Navy Blue"，"Classic — Matte Black"],
+      "subtitles": ["Slim & scratch-resistant", "Frosted texture, anti-fingerprint", "Deep navy, soft-touch"，"Slim & scratch-resistant", "Frosted texture, anti-fingerprint", "Deep navy, soft-touch""Slim & scratch-resistant"], 
+  
       "price": [29, 31, 33, 34, 36, 38, 40]
     }
   ]
