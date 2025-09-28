@@ -28,6 +28,7 @@ function setupProducts(products) {
       const img = document.createElement("img");
       img.src = src;
       img.alt = `${product.name} ${i+1}`;
+      img.loading = "lazy";
       slide.appendChild(img);
       track.appendChild(slide);
     });
@@ -173,4 +174,4 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-}); 
+});
