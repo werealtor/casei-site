@@ -1,6 +1,7 @@
 async function init() {
   try {
-    const res = await fetch("config.json", { cache: "no-store" });
+    // 加上版本号避免 CDN/浏览器缓存
+    const res = await fetch("config.json?v=2", { cache: "no-store" });
     if (!res.ok) throw new Error('Config load failed');
     const data = await res.json();
     setupProducts(data.products);
@@ -8,16 +9,16 @@ async function init() {
     console.error("加载 config.json 失败:", err);
   }
 
-  // Hero video autoplay reliability (especially iOS)
+  // Hero video：确保 iOS/移动端可靠自动播放
   const v = document.getElementById('heroVideo');
   if (v) {
-    v.muted = true;
+    v.muted = true; // iOS 自动播放要求静音
     const tryPlay = () => v.play().catch(() => {});
     tryPlay();
     document.addEventListener('visibilitychange', tryPlay, { once: true });
 
-    // respect system preference for reduced motion
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // 尊重“减少动态效果”系统偏好
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       v.removeAttribute('autoplay');
       v.pause();
     }
@@ -33,70 +34,84 @@ function setupProducts(products) {
     const progress = card.querySelector(".progress .bar");
     const priceEl = card.querySelector(".price");
 
-    // Inject slides
+    // 注入 slides
     track.innerHTML = "";
     product.images.forEach((src, i) => {
       const slide = document.createElement("div");
       slide.className = "slide";
       const img = document.createElement("img");
       img.src = src;
-      img.alt = `${product.name} ${i+1}`;
+      img.alt = `${product.name} ${i + 1}`;
       img.loading = "lazy";
       slide.appendChild(img);
       track.appendChild(slide);
     });
 
-    // Arrows
+    // 添加左右箭头
     const viewport = card.querySelector(".main-viewport");
     const leftBtn = document.createElement("button");
     leftBtn.className = "nav-arrow left";
     leftBtn.innerHTML = "‹";
     leftBtn.setAttribute('aria-label', 'Previous slide');
+
     const rightBtn = document.createElement("button");
     rightBtn.className = "nav-arrow right";
     rightBtn.innerHTML = "›";
     rightBtn.setAttribute('aria-label', 'Next slide');
+
     viewport.appendChild(leftBtn);
     viewport.appendChild(rightBtn);
 
-    // State
+    // 状态
     let index = 0;
     const slides = track.children;
     let interval;
 
     function update(newIndex) {
+      if (!slides.length) return;
       index = Math.max(0, Math.min(newIndex, slides.length - 1));
       track.style.transform = `translateX(-${index * 100}%)`;
 
-      // Progress
+      // 进度条
       if (progress) progress.style.width = ((index + 1) / slides.length) * 100 + "%";
 
-      // Price
-      if (Array.isArray(product.price)) {
-        priceEl.textContent = `$${product.price[index]}`;
-      } else {
-        priceEl.textContent = `$${product.price}`;
+      // 价格（支持数组/单价）
+      if (priceEl) {
+        if (Array.isArray(product.price)) {
+          priceEl.textContent = `$${product.price[index]}`;
+        } else if (product.price != null) {
+          priceEl.textContent = `$${product.price}`;
+        } else {
+          priceEl.textContent = "$--";
+        }
       }
 
+      // 箭头可用性
       leftBtn.disabled = index === 0;
       rightBtn.disabled = index === slides.length - 1;
     }
 
+    // 点击事件
     leftBtn.addEventListener("click", () => update(index - 1));
     rightBtn.addEventListener("click", () => update(index + 1));
 
-    // Autoplay
+    // 自动轮播
     function startAutoPlay() { interval = setInterval(() => update(index + 1), 3000); }
     function stopAutoPlay() { clearInterval(interval); }
     startAutoPlay();
 
-    // Pause on hover / resume
+    // 悬停暂停（桌面）
     viewport.addEventListener('mouseenter', stopAutoPlay);
     viewport.addEventListener('mouseleave', startAutoPlay);
 
-    // Touch swipe
+    // 触摸滑动（移动）
     let startX = 0, isDragging = false;
-    viewport.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; stopAutoPlay(); });
+    viewport.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+      stopAutoPlay();
+    }, { passive: true });
+
     viewport.addEventListener('touchend', e => {
       if (!isDragging) return;
       isDragging = false;
@@ -106,17 +121,18 @@ function setupProducts(products) {
       startAutoPlay();
     });
 
+    // 初始化
     update(0);
   });
 }
 
-// Upload preview
+// 入口
 document.addEventListener("DOMContentLoaded", () => {
   init();
 
+  // 上传预览
   const upload = document.getElementById("image-upload");
   const preview = document.getElementById("preview-image");
-
   if (upload && preview) {
     upload.addEventListener("change", e => {
       const file = e.target.files[0];
@@ -129,10 +145,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Dark mode toggle
+  // 暗黑模式切换
   const toggleBtn = document.getElementById('dark-mode-toggle');
   const body = document.body;
-  const setIcon = () => { toggleBtn.innerHTML = body.classList.contains('dark') ? '🌞' : '🌙'; };
+  const setIcon = () => { if (toggleBtn) toggleBtn.innerHTML = body.classList.contains('dark') ? '🌞' : '🌙'; };
   if (localStorage.getItem('darkMode') === 'enabled') body.classList.add('dark');
   setIcon();
 
@@ -145,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Mobile menu
+  // 移动端菜单
   const menuIcon = document.querySelector('.menu-icon');
   const topNav = document.querySelector('.top-nav');
   if (menuIcon && topNav) {
