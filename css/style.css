@@ -193,8 +193,8 @@ footer {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: var(--brand);
-  color: #fff;
+  background: var(--tone);
+  color: var(--text);
   border: none;
   border-radius: 50%;
   width: 50px;
