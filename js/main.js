@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
     body.classList.add('dark');
     toggleBtn.innerHTML = '🌞';
   } else {
-    toggleBtn.innerHTML = '🌌';
+    toggleBtn.innerHTML = '🌙';
   }
 
   // 按钮事件监听
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleBtn.innerHTML = '🌞';
       } else {
         localStorage.setItem('darkMode', 'disabled');
-        toggleBtn.innerHTML = '🌌';
+        toggleBtn.innerHTML = '🌙';
       }
     });
   }
