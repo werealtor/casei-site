@@ -1,137 +1,164 @@
-/* tiny utils */
-const $ = (s, el=document)=>el.querySelector(s);
-const $$ = (s, el=document)=>Array.from(el.querySelectorAll(s));
-const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+// 简易工具
+const $  = (sel, el=document) => el.querySelector(sel);
+const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
 
-/* nav toggle */
+// 主题 & 菜单
 (() => {
+  const toggle = $('#theme-toggle');
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark') document.body.classList.add('dark');
+  toggle?.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  });
+
   const header = $('#site-header');
-  const btn = $('.menu-toggle', header);
-  btn?.addEventListener('click', () => {
-    const exp = btn.getAttribute('aria-expanded')==='true';
-    btn.setAttribute('aria-expanded', String(!exp));
-    header.classList.toggle('open', !exp);
+  $('.menu-toggle')?.addEventListener('click', () => {
+    header.classList.toggle('open');
+    const btn = $('.menu-toggle');
+    const expanded = header.classList.contains('open');
+    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
   });
 })();
 
-/* theme toggle */
-(() => {
-  const btn = $('#theme-toggle');
-  if(!btn) return;
-  const saved = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
-  document.body.classList.toggle('dark', saved==='dark');
-  btn.textContent = saved==='dark' ? '☀️' : '🌙';
-  btn.addEventListener('click', ()=>{
-    const dark = !document.body.classList.contains('dark');
-    document.body.classList.toggle('dark', dark);
-    localStorage.setItem('theme', dark?'dark':'light');
-    btn.textContent = dark ? '☀️' : '🌙';
-  });
-})();
-
-/* upload preview (demo) */
-(() => {
-  const form = $('#uForm'); if(!form) return;
-  const file = $('#file'), nameEl = $('#fileName'), err = $('#uErr'), prev = $('#preview');
-  const MAX = 10*1024*1024;
-  file.addEventListener('change', ()=>{
-    const f=file.files?.[0]; nameEl.textContent = f ? `${f.name} · ${(f.size/1024/1024).toFixed(1)}MB` : 'PNG/JPEG · < 10MB';
-  });
-  form.addEventListener('submit', e=>{
-    e.preventDefault(); err.textContent='';
-    const f=file.files?.[0];
-    if(!f){ err.textContent='Please choose an image.'; return; }
-    if(!/^image\/(png|jpe?g)$/i.test(f.type)){ err.textContent='Only PNG/JPEG supported.'; return; }
-    if(f.size>MAX){ err.textContent='File too large (max 10MB).'; return; }
-    const r=new FileReader();
-    r.onload = ev=>{ prev.src=ev.target.result; prev.style.display='block'; };
-    r.readAsDataURL(f);
-  });
-})();
-
-/* build products from config.json */
+// 动态构建轮播：从 config.json 注入 7 张图 + 箭头 + 进度条 + 价格联动
 (async () => {
-  const grid = $('#products-grid') || $('.products-grid');
-  if(!grid) return;
+  let conf;
+  try {
+    const res = await fetch('config.json', { cache: 'no-store' });
+    conf = await res.json();
+  } catch (e) {
+    console.error('Load config.json failed', e);
+    return;
+  }
 
-  const cfg = await fetch('config.json', {cache:'no-store'}).then(r=>r.json()).catch(()=>null);
-  if(!cfg?.products?.length) return;
+  const currency = (conf?.settings?.currency || 'USD') === 'USD' ? '$' : (conf?.settings?.currency || '$');
 
-  cfg.products.forEach(p=>{
-    // 若 index.html 已有卡片，就用现成的；否则注入一张
-    let card = $(`.card.product[data-product="${p.id}"]`, grid);
-    if(!card){
-      card = document.createElement('article');
-      card.className='card product u3';
-      card.dataset.product = p.id;
-      card.innerHTML = `
-        <div class="main-viewport" role="region" aria-label="${p.name} gallery" tabindex="0">
-          <div class="main-track"></div>
-          <div class="progress"><i></i></div>
-        </div>
-        <div class="body">
-          <h3>${p.name}</h3>
-          <p class="sub">${p.subtitle??''}</p>
-          <div class="pillrow">${(p.badges||[]).map(b=>`<span class="pill">${b}</span>`).join('')}</div>
-          <div class="price" data-id="${p.id}">$—</div>
-        </div>`;
-      grid.appendChild(card);
-    }
-
-    const vp = $('.main-viewport', card);
-    const track = $('.main-track', card);
+  $$('.card.product').forEach(card => {
+    const pid   = card.dataset.product;                 // classic / fashion / business
+    const vp    = $('.main-viewport', card);
+    const track = $('.main-track', vp);
+    const prog  = $('.progress i', vp);
     const priceEl = $('.price', card);
-    const prog = $('.progress', card) || (()=>{ const d=document.createElement('div'); d.className='progress'; d.innerHTML='<i></i>'; vp.appendChild(d); return d; })();
-    const bar  = $('i', prog);
 
-    // slides
-    track.innerHTML='';
-    (p.images||[]).forEach((src, i)=>{
+    const pconf = conf.products.find(p => p.id === pid);
+    if (!pconf) return;
+
+    // 1) 清空轨道并注入 slides
+    track.innerHTML = '';
+    (pconf.images || []).forEach((src, i) => {
       const slide = document.createElement('div');
-      slide.className='slide';
-      slide.dataset.price = Array.isArray(p.price) ? p.price[i] : p.price?.[String(i+1)];
-      slide.innerHTML = `<img class="cover" src="${src}" alt="${p.name} — ${i+1}" draggable="false" />`;
+      slide.className = 'slide';
+      slide.dataset.index = i + 1;
+      const img = document.createElement('img');
+      img.className = 'cover';
+      img.alt = `${pconf.name} — ${i+1}`;
+      img.src = src;
+      slide.appendChild(img);
       track.appendChild(slide);
     });
 
-    // arrows（缺就补）
-    let left  = $('.nav-arrow.left', card);
-    let right = $('.nav-arrow.right', card);
-    if(!left){  left=document.createElement('button');  left.className='nav-arrow left';  left.setAttribute('aria-label','Prev');  left.textContent='‹'; vp.appendChild(left); }
-    if(!right){ right=document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.textContent='›'; vp.appendChild(right); }
-
-    // z-index 兜底（防止被图片盖住）
-    vp.style.position='relative';
-    $$('.slide .cover', card).forEach(img=>{ img.style.zIndex='0'; img.style.pointerEvents='none'; });
-    [left,right].forEach(a=>{ a.style.zIndex='9999'; a.style.pointerEvents='auto'; a.style.opacity='1'; });
-    prog.style.zIndex='9998';
-
-    const slides = $$('.slide', track);
-    const getIndex = ()=> Math.round(vp.scrollLeft / vp.clientWidth);
-
-    const goTo = i=>{
-      i = clamp(i, 0, slides.length-1);
-      vp.scrollTo({ left: vp.clientWidth * i, behavior:'smooth' });
-      update(i);
-    };
-
-    function update(i=getIndex()){
-      if (bar) bar.style.width = ((i+1)/(slides.length||1))*100 + '%';
-
-      const val = slides[i]?.dataset.price;
-      if (val && priceEl) priceEl.textContent = `$${val}`;
-
-      left.classList.toggle('is-disabled', i<=0);
-      right.classList.toggle('is-disabled', i>=slides.length-1);
+    // 2) 确保箭头存在（由 JS 生成，避免被误删）
+    let left = $('.nav-arrow.left', vp);
+    let right = $('.nav-arrow.right', vp);
+    if (!left) {
+      left = document.createElement('button');
+      left.className = 'nav-arrow left';
+      left.setAttribute('aria-label', 'Previous');
+      left.textContent = '‹';
+      vp.appendChild(left);
+    }
+    if (!right) {
+      right = document.createElement('button');
+      right.className = 'nav-arrow right';
+      right.setAttribute('aria-label', 'Next');
+      right.textContent = '›';
+      vp.appendChild(right);
     }
 
-    left.onclick  = ()=> goTo(getIndex()-1);
-    right.onclick = ()=> goTo(getIndex()+1);
+    // 3) 计算当前 index（基于滚动位置）
+    const slides = $$('.slide', track);
+    const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
 
-    let t; 
-    vp.addEventListener('scroll', ()=>{ clearTimeout(t); t=setTimeout(()=>update(getIndex()), 90); }, {passive:true});
-    window.addEventListener('resize', ()=>{ clearTimeout(t); t=setTimeout(()=>goTo(getIndex()), 120); });
+    // 4) 前往某页
+    const goTo = (i) => {
+      const max = Math.max(0, slides.length - 1);
+      const idx = Math.min(Math.max(i, 0), max);
+      vp.scrollTo({ left: idx * vp.clientWidth, behavior: 'smooth' });
+      update(idx);
+    };
 
+    // 5) 更新：进度条 + 箭头状态 + 价格联动
+    function update(idx = getIndex()) {
+      // 进度条
+      const pct = slides.length > 1 ? ((idx + 1) / slides.length) * 100 : 100;
+      if (prog) prog.style.width = `${pct}%`;
+
+      // 箭头状态
+      left.classList.toggle('is-disabled', idx <= 0);
+      right.classList.toggle('is-disabled', idx >= slides.length - 1);
+
+      // 价格联动（数组越界自动兜底用最后一个）
+      const arr = Array.isArray(pconf.price) ? pconf.price : [];
+      let val = arr[Math.min(idx, arr.length - 1)];
+      if (typeof val !== 'number') val = arr[arr.length - 1];
+      if (priceEl && typeof val === 'number') priceEl.textContent = `${currency}${val}`;
+    }
+
+    // 6) 事件绑定
+    left.onclick  = () => goTo(getIndex() - 1);
+    right.onclick = () => goTo(getIndex() + 1);
+
+    // 7) 同步滚动 / 尺寸变化
+    let t1, t2;
+    vp.addEventListener('scroll', () => { clearTimeout(t1); t1 = setTimeout(() => update(getIndex()), 90); }, { passive:true });
+    window.addEventListener('resize', () => { clearTimeout(t2); t2 = setTimeout(() => goTo(getIndex()), 120); });
+
+    // 8) 初始化
     update(0);
+  });
+
+  // 保险：把箭头和进度条层级压到图层之上（防止某些自定义样式覆盖）
+  (function ensureZTop(){
+    const s = document.createElement('style');
+    s.id = 'u3-zfix';
+    s.textContent = `
+      .card.product .nav-arrow{z-index:99990!important;pointer-events:auto!important;opacity:1!important}
+      .card.product .progress{z-index:99990!important}
+      .card.product .slide .cover{z-index:0!important;pointer-events:none!important}
+    `;
+    document.getElementById('u3-zfix')?.remove();
+    document.head.appendChild(s);
+  })();
+})();
+
+// 简易上传预览（保持原功能）
+(() => {
+  const form = document.getElementById('uForm');
+  const fileInput = document.getElementById('file');
+  const fileName = document.getElementById('fileName');
+  const preview = document.getElementById('preview');
+  const uErr = document.getElementById('uErr');
+
+  fileInput?.addEventListener('change', () => {
+    const f = fileInput.files?.[0];
+    if (!f) return;
+    fileName.textContent = `${f.name} · ${(f.size/1024/1024).toFixed(2)}MB`;
+    if (!/^image\/(png|jpeg)$/i.test(f.type)) {
+      uErr.textContent = 'Only PNG/JPEG supported.';
+      preview.style.display = 'none';
+      return;
+    }
+    uErr.textContent = '';
+    const url = URL.createObjectURL(f);
+    preview.src = url;
+    preview.style.display = 'block';
+  });
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const f = fileInput.files?.[0];
+    if (!f) { uErr.textContent = 'Please choose an image first.'; return; }
+    alert('Preview ready (demo).');
   });
 })();
