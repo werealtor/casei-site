@@ -6,7 +6,7 @@ async function init(){
     setupProducts(data.products);
   }catch(e){ console.error(e); }
 
-  // Hero video autoplay & reduced motion
+  // Hero autoplay + reduced motion
   const v = document.querySelector(".hero-media");
   if(v){
     v.muted = true;
@@ -87,26 +87,36 @@ function setupProducts(products){
   });
 }
 
-// DOM ready
+// DOM Ready
 document.addEventListener("DOMContentLoaded", ()=>{
   init();
 
-  // Upload preview
+  /* Upload preview (polished) */
   const upload = document.getElementById("image-upload");
-  const preview = document.getElementById("preview-image");
-  if(upload && preview){
-    upload.addEventListener("change", e=>{
+  const previewImg = document.getElementById("preview-image");
+  const previewBox = document.getElementById("preview-box");
+  const fileNameEl = document.getElementById("file-name");
+
+  if (upload && previewImg && previewBox) {
+    upload.addEventListener("change", e => {
       const file = e.target.files?.[0];
-      if(!file) return;
-      if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; return; }
-      if(file.size > 10*1024*1024){ alert("Max 10MB."); upload.value=""; return; }
+      if (!file) { if (fileNameEl) fileNameEl.textContent = "no file selected"; previewBox.style.display = "none"; return; }
+
+      if (!["image/png", "image/jpeg"].includes(file.type)) { alert("Only PNG/JPEG allowed."); upload.value = ""; previewBox.style.display = "none"; return; }
+      if (file.size > 10 * 1024 * 1024) { alert("Max 10MB."); upload.value = ""; previewBox.style.display = "none"; return; }
+
+      if (fileNameEl) fileNameEl.textContent = file.name;
+
       const reader = new FileReader();
-      reader.onload = ev => { preview.src = ev.target.result; preview.style.display="block"; };
+      reader.onload = ev => {
+        previewImg.src = ev.target.result;
+        previewBox.style.display = "flex";   // show bordered preview
+      };
       reader.readAsDataURL(file);
     });
   }
 
-  // Dark mode
+  /* Dark mode */
   const toggle = document.getElementById("dark-mode-toggle");
   const setIcon = () => toggle && (toggle.textContent = document.body.classList.contains("dark") ? "🌞" : "🌙");
   if(localStorage.getItem("darkMode")==="enabled") document.body.classList.add("dark");
@@ -117,19 +127,37 @@ document.addEventListener("DOMContentLoaded", ()=>{
     setIcon();
   });
 
-  // Mobile menu
+  /* Mobile drawer */
   const menuBtn = document.querySelector(".menu-icon");
-  const nav = document.querySelector(".top-nav");
-  function closeMenu(){ nav?.classList.remove("active"); document.body.classList.remove("menu-open"); menuBtn?.setAttribute("aria-expanded","false"); }
-  if(menuBtn && nav){
+  const wrap = document.querySelector(".top-nav-wrap");
+  const list = document.querySelector(".top-nav");
+
+  function closeMenu(){
+    wrap?.classList.remove("active");
+    document.body.classList.remove("menu-open");
+    menuBtn?.setAttribute("aria-expanded","false");
+  }
+  if(menuBtn && wrap && list){
     menuBtn.addEventListener("click", ()=>{
-      const active = nav.classList.toggle("active");
+      const active = wrap.classList.toggle("active");
       document.body.classList.toggle("menu-open", active);
       menuBtn.setAttribute("aria-expanded", active?"true":"false");
-      if(active) setTimeout(()=> nav.querySelector("a")?.focus({preventScroll:true}), 80);
+      if(active) setTimeout(()=> list.querySelector("a")?.focus({preventScroll:true}), 80);
     });
-    nav.querySelectorAll("a[href^='#']").forEach(a=> a.addEventListener("click", closeMenu));
-    document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeMenu(); });
+    wrap.addEventListener("click", e=>{ if(e.target===wrap) closeMenu(); });
+    list.querySelectorAll("a[href^='#']").forEach(a=> a.addEventListener("click", closeMenu));
+    document.addEventListener("keydown", e=>{ if(e.key==="Escape" && wrap.classList.contains("active")) closeMenu(); });
     window.addEventListener("resize", closeMenu);
+
+    // Smooth scroll offset
+    document.querySelectorAll("a[href^='#']").forEach(a=>{
+      a.addEventListener("click", ev=>{
+        const id=a.getAttribute("href"); if(!id||id==="#") return;
+        const target=document.querySelector(id); if(!target) return;
+        ev.preventDefault();
+        const y = target.getBoundingClientRect().top + window.scrollY - 10;
+        window.scrollTo({top:y, behavior:"smooth"});
+      });
+    });
   }
 });
