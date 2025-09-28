@@ -152,9 +152,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById('dark-mode-toggle');
   const body = document.body;
 
-  // 检查 localStorage 中的偏好
+  // 检查 localStorage 中的偏好并设置图标
   if (localStorage.getItem('darkMode') === 'enabled') {
     body.classList.add('dark');
+    toggleBtn.innerHTML = '🌞';
+  } else {
+    toggleBtn.innerHTML = '🌌';
   }
 
   // 按钮事件监听
@@ -163,9 +166,11 @@ document.addEventListener("DOMContentLoaded", () => {
       body.classList.toggle('dark');
       if (body.classList.contains('dark')) {
         localStorage.setItem('darkMode', 'enabled');
+        toggleBtn.innerHTML = '🌞';
       } else {
         localStorage.setItem('darkMode', 'disabled');
+        toggleBtn.innerHTML = '🌌';
       }
     });
   }
-}); 
+});
