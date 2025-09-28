@@ -9,6 +9,16 @@
 <body>
   <!-- Header -->
   <header id="site-header">
+    <nav class="top-nav">
+      <a href="#">Case&i</a>
+      <a href="#products">Products</a>
+      <a href="#custom">Customize</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="hero-video">
+      <video autoplay loop muted playsinline src="assets/hero.mp4"></video>
+    </div>
     <div class="container">
       <h1>Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
@@ -18,14 +28,6 @@
       </nav>
     </div>
   </header>
-
-  <!-- Hero -->
-  <section id="hero">
-    <div class="container">
-      <h2>Your Style, Your Case</h2>
-      <p>High-quality phone cases designed for minimalism and durability.</p>
-    </div>
-  </section>
 
   <!-- Products -->
   <section id="products">
@@ -103,14 +105,32 @@
     </div>
   </section>
 
+  <!-- About Us -->
+  <section id="about">
+    <div class="container">
+      <h2>About Us</h2>
+      <p>Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.</p>
+    </div>
+  </section>
+
+  <!-- Contact Us -->
+  <section id="contact">
+    <div class="container">
+      <h2>Contact Us</h2>
+      <form id="contact-form">
+        <input type="text" placeholder="Name" />
+        <input type="email" placeholder="Email" />
+        <textarea placeholder="Message"></textarea>
+        <button type="submit" class="btn">Send</button>
+      </form>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer id="site-footer">
-    <p>&copy; 2025 Case&i · AIXX Inc</p>
-    <p><a href="https://xxkit.com">xxkit.com</a></p>
+    <p>&copy; 2025 AIXX Inc · All rights reserved · <a href="https://xxkit.com">xxkit.com</a></p>
+    <button id="dark-mode-toggle"></button>
   </footer>
-
-  <!-- Floating Dark Mode Toggle -->
-  <button id="dark-mode-toggle"></button>
 
   <script src="js/main.js"></script>
 </body>
