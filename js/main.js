@@ -193,10 +193,4 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener('resize', closeMenu);
   }
 
-  // 滚动阴影
-  const header = document.getElementById('site-header');
-  window.addEventListener('scroll', () => {
-    const y = window.scrollY || document.documentElement.scrollTop;
-    header?.classList.toggle('scrolled', y > 4);
-  }, { passive: true });
 });
