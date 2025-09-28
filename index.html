@@ -47,9 +47,8 @@
     <section id="products">
       <div class="container">
         <h2 class="title">Our Products</h2>
-        <div class="grid products-grid" id="products-grid">
-          <!-- JS will inject product cards here -->
-        </div>
+        <!-- 若你手写卡片也可以，以下容器留空由 JS 注入 -->
+        <div class="grid products-grid" id="products-grid"></div>
       </div>
     </section>
 
@@ -59,7 +58,8 @@
         <h2 class="title">Customize Your Case</h2>
         <form id="uForm" novalidate>
           <div class="file-field">
-            <label for="file" class="input-like">Choose Image
+            <label for="file" class="input-like">
+              Choose Image
               <small id="fileName">PNG/JPEG · &lt; 10MB</small>
             </label>
             <button type="submit" class="btn primary">Upload &amp; Preview</button>
