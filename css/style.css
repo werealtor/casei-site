@@ -3,6 +3,7 @@
   --tone:#f7f7f8; --tone-rgb:247,247,248; --brand:#0b66ff; --max:1100px;
   --radius:12px; --shadow:0 1px 6px rgba(0,0,0,.04);
 
+  /* Typography */
   --font-sans:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   --font-serif:"Cormorant Garamond","Times New Roman",Georgia,serif;
   --fs-body:15.5px; --fs-nav:16px; --fs-h1:28px; --fs-h2:24px; --fs-card-title:18px;
@@ -36,11 +37,18 @@ h1,h2,h3,.title{
 /* Header / Nav */
 #site-header{border-bottom:1px solid var(--line);background:var(--bg)}
 .top-nav-container{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+
+/* LOGO 与导航均衬线 */
 .logo{font-family:var(--font-serif);font-weight:600;font-size:18px;letter-spacing:.4px}
 .top-nav{display:flex;gap:24px}
-.top-nav a{font-family:var(--font-serif);padding:10px 0;font-size:var(--fs-nav);font-weight:600;letter-spacing:.4px}
+.top-nav a{
+  font-family:var(--font-serif);
+  padding:10px 0; font-size:var(--fs-nav);
+  font-weight:600; letter-spacing:.4px;
+}
 .menu-icon{display:none;background:none;border:0;font-size:22px;cursor:pointer}
 .top-nav-wrap{display:contents}
+
 @media (max-width:768px){
   .menu-icon{display:block}
   .top-nav-wrap{position:fixed;inset:0;z-index:1000;pointer-events:none}
@@ -68,7 +76,10 @@ h1,h2,h3,.title{
 .hero-cta h1{font-size:var(--fs-h1)}
 .hero-cta p{color:var(--muted);font-size:14px;margin-top:6px}
 .nav{margin-top:10px}
-.btn{border:1px solid var(--line);background:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;letter-spacing:.5px;transition:filter .15s,border-color .15s}
+.btn{
+  border:1px solid var(--line); background:var(--bg); padding:10px 16px;
+  border-radius:999px; font-weight:600; letter-spacing:.5px; transition:filter .15s,border-color .15s
+}
 .btn:hover{filter:brightness(.98)}
 .btn.alt{background:var(--brand);color:#fff;border-color:var(--brand)}
 .btn.block{width:100%}
@@ -86,7 +97,10 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 .main-track{display:flex;transition:transform .3s ease}
 .slide{min-width:100%;aspect-ratio:16/9;position:relative}
 .slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.nav-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.32);color:#fff;border:none;font-size:20px;padding:6px 10px;border-radius:50%;cursor:pointer;opacity:0;transition:opacity .15s}
+.nav-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.32);color:#fff;border:none;
+  font-size:20px;padding:6px 10px;border-radius:50%;cursor:pointer;opacity:0;transition:opacity .15s
+}
 .main-viewport:hover .nav-arrow{opacity:.9}
 .nav-arrow.left{left:10px}.nav-arrow.right{right:10px}
 .progress{position:absolute;left:0;right:0;bottom:0;height:4px;background:#eee}
@@ -120,35 +134,45 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 /* Helper note */
 .helper{ text-align:center; color:var(--muted); font-size:14px; margin-top:10px; }
 
-/* Footer */
-#site-footer {
-  border-top: 1px solid var(--line);
-  padding: 24px 20px;
-  background: var(--bg);
-  text-align: center;
-}
-#site-footer p { margin: 4px 0; }
-#site-footer .region { font-size: 14px; color: var(--text); }
-#site-footer .legal  { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
-
-/* Dark mode toggle */
-#dark-mode-toggle {
+/* Footer & dark toggle */
+footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a8a8a;font-size:13px}
+#dark-mode-toggle{
   position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));
   width:50px;height:50px;display:flex;align-items:center;justify-content:center;
   border-radius:50%;border:0;background:rgba(var(--tone-rgb),.92);box-shadow:var(--shadow);font-size:20px;cursor:pointer;z-index:1000
 }
 #dark-mode-toggle:hover{filter:brightness(.95)}
 
-/* ===== Mobile fix: 禁止触发 iOS 视频控件，保持 16:9 和圆角 ===== */
+/* ===== Desktop (大屏) 优化 ===== */
+@media (min-width: 1024px) {
+  :root{
+    --max: 1280px;
+    --fs-body: 16px;
+    --fs-nav: 18px;
+    --fs-h1: 36px;
+    --fs-h2: 28px;
+  }
+  section{ padding: 60px 0; }
+  .top-nav a{ font-size: var(--fs-nav); padding: 14px 0; }
+  .hero-cta h1{ font-size: var(--fs-h1); line-height: 1.2; }
+  .section-desc{ font-size: 16px; line-height: 1.6; }
+}
+
+/* ===== 手机端 Hero 视频优化 ===== */
 @media (max-width: 768px) {
   .hero-box { padding: 0 16px; }
-  .hero-media{
-    pointer-events: none;        /* 防止点击弹出原生控制条 */
-    -webkit-touch-callout: none; /* 禁止长按菜单 */
+  .hero-media {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    display: block;
+
+    pointer-events: none;
+    -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
-    border-radius: 16px;         /* 与卡片一致的圆角 */
-    aspect-ratio: 16/9;          /* 强制 16:9 */
-    object-fit: cover;
   }
 }
