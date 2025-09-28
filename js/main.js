@@ -247,6 +247,82 @@ function wireSliderPerCard(card) {
     // 绑定价格（优先使用 config 中的 price；否则用 prices.json）
     attachPriceBinding(card, priceMap);
     // 为该卡注入箭头 & 进度条，并联动
-    wireSliderPerCard(card);
+    wireSliderPerCard(document.querySelectorAll('.card.product').forEach(card => {
+  const vp = card.querySelector('.main-viewport');
+  const track = card.querySelector('.main-track');
+  const slides = track.querySelectorAll('.slide');
+  const priceEl = card.querySelector('.price');
+
+  // 确保 main-viewport 有相对定位
+  vp.style.position = 'relative';
+  vp.style.zIndex = '0';
+
+  // ---- 修复箭头 ----
+  let left = card.querySelector('.nav-arrow.left');
+  let right = card.querySelector('.nav-arrow.right');
+
+  if (!left) {
+    left = document.createElement('button');
+    left.className = 'nav-arrow left';
+    left.textContent = '<';
+    vp.appendChild(left);
+  }
+  if (!right) {
+    right = document.createElement('button');
+    right.className = 'nav-arrow right';
+    right.textContent = '>';
+    vp.appendChild(right);
+  }
+
+  // ---- 修复进度条 ----
+  let prog = card.querySelector('.progress');
+  if (!prog) {
+    prog = document.createElement('div');
+    prog.className = 'progress';
+    const bar = document.createElement('i');
+    prog.appendChild(bar);
+    vp.appendChild(prog);
+  }
+
+  // 关键：确保层级高于图片
+  prog.style.position = 'absolute';
+  prog.style.left = '0';
+  prog.style.right = '0';
+  prog.style.bottom = '0';
+  prog.style.zIndex = '20';
+
+  left.style.zIndex = '30';
+  right.style.zIndex = '30';
+
+  slides.forEach(slide => {
+    const cover = slide.querySelector('.cover');
+    if (cover) cover.style.zIndex = '0'; // 避免盖住箭头和进度条
   });
-})();
+
+  // 绑定切换逻辑
+  const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
+  const goto = i => vp.scrollTo({ left: i * vp.clientWidth, behavior: 'smooth' });
+
+  left.onclick = () => goto(Math.max(0, getIndex() - 1));
+  right.onclick = () => goto(Math.min(slides.length - 1, getIndex() + 1));
+
+  // 更新进度条 & 价格
+  function update() {
+    const idx = getIndex();
+    const bar = prog.querySelector('i');
+    bar.style.width = ((idx + 1) / slides.length) * 100 + '%';
+
+    const pid = card.dataset.product;
+    if (window.priceData && window.priceData[pid]) {
+      const prices = window.priceData[pid];
+      if (Array.isArray(prices)) {
+        priceEl.textContent = `$${prices[idx] || prices[0]}`;
+      }
+    }
+  }
+
+  vp.addEventListener('scroll', () => setTimeout(update, 80));
+  update();
+});
+
+
