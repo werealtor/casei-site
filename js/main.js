@@ -1,115 +1,127 @@
-// 简易工具
-const $  = (sel, root=document) => root.querySelector(sel);
-const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-const clamp = (v,min,max)=>Math.min(max,Math.max(min,v));
+/* Case&i — U3 slider + price sync + arrows + progress */
+(function(){
+  const $ = (s, el=document)=>el.querySelector(s);
+  const $$ = (s, el=document)=>Array.from(el.querySelectorAll(s));
+  const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
 
-// 移动端菜单
-(() => {
-  const hdr = $('#site-header'), btn = $('.menu-toggle', hdr);
-  if (btn) btn.addEventListener('click', () => hdr.classList.toggle('open'));
-})();
+  async function loadConfig(){
+    const res = await fetch('config.json', { cache:'no-store' });
+    if(!res.ok) throw new Error('config.json not found');
+    return res.json();
+  }
 
-// 主题
-(() => {
-  const btn = $('#theme-toggle');
-  if(!btn) return;
-  const apply = m => document.body.classList.toggle('dark', m==='dark');
-  apply(localStorage.getItem('theme') || 'light');
-  btn.addEventListener('click', () => {
-    const cur = document.body.classList.contains('dark') ? 'dark':'light';
-    const nxt = cur==='dark' ? 'light':'dark';
-    localStorage.setItem('theme', nxt); apply(nxt);
-  });
-})();
-
-// 主逻辑：从 config.json 渲染图片 & 初始化滑块 & 价格联动
-(async function init() {
-  const cfg = await fetch('config.json', {cache:'no-store'}).then(r=>r.json());
-
-  cfg.products.forEach(prod => {
-    const card  = $(`.card[data-product="${prod.id}"]`);
-    if (!card) return;
-
-    // 1) 渲染 slides
+  function injectSlidesIfEmpty(card, p){
     const track = $('.main-track', card);
-    track.innerHTML = '';
-    prod.images.forEach((src, i) => {
-      const d = document.createElement('div');
-      d.className = 'slide';
-      d.dataset.index = i+1;
-      d.innerHTML = `<img class="cover" src="${src}" alt="${prod.name} ${i+1}" loading="lazy">`;
-      track.appendChild(d);
+    if(!track) return [];
+    if(track.children.length) return $$('.slide', track);
+    if(!p || !Array.isArray(p.images)) return [];
+    p.images.forEach((src,i)=>{
+      const slide = document.createElement('div'); slide.className='slide';
+      const img = document.createElement('img'); img.className='cover';
+      img.src = src; img.alt = `${p.name||p.id} — ${i+1}`; img.draggable=false;
+      slide.appendChild(img); track.appendChild(slide);
     });
+    return $$('.slide', track);
+  }
 
-    // 2) 箭头（若不存在则创建）
+  function ensureControls(vp){
+    // progress
+    let prog = $('.progress', vp);
+    if(!prog){ prog = document.createElement('div'); prog.className='progress'; prog.innerHTML='<div class="bar"></div>'; vp.appendChild(prog); }
+    else if(!$('.bar', prog)){ prog.innerHTML='<div class="bar"></div>'; }
+    const bar = $('.bar', prog);
+    // arrows
+    let left = $('.nav-arrow.left', vp);
+    if(!left){ left = document.createElement('button'); left.className='nav-arrow left'; left.setAttribute('aria-label','Previous'); left.textContent='‹'; vp.appendChild(left); }
+    let right = $('.nav-arrow.right', vp);
+    if(!right){ right = document.createElement('button'); right.className='nav-arrow right'; right.setAttribute('aria-label','Next'); right.textContent='›'; vp.appendChild(right); }
+    return { bar, left, right };
+  }
+
+  function mountCard(card, pCfg){
     const vp = $('.main-viewport', card);
-    let left  = $('.nav-arrow.left',  card);
-    let right = $('.nav-arrow.right', card);
-    if (!left)  { left  = document.createElement('button'); left.className  = 'nav-arrow left';  left.setAttribute('aria-label','Prev');  left.textContent  = '‹'; vp.appendChild(left); }
-    if (!right) { right = document.createElement('button'); right.className = 'nav-arrow right'; right.setAttribute('aria-label','Next'); right.textContent = '›'; vp.appendChild(right); }
-
-    // 3) 进度条
-    const bar = $('.progress i', card);
-
-    const slides = $$('.slide', track);
+    const track = $('.main-track', card);
     const priceEl = $('.price', card);
-    const priceList = prod.price || [];
+    if(!vp || !track) return;
 
-    const getIndex = () => Math.round(vp.scrollLeft / vp.clientWidth);
-    const goTo = (i) => {
+    const slides = injectSlidesIfEmpty(card, pCfg);
+    const { bar, left, right } = ensureControls(vp);
+
+    // z-index 安全：图片不挡点击，控件永远在顶层
+    $$('.slide .cover', vp).forEach(img=>{ img.style.pointerEvents='none'; img.style.zIndex='0'; });
+    [left,right].forEach(a=>{ a.style.zIndex='9999'; a.style.opacity='1'; a.style.pointerEvents='auto'; });
+    vp.style.position='relative';
+
+    const getIndex = ()=> Math.round(vp.scrollLeft / vp.clientWidth);
+    const goto = (i)=>{
       i = clamp(i, 0, slides.length-1);
-      vp.scrollTo({ left: i*vp.clientWidth, behavior: 'smooth' });
+      track.style.transform = `translateX(-${i*100}%)`;
       update(i);
     };
-
-    function update(i = getIndex()) {
-      // 进度
-      const pct = ((i+1)/slides.length)*100;
-      if (bar) bar.style.width = pct + '%';
-
-      // 箭头禁用
-      left.classList.toggle('is-disabled',  i<=0);
-      right.classList.toggle('is-disabled', i>=slides.length-1);
-
-      // 价格联动（数组 or 对象均可）
-      if (priceEl && priceList) {
-        let v;
-        if (Array.isArray(priceList)) v = priceList[ clamp(i,0,priceList.length-1) ];
-        else v = priceList[String(i+1)];
-        if (typeof v === 'number') priceEl.textContent = `$${v}`;
+    function update(i=getIndex()){
+      if(bar) bar.style.width = ((i+1)/(slides.length||1))*100 + '%';
+      left.classList.toggle('is-disabled', i===0);
+      right.classList.toggle('is-disabled', i===slides.length-1);
+      if(pCfg && Array.isArray(pCfg.price) && priceEl){
+        const v = pCfg.price[Math.min(i, pCfg.price.length-1)];
+        if(typeof v==='number') priceEl.textContent = `$${v}`;
       }
-
-      // 层级：确保箭头与进度条在图片之上
-      vp.style.position = 'relative';
-      $$('.slide .cover', card).forEach(img => { img.style.zIndex = '0'; img.style.pointerEvents = 'none'; });
-      left.style.zIndex = right.style.zIndex = '9999';
-      $('.progress', card).style.zIndex = '9998';
     }
 
-    // 事件
-    left.onclick  = () => goTo(getIndex()-1);
-    right.onclick = () => goTo(getIndex()+1);
+    left.onclick = ()=> goto(getIndex()-1);
+    right.onclick = ()=> goto(getIndex()+1);
 
-    let t=null;
-    vp.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(()=>update(getIndex()), 60); }, {passive:true});
-    window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(()=>goTo(getIndex()), 80); });
-
-    // 初始
+    // 初始化
     update(0);
-  });
+  }
 
-  // 简易上传预览（保留）
-  const form = $('#uForm'); if (form){
-    const file = $('#file'), name = $('#fileName'), err = $('#uErr'), img = $('#preview');
-    form.addEventListener('submit', e=>{
-      e.preventDefault(); err.textContent='';
-      const f=file.files[0]; if(!f){ err.textContent='Please choose an image.'; return; }
-      if(!/^image\/(png|jpeg)$/.test(f.type)){ err.textContent='PNG/JPEG only.'; return; }
-      if(f.size>10*1024*1024){ err.textContent='File must be < 10MB.'; return; }
-      const url=URL.createObjectURL(f); img.src=url; img.style.display='block';
+  // 上传预览（保留）
+  function setupUpload(){
+    const uForm = $('#uForm'); if(!uForm) return;
+    const fileInput = $('#file');
+    const nameEl = $('#fileName');
+    const err = $('#uErr');
+    const preview = $('#preview');
+    const MAX = 10*1024*1024;
+    fileInput.addEventListener('change', ()=>{
+      if(!fileInput.files.length){ nameEl.textContent='PNG/JPEG · < 10MB'; return; }
+      const f=fileInput.files[0]; nameEl.textContent=`${f.name} · ${(f.size/1024/1024).toFixed(1)}MB`;
     });
-    file.addEventListener('change', ()=>{
-      name.textContent = file.files[0]?.name ? file.files[0].name : 'PNG/JPEG · < 10MB';
+    uForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const f=fileInput.files[0]; if(!f){ err.textContent='Please choose an image.'; return; }
+      if(!/^image\/(png|jpe?g)$/i.test(f.type)){ err.textContent='Only PNG/JPEG supported.'; return; }
+      if(f.size>MAX){ err.textContent='File too large (max 10MB).'; return; }
+      const reader=new FileReader();
+      reader.onload = ev=>{ preview.src=ev.target.result; preview.style.display='block'; err.textContent=''; };
+      reader.readAsDataURL(f);
     });
   }
+
+  // 主题按钮
+  function setupTheme(){
+    const btn = $('#theme-toggle'); if(!btn) return;
+    const saved = localStorage.getItem('theme');
+    if(saved==='dark'){ document.body.classList.add('dark'); btn.textContent='☀️'; }
+    btn.addEventListener('click', ()=>{
+      const isDark = document.body.classList.toggle('dark');
+      btn.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', async ()=>{
+    try{
+      const cfg = await loadConfig();
+      const map = cfg?.products ? Object.fromEntries(cfg.products.map(p=>[p.id,p])) : {};
+      $$('.card.product.u3').forEach(card=>{
+        const id = card.dataset.product;
+        mountCard(card, map[id]);
+      });
+      setupUpload();
+      setupTheme();
+    }catch(e){
+      console.error(e);
+    }
+  });
 })();
