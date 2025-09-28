@@ -1,7 +1,5 @@
 {
-  "settings": {
-    "currency": "USD"
-  },
+  "settings": { "currency": "USD" },
   "products": [
     {
       "id": "classic",
@@ -15,7 +13,7 @@
         "assets/images/classic/6.jpg",
         "assets/images/classic/7.jpg"
       ],
-      "price": [25, 26, 27, 28, 29, 30, 31]
+      "price": [19, 20, 21, 22, 23, 24, 25]
     },
     {
       "id": "fashion",
