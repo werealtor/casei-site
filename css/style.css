@@ -74,3 +74,10 @@ h2.title{text-align:center;font-size:var(--fs-h2);margin-bottom:12px}
 
 /* Footer */
 footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a8a8a;font-size:13px}
+
+
+/* 防止 iOS 智能缩放/字体放大导致布局偏移 */
+html { -webkit-text-size-adjust: 100%; }
+body { overscroll-behavior-y: contain; } /* 轻微改善滚动反弹造成的跳动 */
+
+
