@@ -31,14 +31,18 @@ h1,h2,h3,.title{
 /* Header / Nav */
 #site-header{border-bottom:1px solid var(--line);background:var(--bg);position:relative;z-index:3000;}
 .top-nav-container{padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:var(--font-serif);font-weight:600;font-size:18px;letter-spacing:.4px}
+.logo{font-family:var(--font-serif);font-weight:600;font-size:18px;letter-spacing:.4px;color:var(--brand);}
+.menu-icon{display:none;background:none;border:0;font-size:22px;cursor:pointer;color:var(--brand);transition:filter .15s;}
+.menu-icon:hover{filter:brightness(.9);}
 .top-nav{display:flex;gap:24px}
 .top-nav a{
   font-family:var(--font-serif);
   padding:10px 0; font-size:var(--fs-nav);
   font-weight:600; letter-spacing:.4px;
+  color:var(--brand);
+  transition:color .15s;
 }
-.menu-icon{display:none;background:none;border:0;font-size:22px;cursor:pointer}
+.top-nav a:hover{color:var(--text);}
 .top-nav-wrap{display:contents}
 
 /* Mobile drawer menu (z-index 高于视频) */
@@ -58,7 +62,7 @@ h1,h2,h3,.title{
     transform:translateY(-10px);opacity:0;pointer-events:none;
     transition:transform .25s,opacity .2s;z-index:2001;
   }
-  .top-nav a{padding:22px 20px;text-align:center;border-bottom:1px solid var(--line)}
+  .top-nav a{padding:22px 20px;text-align:center;border-bottom:1px solid var(--line);color:var(--brand);transition:background .15s;}
   .top-nav a:active{background:rgba(0,0,0,.03)}
   .top-nav-wrap.active{pointer-events:auto}
   .top-nav-wrap.active::before{opacity:1}
@@ -92,7 +96,8 @@ h1,h2,h3,.title{
   border-radius:999px; font-weight:600; letter-spacing:.5px; transition:filter .15s,border-color .15s
 }
 .btn:hover{filter:brightness(.98)}
-.btn.alt{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn.alt{background:var(--brand);color:#fff;border-color:var(--brand);transition:filter .15s;}
+.btn.alt:hover{filter:brightness(.95);} /* 优化按钮 hover */
 .btn.block{width:100%}
 
 /* Sections */
@@ -167,6 +172,28 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
   color:var(--text);
 }
 
+/* Form inputs (新添加优化) */
+.input, .textarea {
+  width: 100%;
+  padding: 12px 16px; /* 更大 padding 便于触摸 */
+  border: 1px solid var(--line);
+  border-radius: 8px; /* 圆角匹配极简 */
+  background: var(--bg);
+  font-size: var(--fs-body);
+  color: var(--text);
+  transition: border-color .2s, box-shadow .2s;
+  margin-bottom: 12px; /* 间距优化 */
+}
+.input:focus, .textarea:focus {
+  border-color: var(--brand); /* 焦点海军蓝 */
+  box-shadow: 0 0 0 2px rgba(0,31,63,.1); /* 浅蓝光环 */
+  outline: none;
+}
+.textarea {
+  min-height: 120px; /* 优化 Message 高度，支持多行 */
+  resize: vertical; /* 允许垂直调整 */
+}
+
 /* File input */
 .input-file{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
 .file-field{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -179,3 +206,4 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 
 /* Footer */
 footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a8a8a;font-size:13px}
+.helper { color: var(--muted); font-size: 14px; text-align: center; margin-top: 8px; } /* 优化 helper 文本 */
