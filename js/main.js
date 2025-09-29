@@ -278,4 +278,4 @@ function initThemeToggle(){
     localStorage.setItem("theme", currentTheme);
     button.textContent = currentTheme === "dark" ? "☀️" : "🌙";
   });
-}
+} 
