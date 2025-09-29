@@ -31,15 +31,19 @@
 
   <!-- Hero -->
   <section id="hero">
-    <div class="hero-frame">
-      <video class="hero-media" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
+    <div class="hero-box">
+      <!-- 带裁切容器（统一 16:9 + 圆角） -->
+      <div class="hero-frame">
+        <video class="hero-media" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
+      </div>
     </div>
+
     <div class="container hero-cta">
-      <h1>Minimal · Premium · Personal</h1>
+      <h1 class="serif">Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
       <nav class="nav">
-        <a href="#products" class="btn">Shop Products</a>
-        <a href="#custom" class="btn alt">Customize Now</a>
+        <a href="#products" class="btn serif">Shop Products</a>
+        <a href="#custom" class="btn alt serif">Customize Now</a>
       </nav>
     </div>
   </section>
@@ -47,35 +51,44 @@
   <!-- Products -->
   <section id="products">
     <div class="container">
-      <h2 class="title">Our Products</h2>
+      <h2 class="title serif">Our Products</h2>
       <div class="grid products-grid">
+        <!-- Classic -->
         <article class="card product u3" data-product="classic">
           <div class="main-viewport">
             <div class="main-track"></div>
             <div class="progress"><div class="bar"></div></div>
           </div>
           <div class="body">
-            <h3>Classic</h3>
+            <h3 class="serif">Classic</h3>
             <p class="sub">Slim & scratch-resistant</p>
             <div class="pills"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
             <div class="price" data-id="classic">$--</div>
           </div>
         </article>
 
+        <!-- Fashion -->
         <article class="card product u3" data-product="fashion">
-          <div class="main-viewport"><div class="main-track"></div><div class="progress"><div class="bar"></div></div></div>
+          <div class="main-viewport">
+            <div class="main-track"></div>
+            <div class="progress"><div class="bar"></div></div>
+          </div>
           <div class="body">
-            <h3>Fashion</h3>
+            <h3 class="serif">Fashion</h3>
             <p class="sub">Trendy design & anti-fingerprint</p>
             <div class="pills"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
             <div class="price" data-id="fashion">$--</div>
           </div>
         </article>
 
+        <!-- Business -->
         <article class="card product u3" data-product="business">
-          <div class="main-viewport"><div class="main-track"></div><div class="progress"><div class="bar"></div></div></div>
+          <div class="main-viewport">
+            <div class="main-track"></div>
+            <div class="progress"><div class="bar"></div></div>
+          </div>
           <div class="body">
-            <h3>Business</h3>
+            <h3 class="serif">Business</h3>
             <p class="sub">Premium touch & shockproof</p>
             <div class="pills"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
             <div class="price" data-id="business">$--</div>
@@ -88,21 +101,22 @@
   <!-- Customize -->
   <section id="custom">
     <div class="container">
-      <h2>Customize Your Case</h2>
-      <form id="custom-form" class="section-narrow">
-        <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
+      <h2 class="serif">Customize Your Case</h2>
 
-        <div class="file-field" style="margin-top:8px">
-          <label class="file-btn" for="image-upload">Choose File</label>
-          <span id="file-name" class="file-name">no file selected</span>
+      <form id="custom-form" class="section-narrow">
+        <label class="label serif">Choose Image <span class="muted">(PNG/JPEG &lt; 10MB)</span></label>
+
+        <div class="file-field">
           <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" />
+          <label class="file-btn serif" for="image-upload">Choose File</label>
+          <span id="file-name" class="file-name">no file selected</span>
         </div>
 
-        <div class="preview-box" id="preview-box">
+        <div class="preview-box" id="preview-box" aria-hidden="true">
           <img id="preview-image" alt="Preview" />
         </div>
 
-        <button type="submit" class="btn alt block" style="margin-top:10px">Upload</button>
+        <button type="submit" class="btn alt block serif">Upload</button>
       </form>
     </div>
   </section>
@@ -110,7 +124,7 @@
   <!-- About -->
   <section id="about">
     <div class="container">
-      <h2>About Us</h2>
+      <h2 class="serif">About Us</h2>
       <p class="section-desc">
         Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability.
         Visit xxkit.com to learn more.
@@ -121,12 +135,12 @@
   <!-- Contact -->
   <section id="contact">
     <div class="container">
-      <h2>Contact Us</h2>
+      <h2 class="serif">Contact Us</h2>
       <form id="contact-form" class="section-narrow">
-        <input type="text" class="input" placeholder="Name" required />
-        <input type="email" class="input" placeholder="Email" required />
-        <textarea class="input textarea" placeholder="Message" required></textarea>
-        <button type="submit" class="btn alt block" style="margin-top:8px">Send</button>
+        <input type="text" class="input serif" placeholder="Name" required />
+        <input type="email" class="input serif" placeholder="Email" required />
+        <textarea class="input textarea serif" placeholder="Message" required></textarea>
+        <button type="submit" class="btn alt block serif">Send</button>
         <p class="helper">We usually reply within 24 hours.</p>
       </form>
     </div>
@@ -134,8 +148,8 @@
 
   <!-- Footer -->
   <footer id="site-footer">
-    <p>United States</p>
-    <p>&copy; 2025 AIXX Inc. All rights reserved.</p>
+    <p class="serif">United States</p>
+    <p class="serif">&copy; 2025 AIXX Inc. All rights reserved.</p>
   </footer>
 
   <!-- Dark Mode -->
