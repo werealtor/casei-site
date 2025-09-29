@@ -123,7 +123,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     document.addEventListener("keydown",e=>{ if(e.key==="Escape" && wrap.classList.contains("active")) closeMenu(); });
     window.addEventListener("resize",closeMenu);
 
-    // smooth scroll
     document.querySelectorAll("a[href^='#']").forEach(a=>{
       a.addEventListener("click",ev=>{
         const id=a.getAttribute("href"); if(!id||id==="#") return;
