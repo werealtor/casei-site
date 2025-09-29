@@ -1,10 +1,9 @@
-/* main.js - 产品轮播 + 价格联动 + 移动端抽屉菜单 + Hero 视频适配 */
-
 document.addEventListener("DOMContentLoaded", () => {
   initMenu();
   initVideo();
   initUploadPreview();
   initProducts();
+  initThemeToggle();  // Add this line!
 });
 
 /* ========== 顶部菜单（移动端抽屉） ========== */
@@ -260,21 +259,38 @@ function setupProducts(products){
 }
 
 /* ========== 主题切换 ========== */
-function initThemeToggle(){
+function initThemeToggle() {
   const button = document.getElementById("theme-toggle");
-  if(!button) return;
+  if (!button) return;
   const html = document.documentElement;
   let currentTheme = localStorage.getItem("theme");
-  const systemSettingDark = window.matchMedia("(prefers-color-scheme: dark)");
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+  // Set initial theme with fallback to system
   if (!currentTheme) {
-    currentTheme = systemSettingDark.matches ? "dark" : "light";
+    currentTheme = systemDark.matches ? "dark" : "light";
   }
   html.setAttribute("data-theme", currentTheme);
   button.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+  button.setAttribute("aria-label", currentTheme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+
+  // Listener for system changes
+  systemDark.addEventListener("change", (e) => {
+    if (!localStorage.getItem("theme")) {  // Only auto-switch if no user preference
+      const newTheme = e.matches ? "dark" : "light";
+      html.setAttribute("data-theme", newTheme);
+      button.textContent = newTheme === "dark" ? "☀️" : "🌙";
+      button.setAttribute("aria-label", newTheme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    }
+  });
+
   button.addEventListener("click", () => {
+    html.classList.add("theme-transition");  // Add for smooth CSS transition
     currentTheme = currentTheme === "dark" ? "light" : "dark";
     html.setAttribute("data-theme", currentTheme);
     localStorage.setItem("theme", currentTheme);
     button.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+    button.setAttribute("aria-label", currentTheme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    setTimeout(() => html.classList.remove("theme-transition"), 300);
   });
 }
