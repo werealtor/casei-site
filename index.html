@@ -31,9 +31,20 @@
 
   <!-- Hero -->
   <section id="hero">
+    <!-- 关键：用 .hero-frame 包裹视频，配合 CSS 做 16:9 自适应 -->
     <div class="hero-frame">
-      <video class="hero-media" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
+      <video
+        class="hero-media"
+        src="assets/videos/hero.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="metadata"
+      ></video>
     </div>
+
     <div class="container hero-cta">
       <h1>Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
@@ -49,8 +60,12 @@
     <div class="container">
       <h2 class="title">Our Products</h2>
       <div class="grid products-grid">
+        <!-- Classic -->
         <article class="card product u3" data-product="classic">
-          <div class="main-viewport"><div class="main-track"></div><div class="progress"><div class="bar"></div></div></div>
+          <div class="main-viewport">
+            <div class="main-track"></div>
+            <div class="progress"><div class="bar"></div></div>
+          </div>
           <div class="body">
             <h3>Classic</h3>
             <p class="sub">Slim & scratch-resistant</p>
@@ -59,8 +74,12 @@
           </div>
         </article>
 
+        <!-- Fashion -->
         <article class="card product u3" data-product="fashion">
-          <div class="main-viewport"><div class="main-track"></div><div class="progress"><div class="bar"></div></div></div>
+          <div class="main-viewport">
+            <div class="main-track"></div>
+            <div class="progress"><div class="bar"></div></div>
+          </div>
           <div class="body">
             <h3>Fashion</h3>
             <p class="sub">Trendy design & anti-fingerprint</p>
@@ -69,8 +88,12 @@
           </div>
         </article>
 
+        <!-- Business -->
         <article class="card product u3" data-product="business">
-          <div class="main-viewport"><div class="main-track"></div><div class="progress"><div class="bar"></div></div></div>
+          <div class="main-viewport">
+            <div class="main-track"></div>
+            <div class="progress"><div class="bar"></div></div>
+          </div>
           <div class="body">
             <h3>Business</h3>
             <p class="sub">Premium touch & shockproof</p>
@@ -129,55 +152,29 @@
   <!-- Footer -->
   <footer id="site-footer">
     <p>United States</p>
-    <p>&copy; 2025 AIXX Inc · All rights reserved.</p>
+    <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
   </footer>
 
   <!-- Dark Mode -->
   <button id="dark-mode-toggle" aria-label="Toggle dark mode"></button>
 
+  <!-- Scripts -->
   <script src="js/main.js"></script>
-  
-  
-    <!-- 调试脚本：在页面左下角显示设备与视频尺寸 -->
+  <!-- （可选）调试信息悬浮框，确认后可删除
   <script>
     window.addEventListener('load', () => {
       const v = document.querySelector('.hero-media');
       const box = document.createElement('div');
       box.style.cssText =
-        'position:fixed;left:8px;bottom:8px;padding:6px 8px;' +
-        'background:rgba(0,0,0,.6);color:#fff;font-size:12px;' +
-        'border-radius:6px;z-index:9999;font-family:monospace';
+        'position:fixed;left:8px;bottom:8px;padding:6px 8px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;border-radius:6px;z-index:9999;font-family:monospace';
       const info = () => {
         const r = v?.getBoundingClientRect?.() || {};
         box.textContent =
-          `vw:${window.innerWidth} vh:${window.innerHeight} DPR:${window.devicePixelRatio} | ` +
-          `video:${Math.round(r.width)}x${Math.round(r.height)}`;
+          `vw:${innerWidth} vh:${innerHeight} DPR:${devicePixelRatio} | video:${Math.round(r.width)}x${Math.round(r.height)}`;
       };
-      info();
-      setInterval(info, 1000);
-      document.body.appendChild(box);
+      info(); setInterval(info, 1000); document.body.appendChild(box);
     });
   </script>
+  -->
 </body>
 </html>
-  
-  
-  
-  
-  
-  
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-  
