@@ -1,165 +1,63 @@
-/* main.js - 产品轮播 + 价格联动 + 移动端抽屉菜单 + Hero 视频适配 */
+(function(){
+  const track=document.getElementById('track');
+  const prev=document.getElementById('prev');
+  const next=document.getElementById('next');
+  const dotsC=document.getElementById('dots');
+  const bar=document.getElementById('bar');
+  const live=document.getElementById('live');
 
-document.addEventListener("DOMContentLoaded", () => {
-  initMenu();
-  initVideo();
-  initUploadPreview();
-  initProducts();
-});
+  const AUTOPLAY_MS=3800, SWIPE_THRESH=0.18, SWIPE_VEL=0.25, EASE=0.12, LOOP=true;
+  const MIN_DEADZONE=14, HORIZ_RATIO=1.2, TAP_MAX=24, FLICK_VEL=0.45, MIN_DWELL=1800, RESUME_DELAY=2500;
+  const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ========== 顶部菜单（移动端抽屉） ========== */
-function initMenu(){
-  const menuBtn = document.querySelector(".menu-icon");
-  const wrap = document.querySelector(".top-nav-wrap");
-  const list = document.querySelector(".top-nav");
-  if(!menuBtn || !wrap || !list) return;
+  let slides=Array.from(track.children), index=0, width=track.clientWidth;
 
-  const closeMenu = () => {
-    wrap.classList.remove("active");
-    document.body.classList.remove("menu-open");
-    menuBtn.setAttribute("aria-expanded","false");
-  };
-
-  menuBtn.addEventListener("click", () => {
-    const active = wrap.classList.toggle("active");
-    document.body.classList.toggle("menu-open", active);
-    menuBtn.setAttribute("aria-expanded", active ? "true" : "false");
+  // fallback: 如果没图片，移除 slide
+  slides=slides.filter(s=>{
+    const img=s.querySelector('img'); return img && img.getAttribute('src');
   });
+  if(slides.length===0){track.innerHTML='<article class="slide"><img src="assets/images/og-cover.jpg"></article>';slides=Array.from(track.children);}
 
-  wrap.addEventListener("click", e => { if(e.target === wrap) closeMenu(); });
-  list.querySelectorAll("a[href^='#']").forEach(a => a.addEventListener("click", closeMenu));
-  document.addEventListener("keydown", e => { if(e.key === "Escape" && wrap.classList.contains("active")) closeMenu(); });
-}
+  if(LOOP&&slides.length>1){
+    track.insertBefore(slides[slides.length-1].cloneNode(true),slides[0]);
+    track.appendChild(slides[0].cloneNode(true));
+    slides=Array.from(track.children); index=1; instant(index);
+  }
+  const realCount=LOOP?slides.length-2:slides.length;
 
-/* ========== Hero 视频 ========== */
-function initVideo(){
-  const v = document.querySelector(".hero-media");
-  if(!v) return;
-  v.muted = true; v.playsInline = true; v.setAttribute("webkit-playsinline","true");
-  const tryPlay = () => v.play().catch(()=>{});
-  tryPlay();
-  // 首次交互后再尝试播放，兼容部分移动浏览器策略
-  const oncePlay = () => { tryPlay(); window.removeEventListener("touchstart", oncePlay); window.removeEventListener("click", oncePlay); };
-  window.addEventListener("touchstart", oncePlay, { once:true, passive:true });
-  window.addEventListener("click", oncePlay, { once:true });
-  document.addEventListener("visibilitychange", () => { if(!document.hidden) tryPlay(); });
-}
+  for(let i=0;i<realCount;i++){let b=document.createElement('button');b.type="button";b.setAttribute('aria-label',`第${i+1}张`);if(i===0)b.setAttribute('aria-selected','true');b.onclick=()=>{stop(); if(canAdvance()) move(real2track(i)); resume();};dotsC.appendChild(b);}
+  function real2track(r){return LOOP?r+1:r}
+  function track2real(t){if(!LOOP)return t; if(t===0)return realCount-1;if(t===slides.length-1)return 0;return t-1;}
 
-/* ========== 上传预览 ========== */
-function initUploadPreview(){
-  const upload = document.getElementById("image-upload");
-  const previewImg = document.getElementById("preview-image");
-  const previewBox = document.getElementById("preview-box");
-  const fileNameEl = document.getElementById("file-name");
-  if(!upload || !previewImg || !previewBox) return;
+  let timer=null,progressRAF=null,lastChange=performance.now();
+  function start(){if(slides.length<2||REDUCED)return;stop();progressStart=performance.now();progress();timer=setTimeout(()=>{move(index+1);start();},AUTOPLAY_MS);}
+  function stop(){if(timer){clearTimeout(timer);timer=null;}if(progressRAF){cancelAnimationFrame(progressRAF);progressRAF=null;}bar.style.width="0%";}
+  function progress(){progressRAF=requestAnimationFrame(t=>{const pct=Math.min(1,(t-progressStart)/AUTOPLAY_MS);bar.style.width=(pct*100)+"%";if(pct<1)progress();});}
+  let resumeT=null;function resume(){if(resumeT)clearTimeout(resumeT);resumeT=setTimeout(()=>start(),RESUME_DELAY);}
+  document.addEventListener('visibilitychange',()=>{document.hidden?stop():start();});
 
-  upload.addEventListener("change", e => {
-    const file = e.target.files?.[0];
-    if(!file){ if(fileNameEl) fileNameEl.textContent = "no file selected"; previewBox.style.display="none"; return; }
-    if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return; }
-    if(file.size > 10 * 1024 * 1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
-    if(fileNameEl) fileNameEl.textContent = file.name;
-    const reader = new FileReader();
-    reader.onload = ev => { previewImg.src = ev.target.result; previewBox.style.display="flex"; };
-    reader.readAsDataURL(file);
-  });
-}
+  prev.onclick=()=>{stop();if(canAdvance())move(index-1);resume();}
+  next.onclick=()=>{stop();if(canAdvance())move(index+1);resume();}
 
-/* ========== 产品轮播 + 价格联动 ========== */
-async function initProducts(){
-  try{
-    const res = await fetch("config.json?v=" + Date.now(), { cache: "no-store" });
-    if(!res.ok) throw new Error("config load failed");
-    const data = await res.json();
-    if(Array.isArray(data?.products)) setupProducts(data.products);
-  }catch(e){ console.error(e); }
-}
+  let sx=0,sy=0,dx=0,dy=0,startT=0,drag=false,baseX=0,intent=false;
+  track.addEventListener('touchstart',s,{passive:true});track.addEventListener('mousedown',s);
+  window.addEventListener('touchmove',m,{passive:false});window.addEventListener('mousemove',m);
+  window.addEventListener('touchend',e);window.addEventListener('mouseup',e);
+  window.addEventListener('resize',()=>{width=track.clientWidth;instant(index);});
+  function s(ev){const p='touches'in ev?ev.touches[0]:ev;sx=p.clientX;sy=p.clientY;dx=dy=0;drag=true;startT=performance.now();baseX=-index*width;intent=false;stop();}
+  function m(ev){if(!drag)return;const p='touches'in ev?ev.touches[0]:ev;dx=p.clientX-sx;dy=p.clientY-sy;if(!intent){if(Math.abs(dx)<MIN_DEADZONE)return;if(Math.abs(dx)<Math.abs(dy)*HORIZ_RATIO)return;intent=true;}ev.preventDefault();translate(baseX+dx);}
+  function e(){if(!drag)return;drag=false;const dt=Math.max(1,performance.now()-startT);const v=dx/dt;const travel=Math.abs(dx)/width;let target=index;if(Math.abs(dx)<TAP_MAX){target=index;}else if(Math.abs(v)>FLICK_VEL||travel>SWIPE_THRESH||Math.abs(v)>SWIPE_VEL){target=dx<0?index+1:index-1;}move(target);resume();}
 
-function setupProducts(products){
-  products.forEach(product => {
-    const card = document.querySelector(`.card[data-product="${product.id}"]`);
-    if(!card) return;
+  let anim=null,raf=null;
+  function move(t,smooth=true){if(LOOP){if(t<=0){if(t===-1)t=0;}if(t>=slides.length-1){if(t===slides.length)t=slides.length-1;}}else{t=Math.max(0,Math.min(slides.length-1,t));}if(t!==index&&!canAdvance())return;index=t;setDots(track2real(index));announce();if(smooth&&!REDUCED){cancel();const from=getX(),to=-index*width;anim={x:from,to};step();}else{instant(index);}lastChange=performance.now();}
+  function step(){if(!anim)return;anim.x+=(anim.to-anim.x)*EASE;if(Math.abs(anim.to-anim.x)<.5){anim.x=anim.to;cancel();}else{raf=requestAnimationFrame(step);}translate(anim.x);if(LOOP){if(index===slides.length-1&&Math.abs(anim.to-anim.x)<.6){index=1;instant(index);}else if(index===0&&Math.abs(anim.to-anim.x)<.6){index=slides.length-2;instant(index);}}}
+  function cancel(){if(raf){cancelAnimationFrame(raf);raf=null;}anim=null;}
+  function instant(i){translate(-i*width);setDots(track2real(i));}
+  function translate(x){track.style.transform=`translate3d(${x}px,0,0)`;}
+  function getX(){const tf=getComputedStyle(track).transform;if(!tf||tf==="none")return 0;const m=new WebKitCSSMatrix(tf);return m.m41||0;}
+  function setDots(r){dotsC.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-selected',i===r?'true':'false'));}
+  function canAdvance(){return performance.now()-lastChange>MIN_DWELL;}
+  function announce(){if(live) live.textContent=`第 ${track2real(index)+1} 张，共 ${realCount} 张`;}
 
-    // 数据归一：images + price 数组
-    const images = Array.isArray(product.images) ? product.images : [];
-    const prices = Array.isArray(product.price) ? product.price : [];
-    const slidesData = images.map((img, i) => ({
-      image: img,
-      price: typeof prices[i] === "number" ? prices[i] : (typeof product.price === "number" ? product.price : null)
-    }));
-
-    const track = card.querySelector(".main-track");
-    const progress = card.querySelector(".progress .bar");
-    const priceEl = card.querySelector(".price");
-    const viewport = card.querySelector(".main-viewport");
-
-    // 注入 slides
-    track.innerHTML = "";
-    slidesData.forEach((s, i) => {
-      const slide = document.createElement("div");
-      slide.className = "slide";
-      const img = document.createElement("img");
-      img.src = s.image;
-      img.alt = `${product.name || product.id} ${i+1}`;
-      img.loading = "lazy";
-      slide.appendChild(img);
-      track.appendChild(slide);
-    });
-
-    // 箭头
-    const leftBtn  = document.createElement("button");
-    const rightBtn = document.createElement("button");
-    leftBtn.className = "nav-arrow left";
-    rightBtn.className = "nav-arrow right";
-    leftBtn.setAttribute("aria-label","Previous slide");
-    rightBtn.setAttribute("aria-label","Next slide");
-    leftBtn.textContent  = "‹";
-    rightBtn.textContent = "›";
-    viewport.appendChild(leftBtn);
-    viewport.appendChild(rightBtn);
-
-    let index = 0, interval;
-    const slides = track.children;
-
-    function update(nextIndex){
-      if(!slides.length) return;
-      index = Math.max(0, Math.min(nextIndex, slides.length - 1));
-      track.style.transform = `translateX(-${index * 100}%)`;
-      if(progress) progress.style.width = ((index + 1) / slides.length) * 100 + "%";
-
-      // 精准价格（覆盖初始的 "from $"）
-      if(priceEl){
-        const p = slidesData[index]?.price;
-        priceEl.textContent = (typeof p === "number") ? `$${p}` : priceEl.textContent;
-      }
-
-      // 首尾禁用
-      leftBtn.disabled  = (index === 0);
-      rightBtn.disabled = (index === slides.length - 1);
-    }
-
-    // 点击切换
-    leftBtn.addEventListener("click", () => update(index - 1));
-    rightBtn.addEventListener("click", () => update(index + 1));
-
-    // 自动轮播
-    function startAuto(){ interval = setInterval(() => update(index + 1), 3000); }
-    function stopAuto(){ clearInterval(interval); }
-    startAuto();
-    viewport.addEventListener("mouseenter", stopAuto);
-    viewport.addEventListener("mouseleave", startAuto);
-
-    // 触摸
-    let startX = 0, dragging = false;
-    viewport.addEventListener("touchstart", e => { dragging = true; startX = e.touches[0].clientX; stopAuto(); }, { passive:true });
-    viewport.addEventListener("touchend", e => {
-      if(!dragging) return; dragging = false;
-      const d = e.changedTouches[0].clientX - startX;
-      if(d > 50) update(index - 1);
-      else if(d < -50) update(index + 1);
-      startAuto();
-    });
-
-    update(0);
-  });
-}
+  instant(index);start();
+})();
