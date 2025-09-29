@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initVideo();
   initUploadPreview();
   initProducts();
-  initThemeToggle();
+  initMenuAutoRetract();
 });
 
 /* ========== 顶部菜单（移动端抽屉） ========== */
@@ -257,5 +257,25 @@ function setupProducts(products){
     observer.observe(card);
 
     update(0);
+  });
+}
+
+/* ========== 主题切换 ========== */
+function initThemeToggle(){
+  const button = document.getElementById("theme-toggle");
+  if(!button) return;
+  const html = document.documentElement;
+  let currentTheme = localStorage.getItem("theme");
+  const systemSettingDark = window.matchMedia("(prefers-color-scheme: dark)");
+  if (!currentTheme) {
+    currentTheme = systemSettingDark.matches ? "dark" : "light";
+  }
+  html.setAttribute("data-theme", currentTheme);
+  button.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+  button.addEventListener("click", () => {
+    currentTheme = currentTheme === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", currentTheme);
+    localStorage.setItem("theme", currentTheme);
+    button.textContent = currentTheme === "dark" ? "☀️" : "🌙";
   });
 }
