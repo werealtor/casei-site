@@ -137,7 +137,11 @@ function setupProducts(products){
       const dot = document.createElement("span");
       dot.className = "dot";
       dot.setAttribute("aria-label", `Slide ${i+1}`);
-      dot.addEventListener("click", () => update(i));
+      dot.addEventListener("click", () => {
+        update(i);
+        stopAuto();
+        setTimeout(startAuto, 5000); // 手动后延迟恢复
+      });
       dotsContainer.appendChild(dot);
     });
     viewport.appendChild(dotsContainer);
@@ -174,7 +178,7 @@ function setupProducts(products){
       pauseBtn.setAttribute("aria-label", paused ? "Play autoplay" : "Pause autoplay");
     }
 
-    function scheduleNext(delay = 3000){
+    function scheduleNext(delay = 5000){ // 调整为5秒
       if(timer) clearTimeout(timer);
       timer = setTimeout(() => {
         update(index + 1);
@@ -194,8 +198,16 @@ function setupProducts(products){
       viewport.classList.add("paused");
     }
 
-    leftBtn.addEventListener("click", () => { update(index - 1); stopAuto(); startAuto(); });
-    rightBtn.addEventListener("click", () => { update(index + 1); stopAuto(); startAuto(); });
+    leftBtn.addEventListener("click", () => { 
+      update(index - 1); 
+      stopAuto(); 
+      setTimeout(startAuto, 5000); // 延迟5秒恢复
+    });
+    rightBtn.addEventListener("click", () => { 
+      update(index + 1); 
+      stopAuto(); 
+      setTimeout(startAuto, 5000); 
+    });
 
     pauseBtn.addEventListener("click", () => {
       if(paused) startAuto();
@@ -224,7 +236,7 @@ function setupProducts(products){
       if(d > 50) update(index - 1);
       else if(d < -50) update(index + 1);
       else update(index);
-      startAuto();
+      setTimeout(startAuto, 5000); // 触摸后延迟恢复
     });
 
     // 键盘
@@ -232,7 +244,8 @@ function setupProducts(products){
     viewport.addEventListener("keydown", e => {
       if(e.key === "ArrowLeft"){ update(index - 1); }
       else if(e.key === "ArrowRight"){ update(index + 1); }
-      stopAuto(); startAuto();
+      stopAuto(); 
+      setTimeout(startAuto, 5000);
     });
 
     // Observer
