@@ -175,3 +175,7 @@ footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a
 
   }
 }
+.hero-media{ pointer-events: none !important; }
+
+
+
