@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initVideo();
   initUploadPreview();
   initProducts();
+  initThemeToggle();
 });
 
 /* ========== 顶部菜单（移动端抽屉） ========== */
@@ -199,4 +200,62 @@ function setupProducts(products){
     }
 
     leftBtn.addEventListener("click", () => { 
-      update(index -
+      update(index - 1); 
+      stopAuto(); 
+      setTimeout(startAuto, 5000); // 延迟5秒恢复
+    });
+    rightBtn.addEventListener("click", () => { 
+      update(index + 1); 
+      stopAuto(); 
+      setTimeout(startAuto, 5000); 
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      if(paused) startAuto();
+      else stopAuto();
+      update(index, false);
+    });
+
+    viewport.addEventListener("mouseenter", stopAuto);
+    viewport.addEventListener("mouseleave", startAuto);
+
+    // 触摸拖拽
+    let startX = 0, currentX = 0, dragging = false;
+    viewport.addEventListener("touchstart", e => {
+      dragging = true; startX = e.touches[0].clientX; stopAuto(); track.style.transition = "none";
+    }, { passive: true });
+    viewport.addEventListener("touchmove", e => {
+      if(!dragging) return;
+      currentX = e.touches[0].clientX;
+      const offset = (currentX - startX) / viewport.offsetWidth * 100;
+      track.style.transform = `translateX(calc(-${index * 100}% + ${offset}%))`;
+    }, { passive: true });
+    viewport.addEventListener("touchend", () => {
+      if(!dragging) return;
+      dragging = false; track.style.transition = "transform .3s ease";
+      const d = currentX - startX;
+      if(d > 50) update(index - 1);
+      else if(d < -50) update(index + 1);
+      else update(index);
+      setTimeout(startAuto, 5000); // 触摸后延迟恢复
+    });
+
+    // 键盘
+    viewport.setAttribute("tabindex", "0");
+    viewport.addEventListener("keydown", e => {
+      if(e.key === "ArrowLeft"){ update(index - 1); }
+      else if(e.key === "ArrowRight"){ update(index + 1); }
+      stopAuto(); 
+      setTimeout(startAuto, 5000);
+    });
+
+    // Observer
+    const observer = new IntersectionObserver(entries => {
+      if(entries[0].isIntersecting) startAuto();
+      else stopAuto();
+    }, { threshold: 0.5 });
+    observer.observe(card);
+
+    update(0);
+  });
+}
