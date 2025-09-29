@@ -90,14 +90,14 @@ h1,h2,h3,.title{
 .hero-cta{text-align:center;padding:16px 20px}
 .hero-cta h1{font-size:var(--fs-h1)}
 .hero-cta p{color:var(--muted);font-size:14px;margin-top:6px}
-.nav{margin-top:10px;display:flex;justify-content:center;gap:12px;} /* 优化按钮间距 */
+.nav{margin-top:10px;display:flex;justify-content:center;gap:12px;}
 .btn{
   border:1px solid var(--line); background:var(--bg); padding:10px 16px;
   border-radius:999px; font-weight:600; letter-spacing:.5px; transition:background .15s, color .15s;
   font-family:var(--font-serif); /* 统一衬线字体 */
   color:var(--text);
 }
-.btn:hover{background:var(--tone);border-color:var(--brand);} /* hover 浅背景 + 品牌边框 */
+.btn:hover{background:var(--tone);border-color:var(--brand);}
 .btn.alt{
   background:transparent; /* 改为透明背景 */
   border:1px solid var(--brand); /* 边框风格 */
@@ -119,12 +119,13 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 .slide{min-width:100%;aspect-ratio:16/9;position:relative}
 .slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
-/* Arrows: 椭圆 + 首尾禁用 */
+/* Arrows: 椭圆优化 */
 .nav-arrow{
   position:absolute;top:50%;transform:translateY(-50%);
   background:rgba(0,0,0,0.30); color:#fff; border:0;
   font-size:20px; line-height:1; padding:8px 14px;
-  border-radius:999px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.18);
+  border-radius:50%; /* 优化为椭圆 (基于padding宽>高) */
+  cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.18);
   transition:background .2s ease, opacity .2s ease, transform .15s ease;
   opacity:.92; z-index:10; -webkit-tap-highlight-color:transparent;
 }
