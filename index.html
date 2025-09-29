@@ -31,19 +31,8 @@
 
   <!-- Hero -->
   <section id="hero">
-    <div class="hero-box">
-      <div class="hero-frame">
-        <video
-          class="hero-media"
-          src="assets/videos/hero.mp4"
-          autoplay
-          muted
-          loop
-          playsinline
-          webkit-playsinline
-          preload="metadata"
-        ></video>
-      </div>
+    <div class="hero-frame">
+      <video class="hero-media" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
     </div>
     <div class="container hero-cta">
       <h1>Minimal · Premium · Personal</h1>
@@ -62,15 +51,32 @@
       <div class="grid products-grid">
         <article class="card product u3" data-product="classic">
           <div class="main-viewport"><div class="main-track"></div><div class="progress"><div class="bar"></div></div></div>
-          <div class="body"><h3>Classic</h3><p class="sub">Slim & scratch-resistant</p><div class="pills"><span class="pill">Lightweight</span><span class="pill">Durable</span></div><div class="price" data-id="classic">$--</div></div>
+          <div class="body">
+            <h3>Classic</h3>
+            <p class="sub">Slim & scratch-resistant</p>
+            <div class="pills"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
+            <div class="price" data-id="classic">$--</div>
+          </div>
         </article>
+
         <article class="card product u3" data-product="fashion">
           <div class="main-viewport"><div class="main-track"></div><div class="progress"><div class="bar"></div></div></div>
-          <div class="body"><h3>Fashion</h3><p class="sub">Trendy design & anti-fingerprint</p><div class="pills"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div><div class="price" data-id="fashion">$--</div></div>
+          <div class="body">
+            <h3>Fashion</h3>
+            <p class="sub">Trendy design & anti-fingerprint</p>
+            <div class="pills"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
+            <div class="price" data-id="fashion">$--</div>
+          </div>
         </article>
+
         <article class="card product u3" data-product="business">
           <div class="main-viewport"><div class="main-track"></div><div class="progress"><div class="bar"></div></div></div>
-          <div class="body"><h3>Business</h3><p class="sub">Premium touch & shockproof</p><div class="pills"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div><div class="price" data-id="business">$--</div></div>
+          <div class="body">
+            <h3>Business</h3>
+            <p class="sub">Premium touch & shockproof</p>
+            <div class="pills"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
+            <div class="price" data-id="business">$--</div>
+          </div>
         </article>
       </div>
     </div>
@@ -87,7 +93,9 @@
           <span id="file-name" class="file-name">no file selected</span>
           <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" />
         </div>
-        <div class="preview-box" id="preview-box"><img id="preview-image" alt="Preview" /></div>
+        <div class="preview-box" id="preview-box">
+          <img id="preview-image" alt="Preview" />
+        </div>
         <button type="submit" class="btn alt block" style="margin-top:10px">Upload</button>
       </form>
     </div>
@@ -95,12 +103,19 @@
 
   <!-- About -->
   <section id="about">
-    <div class="container"><h2>About Us</h2><p class="section-desc">Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.</p></div>
+    <div class="container">
+      <h2>About Us</h2>
+      <p class="section-desc">
+        Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability.
+        Visit xxkit.com to learn more.
+      </p>
+    </div>
   </section>
 
   <!-- Contact -->
   <section id="contact">
-    <div class="container"><h2>Contact Us</h2>
+    <div class="container">
+      <h2>Contact Us</h2>
       <form id="contact-form" class="section-narrow">
         <input type="text" class="input" placeholder="Name" required />
         <input type="email" class="input" placeholder="Email" required />
@@ -114,7 +129,7 @@
   <!-- Footer -->
   <footer id="site-footer">
     <p>United States</p>
-    <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
+    <p>&copy; 2025 AIXX Inc · All rights reserved.</p>
   </footer>
 
   <!-- Dark Mode -->
