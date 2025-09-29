@@ -159,4 +159,18 @@ document.addEventListener("DOMContentLoaded",()=>{
       });
     });
   }
+
+  // 如果检测到桌面模式在小屏设备上，强制移动视口
+  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  if (isMobileDevice && window.screen.width <= 768 && window.innerWidth > window.screen.width) {
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+      // Safari 重绘 hack：短暂切换 body 不透明度以强制应用新视口
+      document.body.style.opacity = '0.99';
+      setTimeout(() => {
+        document.body.style.opacity = '1';
+      }, 10);
+    }
+  }
 });
