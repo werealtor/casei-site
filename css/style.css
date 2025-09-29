@@ -38,11 +38,12 @@ h1,h2,h3,.title{
 #site-header{border-bottom:1px solid var(--line);background:var(--bg)}
 .top-nav-container{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
 
-/* LOGO 与导航均衬线 */
+/* LOGO 与导航均改为衬线风格 */
 .logo{font-family:var(--font-serif);font-weight:600;font-size:18px;letter-spacing:.4px}
+
 .top-nav{display:flex;gap:24px}
 .top-nav a{
-  font-family:var(--font-serif);
+  font-family:var(--font-serif);           /* ← 衬线导航 */
   padding:10px 0; font-size:var(--fs-nav);
   font-weight:600; letter-spacing:.4px;
 }
@@ -142,18 +143,3 @@ footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a
   border-radius:50%;border:0;background:rgba(var(--tone-rgb),.92);box-shadow:var(--shadow);font-size:20px;cursor:pointer;z-index:1000
 }
 #dark-mode-toggle:hover{filter:brightness(.95)}
-
-/* ===== Desktop (大屏) 优化 ===== */
-@media (min-width: 1024px) {
-  :root{
-    --max: 1280px;
-    --fs-body: 16px;
-    --fs-nav: 18px;
-    --fs-h1: 36px;
-    --fs-h2: 28px;
-  }
-  section{ padding: 60px 0; }
-  .top-nav a{ font-size: var(--fs-nav); padding: 14px 0; }
-  .hero-cta h1{ font-size: var(--fs-h1); line-height: 1.2; }
-  .section-desc{ font-size: 16px; line-height: 1.6; }
-}
