@@ -32,19 +32,7 @@
   <!-- Hero -->
   <section id="hero">
     <div class="hero-box">
-      <!-- 这里已加入 iOS 兼容属性，并且不显示控件 -->
-      <video
-        class="hero-media"
-        src="assets/videos/hero.mp4"
-        autoplay
-        muted
-        loop
-        playsinline
-        webkit-playsinline
-        preload="metadata"
-        disablepictureinpicture
-        controlslist="nodownload noplaybackrate nofullscreen noremoteplayback"
-      ></video>
+      <video class="hero-media" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
     </div>
     <div class="container hero-cta">
       <h1>Minimal · Premium · Personal</h1>
@@ -146,8 +134,10 @@
 
   <!-- Footer -->
   <footer id="site-footer">
-    <p>United States</p>
-    <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
+    <div class="container">
+      <p class="region">United States</p>
+      <p class="legal">© 2025 AIXX Inc · All rights reserved</p>
+    </div>
   </footer>
 
   <!-- Dark Mode -->
