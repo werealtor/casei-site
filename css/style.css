@@ -213,4 +213,4 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 
 /* Footer */
 footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a8a8a;font-size:13px}
-.helper { color: var(--muted); font-size: 14px; text-align: center; margin-top: 8px; } 
+.helper { color: var(--muted); font-size: 14px; text-align: center; margin-top: 8px; }
