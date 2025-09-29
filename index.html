@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Case&i — Minimal · Premium · Personal</title>
 
   <!-- Fonts -->
@@ -19,7 +19,7 @@
       <a href="#" class="logo">Case&i</a>
       <button class="menu-icon" aria-label="Toggle menu" aria-expanded="false">☰</button>
       <div class="top-nav-wrap">
-        <nav class="top-nav">
+        <nav class="top-nav" aria-label="Main">
           <a href="#products">Products</a>
           <a href="#custom">Customize</a>
           <a href="#about">About</a>
@@ -31,19 +31,25 @@
 
   <!-- Hero -->
   <section id="hero">
-    <div class="hero-box">
-      <!-- 带裁切容器（统一 16:9 + 圆角） -->
-      <div class="hero-frame">
-        <video class="hero-media" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
+    <div class="container">
+      <div class="hero-frame" aria-label="Brand video">
+        <video
+          class="hero-media"
+          src="assets/videos/hero.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+        ></video>
       </div>
     </div>
-
     <div class="container hero-cta">
-      <h1 class="serif">Minimal · Premium · Personal</h1>
+      <h1>Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
       <nav class="nav">
-        <a href="#products" class="btn serif">Shop Products</a>
-        <a href="#custom" class="btn alt serif">Customize Now</a>
+        <a href="#products" class="btn">Shop Products</a>
+        <a href="#custom" class="btn alt">Customize Now</a>
       </nav>
     </div>
   </section>
@@ -51,47 +57,48 @@
   <!-- Products -->
   <section id="products">
     <div class="container">
-      <h2 class="title serif">Our Products</h2>
+      <h2 class="title">Our Products</h2>
       <div class="grid products-grid">
-        <!-- Classic -->
-        <article class="card product u3" data-product="classic">
+        <!-- Jewelry -->
+        <article class="card product u3" data-product="jewelry">
           <div class="main-viewport">
             <div class="main-track"></div>
             <div class="progress"><div class="bar"></div></div>
           </div>
           <div class="body">
-            <h3 class="serif">Classic</h3>
-            <p class="sub">Slim & scratch-resistant</p>
-            <div class="pills"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
-            <div class="price" data-id="classic">$--</div>
+            <h3>Jewelry</h3>
+            <p class="sub">Delicate & timeless</p>
+            <div class="pills"><span class="pill">Handcrafted</span><span class="pill">Premium</span></div>
+            <!-- 初始展示 from（滑动后将显示对应图片价格） -->
+            <div class="price" data-id="jewelry">from $22</div>
           </div>
         </article>
 
-        <!-- Fashion -->
-        <article class="card product u3" data-product="fashion">
+        <!-- Bag -->
+        <article class="card product u3" data-product="bag">
           <div class="main-viewport">
             <div class="main-track"></div>
             <div class="progress"><div class="bar"></div></div>
           </div>
           <div class="body">
-            <h3 class="serif">Fashion</h3>
-            <p class="sub">Trendy design & anti-fingerprint</p>
-            <div class="pills"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
-            <div class="price" data-id="fashion">$--</div>
+            <h3>Bag</h3>
+            <p class="sub">Trendy & practical</p>
+            <div class="pills"><span class="pill">Lightweight</span><span class="pill">Stylish</span></div>
+            <div class="price" data-id="bag">from $35</div>
           </div>
         </article>
 
-        <!-- Business -->
-        <article class="card product u3" data-product="business">
+        <!-- Leather Goods -->
+        <article class="card product u3" data-product="leather">
           <div class="main-viewport">
             <div class="main-track"></div>
             <div class="progress"><div class="bar"></div></div>
           </div>
           <div class="body">
-            <h3 class="serif">Business</h3>
-            <p class="sub">Premium touch & shockproof</p>
-            <div class="pills"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
-            <div class="price" data-id="business">$--</div>
+            <h3>Leather Goods</h3>
+            <p class="sub">Durable & premium</p>
+            <div class="pills"><span class="pill">Classic</span><span class="pill">Long-lasting</span></div>
+            <div class="price" data-id="leather">from $60</div>
           </div>
         </article>
       </div>
@@ -101,22 +108,16 @@
   <!-- Customize -->
   <section id="custom">
     <div class="container">
-      <h2 class="serif">Customize Your Case</h2>
-
+      <h2>Customize Your Case</h2>
       <form id="custom-form" class="section-narrow">
-        <label class="label serif">Choose Image <span class="muted">(PNG/JPEG &lt; 10MB)</span></label>
-
-        <div class="file-field">
-          <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" />
-          <label class="file-btn serif" for="image-upload">Choose File</label>
+        <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
+        <div class="file-field" style="margin-top:8px">
+          <label class="file-btn" for="image-upload">Choose File</label>
           <span id="file-name" class="file-name">no file selected</span>
+          <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" />
         </div>
-
-        <div class="preview-box" id="preview-box" aria-hidden="true">
-          <img id="preview-image" alt="Preview" />
-        </div>
-
-        <button type="submit" class="btn alt block serif">Upload</button>
+        <div class="preview-box" id="preview-box"><img id="preview-image" alt="Preview" /></div>
+        <button type="submit" class="btn alt block" style="margin-top:10px">Upload</button>
       </form>
     </div>
   </section>
@@ -124,10 +125,9 @@
   <!-- About -->
   <section id="about">
     <div class="container">
-      <h2 class="serif">About Us</h2>
+      <h2>About Us</h2>
       <p class="section-desc">
         Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability.
-        Visit xxkit.com to learn more.
       </p>
     </div>
   </section>
@@ -135,12 +135,12 @@
   <!-- Contact -->
   <section id="contact">
     <div class="container">
-      <h2 class="serif">Contact Us</h2>
+      <h2>Contact Us</h2>
       <form id="contact-form" class="section-narrow">
-        <input type="text" class="input serif" placeholder="Name" required />
-        <input type="email" class="input serif" placeholder="Email" required />
-        <textarea class="input textarea serif" placeholder="Message" required></textarea>
-        <button type="submit" class="btn alt block serif">Send</button>
+        <input type="text" class="input" placeholder="Name" required />
+        <input type="email" class="input" placeholder="Email" required />
+        <textarea class="input textarea" placeholder="Message" required></textarea>
+        <button type="submit" class="btn alt block" style="margin-top:8px">Send</button>
         <p class="helper">We usually reply within 24 hours.</p>
       </form>
     </div>
@@ -148,12 +148,9 @@
 
   <!-- Footer -->
   <footer id="site-footer">
-    <p class="serif">United States</p>
-    <p class="serif">&copy; 2025 AIXX Inc. All rights reserved.</p>
+    <p>United States</p>
+    <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
   </footer>
-
-  <!-- Dark Mode -->
-  <button id="dark-mode-toggle" aria-label="Toggle dark mode"></button>
 
   <script src="js/main.js"></script>
 </body>
