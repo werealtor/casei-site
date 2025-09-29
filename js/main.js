@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initVideo();
   initUploadPreview();
   initProducts();
+  initThemeToggle();
 });
 
 /* ========== 顶部菜单（移动端抽屉） ========== */
@@ -14,33 +15,16 @@ function initMenu(){
   const list = document.querySelector(".top-nav");
   if(!menuBtn || !wrap || !list) return;
 
-  let autoCloseTimer = null;
-  const AUTO_CLOSE_DELAY = 5000; // 5秒自动关闭
-
   const closeMenu = () => {
     wrap.classList.remove("active");
     document.body.classList.remove("menu-open");
     menuBtn.setAttribute("aria-expanded","false");
-    if (autoCloseTimer) clearTimeout(autoCloseTimer);
-  };
-
-  const resetTimer = () => {
-    if (autoCloseTimer) clearTimeout(autoCloseTimer);
-    autoCloseTimer = setTimeout(closeMenu, AUTO_CLOSE_DELAY);
   };
 
   menuBtn.addEventListener("click", () => {
     const active = wrap.classList.toggle("active");
     document.body.classList.toggle("menu-open", active);
     menuBtn.setAttribute("aria-expanded", active ? "true" : "false");
-    if (active) {
-      resetTimer();
-      wrap.addEventListener("mousemove", resetTimer, { once: false });
-      wrap.addEventListener("touchmove", resetTimer, { once: false });
-    } else {
-      wrap.removeEventListener("mousemove", resetTimer);
-      wrap.removeEventListener("touchmove", resetTimer);
-    }
   });
 
   wrap.addEventListener("click", e => { if(e.target === wrap) closeMenu(); });
