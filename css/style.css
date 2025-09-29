@@ -22,7 +22,7 @@
 
 /* Base */
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;scrollbar-gutter:stable;} /* 修复滚动抖动 */
+html{scroll-behavior:smooth}
 body{
   font-family:var(--font-sans); font-size:var(--fs-body);
   color:var(--text); background:var(--bg); line-height:1.5;
