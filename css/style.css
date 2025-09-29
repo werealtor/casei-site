@@ -28,18 +28,23 @@
 }
 
 /* Enhanced Interactivity */
+[data-theme="dark"] .btn {
+  background: transparent; /* Set to transparent in dark mode */
+  border-width: 2px; /* Slightly thicker border for visibility */
+}
 [data-theme="dark"] .btn:hover {
-  background: var(--tone);
+  background: rgba(var(--tone-rgb), 0.5); /* Semi-transparent hover for feedback */
   border-color: var(--brand);
   box-shadow: 0 0 0 2px rgba(90,157,255,.2); /* Added subtle glow for better feedback */
 }
 [data-theme="dark"] .btn.alt {
+  background: transparent;
   border-color: var(--brand);
   color: var(--brand);
 }
 [data-theme="dark"] .btn.alt:hover {
-  background: var(--brand);
-  color: #0b0b0b; /* Inverted text for readability on filled hover */
+  background: rgba(var(--brand-rgb), 0.2); /* Semi-transparent brand hover */
+  color: #ffffff; /* White text for readability */
 }
 
 /* Carousel Dots/Arrows/Pause in Dark Mode */
@@ -51,24 +56,27 @@
   background: rgba(255,255,255,.85); /* Brighter active/hover */
 }
 [data-theme="dark"] .nav-arrow {
-  background: rgba(255,255,255,.15); /* Softer, more integrated with dark bg */
+  background: transparent; /* Changed to transparent */
+  border: 1px solid rgba(255,255,255,.3); /* Added border for visibility */
   box-shadow: 0 2px 8px rgba(0,0,0,.25);
 }
 [data-theme="dark"] .nav-arrow:hover {
-  background: rgba(255,255,255,.25);
+  background: rgba(255,255,255,.1); /* Slight fill on hover */
 }
 [data-theme="dark"] .pause-btn {
-  background: rgba(255,255,255,.15);
+  background: transparent; /* Changed to transparent */
+  border: 1px solid rgba(255,255,255,.3);
 }
 [data-theme="dark"] .pause-btn:hover {
-  background: rgba(255,255,255,.25);
+  background: rgba(255,255,255,.1);
 }
 
 /* Form Inputs in Dark Mode */
 [data-theme="dark"] .input,
 [data-theme="dark"] .textarea {
-  background: var(--tone); /* Matches hover tone for consistency */
+  background: transparent; /* Set to transparent for consistency */
   border-color: var(--line);
+  border-width: 2px; /* Thicker border */
 }
 [data-theme="dark"] .input:focus,
 [data-theme="dark"] .textarea:focus {
@@ -80,10 +88,22 @@
 [data-theme="dark"] .pill {
   border-color: var(--line);
   color: #c0c0c0; /* Brightened from #616161 for better legibility */
+  background: transparent; /* Ensure transparent */
 }
 [data-theme="dark"] .file-name,
 [data-theme="dark"] .helper {
   color: var(--muted); /* Uses updated --muted */
+}
+
+/* Theme Toggle Button in Dark Mode */
+[data-theme="dark"] #theme-toggle {
+  background: transparent; /* Set to transparent */
+  border-width: 2px; /* Thicker border */
+  border-color: var(--line);
+}
+[data-theme="dark"] #theme-toggle:hover {
+  background: rgba(var(--tone-rgb), 0.3); /* Semi-transparent hover */
+  border-color: var(--brand);
 }
 
 /* Smooth Theme Transition */
