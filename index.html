@@ -1,157 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Case&i — Minimal · Premium · Personal</title>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <meta name="description" content="Case&i — Jewelry · Leather · Bag. Minimal design, premium quality, personal style." />
   <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* 类目贴片 & CTA */
+    .label {
+      position:absolute; left:16px; top:16px;
+      padding:6px 10px; border-radius:999px;
+      background:rgba(17,17,17,.65); color:#fff; font-size:12px; letter-spacing:.3px;
+      -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    }
+    .cta-chip {
+      position:absolute; right:16px; bottom:16px;
+      padding:8px 12px; border-radius:999px; border:1px solid #fff;
+      color:#fff; font-size:12px; text-decoration:none;
+      background:rgba(255,255,255,.08);
+    }
+    .cta-chip:active { transform: scale(.98); }
+  </style>
 </head>
 <body>
-  <!-- Header -->
-  <header id="site-header">
-    <div class="top-nav-container container">
-      <a href="#" class="logo">Case&i</a>
-      <button class="menu-icon" aria-label="Toggle menu" aria-expanded="false">☰</button>
-      <div class="top-nav-wrap">
-        <nav class="top-nav" aria-label="Main">
-          <a href="#products">Products</a>
-          <a href="#custom">Customize</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-        </nav>
-      </div>
-    </div>
-  </header>
+  <section class="wrap">
+    <h1 class="brand">Case&i</h1>
+    <p class="sub">Minimal · Premium · Personal</p>
 
-  <!-- Hero -->
-  <section id="hero">
-    <div class="container">
-      <div class="hero-frame" aria-label="Brand video">
-        <video
-          class="hero-media"
-          src="assets/videos/hero.mp4"
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="metadata"
-        ></video>
-      </div>
-    </div>
-    <div class="container hero-cta">
-      <h1>Minimal · Premium · Personal</h1>
-      <p>Case&i by AIXX Inc</p>
-      <nav class="nav">
-        <a href="#products" class="btn">Shop Products</a>
-        <a href="#custom" class="btn alt">Customize Now</a>
-      </nav>
-    </div>
-  </section>
+    <!-- 轮播 -->
+    <section class="carousel" aria-roledescription="carousel" aria-label="产品展示">
+      <div class="track" id="track">
 
-  <!-- Products -->
-  <section id="products">
-    <div class="container">
-      <h2 class="title">Our Products</h2>
-      <div class="grid products-grid">
         <!-- Jewelry -->
-        <article class="card product u3" data-product="jewelry">
-          <div class="main-viewport">
-            <div class="main-track"></div>
-            <div class="progress"><div class="bar"></div></div>
-          </div>
-          <div class="body">
-            <h3>Jewelry</h3>
-            <p class="sub">Delicate & timeless</p>
-            <div class="pills"><span class="pill">Handcrafted</span><span class="pill">Premium</span></div>
-            <!-- 初始展示 from（滑动后将显示对应图片价格） -->
-            <div class="price" data-id="jewelry">from $22</div>
-          </div>
+        <article class="slide" aria-label="第 1 张 · Jewelry">
+          <img src="assets/images/jewelry/cover.jpg" alt="Case&i Jewelry Series" loading="lazy" decoding="async">
+          <span class="label">Jewelry · 珠宝系列</span>
+          <a class="cta-chip" href="/jewelry/">Shop →</a>
+        </article>
+
+        <!-- Leather -->
+        <article class="slide" aria-label="第 2 张 · Leather">
+          <img src="assets/images/leather/cover.jpg" alt="Case&i Leather Series" loading="lazy" decoding="async">
+          <span class="label">Leather · 真皮系列</span>
+          <a class="cta-chip" href="/leather/">Shop →</a>
         </article>
 
         <!-- Bag -->
-        <article class="card product u3" data-product="bag">
-          <div class="main-viewport">
-            <div class="main-track"></div>
-            <div class="progress"><div class="bar"></div></div>
-          </div>
-          <div class="body">
-            <h3>Bag</h3>
-            <p class="sub">Trendy & practical</p>
-            <div class="pills"><span class="pill">Lightweight</span><span class="pill">Stylish</span></div>
-            <div class="price" data-id="bag">from $35</div>
-          </div>
+        <article class="slide" aria-label="第 3 张 · Bag">
+          <img src="assets/images/bag/cover.jpg" alt="Case&i Bag Series" loading="lazy" decoding="async">
+          <span class="label">Bag · 包袋系列</span>
+          <a class="cta-chip" href="/bag/">Shop →</a>
         </article>
 
-        <!-- Leather Goods -->
-        <article class="card product u3" data-product="leather">
-          <div class="main-viewport">
-            <div class="main-track"></div>
-            <div class="progress"><div class="bar"></div></div>
-          </div>
-          <div class="body">
-            <h3>Leather Goods</h3>
-            <p class="sub">Durable & premium</p>
-            <div class="pills"><span class="pill">Classic</span><span class="pill">Long-lasting</span></div>
-            <div class="price" data-id="leather">from $60</div>
-          </div>
-        </article>
       </div>
-    </div>
+
+      <!-- 控件 -->
+      <button class="nav prev" aria-label="上一张" id="prev" type="button">‹</button>
+      <button class="nav next" aria-label="下一张" id="next" type="button">›</button>
+
+      <!-- 进度条 -->
+      <div class="progress"><div class="bar" id="bar"></div></div>
+
+      <!-- 圆点（JS 自动生成） -->
+      <div class="dots" id="dots" role="tablist"></div>
+      <p class="sr-only" id="live" aria-live="polite"></p>
+    </section>
+
+    <footer class="site-foot"><small>© AIXX Inc • Case&i</small></footer>
   </section>
 
-  <!-- Customize -->
-  <section id="custom">
-    <div class="container">
-      <h2>Customize Your Case</h2>
-      <form id="custom-form" class="section-narrow">
-        <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
-        <div class="file-field" style="margin-top:8px">
-          <label class="file-btn" for="image-upload">Choose File</label>
-          <span id="file-name" class="file-name">no file selected</span>
-          <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" />
-        </div>
-        <div class="preview-box" id="preview-box"><img id="preview-image" alt="Preview" /></div>
-        <button type="submit" class="btn alt block" style="margin-top:10px">Upload</button>
-      </form>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section id="about">
-    <div class="container">
-      <h2>About Us</h2>
-      <p class="section-desc">
-        Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability.
-      </p>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact">
-    <div class="container">
-      <h2>Contact Us</h2>
-      <form id="contact-form" class="section-narrow">
-        <input type="text" class="input" placeholder="Name" required />
-        <input type="email" class="input" placeholder="Email" required />
-        <textarea class="input textarea" placeholder="Message" required></textarea>
-        <button type="submit" class="btn alt block" style="margin-top:8px">Send</button>
-        <p class="helper">We usually reply within 24 hours.</p>
-      </form>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer id="site-footer">
-    <p>United States</p>
-    <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
-  </footer>
-
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>
