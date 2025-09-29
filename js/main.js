@@ -1,165 +1,275 @@
-/* main.js - 产品轮播 + 价格联动 + 移动端抽屉菜单 + Hero 视频适配 */
+// Case&i 轮播（加强版）
+// 特性：自动播放、顺滑划动、防误触、无缝循环、视频优化、可配置 data-*、悬停暂停、A11y、RTL 兼容
+(function(){
+  const root = document.documentElement;
+  const carousel = document.querySelector('.carousel');
+  const track = document.getElementById('track');
+  const prev  = document.getElementById('prev');
+  const next  = document.getElementById('next');
+  const dotsC = document.getElementById('dots');
+  const bar   = document.getElementById('bar');
+  const live  = document.getElementById('live');
 
-document.addEventListener("DOMContentLoaded", () => {
-  initMenu();
-  initVideo();
-  initUploadPreview();
-  initProducts();
-});
-
-/* ========== 顶部菜单（移动端抽屉） ========== */
-function initMenu(){
-  const menuBtn = document.querySelector(".menu-icon");
-  const wrap = document.querySelector(".top-nav-wrap");
-  const list = document.querySelector(".top-nav");
-  if(!menuBtn || !wrap || !list) return;
-
-  const closeMenu = () => {
-    wrap.classList.remove("active");
-    document.body.classList.remove("menu-open");
-    menuBtn.setAttribute("aria-expanded","false");
+  // —— 从 data-* 读取配置（无则使用默认）——
+  const cfg = {
+    autoplay:     readBool(carousel.dataset.autoplay, true),
+    interval:     readNum(carousel.dataset.interval, 3800),
+    loop:         readBool(carousel.dataset.loop, true),
+    dwell:        readNum(carousel.dataset.dwell, 1800),
+    resumeDelay:  readNum(carousel.dataset.resumeDelay, 2500),
+    deadzone:     readNum(carousel.dataset.deadzone, 14),
+    horizRatio:   readNum(carousel.dataset.horizRatio, 1.2),
+    tapMax:       readNum(carousel.dataset.tapMax, 24),
+    flickVel:     readNum(carousel.dataset.flickVel, 0.45),
+    hoverPause:   readBool(carousel.dataset.hoverPause, true),
+    ease:         0.12,
+    swipeThresh:  0.18,
+    swipeVel:     0.25,
   };
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  menuBtn.addEventListener("click", () => {
-    const active = wrap.classList.toggle("active");
-    document.body.classList.toggle("menu-open", active);
-    menuBtn.setAttribute("aria-expanded", active ? "true" : "false");
-  });
+  // —— 状态 —— 
+  let slides = Array.from(track.children);
+  let index = 0;                    // 当前 track 索引（含克隆）
+  let width = track.clientWidth;
+  let raf = null;
+  let lastChangeAt = performance.now();
 
-  wrap.addEventListener("click", e => { if(e.target === wrap) closeMenu(); });
-  list.querySelectorAll("a[href^='#']").forEach(a => a.addEventListener("click", closeMenu));
-  document.addEventListener("keydown", e => { if(e.key === "Escape" && wrap.classList.contains("active")) closeMenu(); });
-}
+  // —— 无缝循环：首尾克隆 —— 
+  if (cfg.loop && slides.length > 1){
+    track.insertBefore(slides[slides.length-1].cloneNode(true), slides[0]);
+    track.appendChild(slides[0].cloneNode(true));
+    slides = Array.from(track.children);
+    index = 1;
+    instantTo(index);
+  }
+  const realCount = cfg.loop ? slides.length - 2 : slides.length;
 
-/* ========== Hero 视频 ========== */
-function initVideo(){
-  const v = document.querySelector(".hero-media");
-  if(!v) return;
-  v.muted = true; v.playsInline = true; v.setAttribute("webkit-playsinline","true");
-  const tryPlay = () => v.play().catch(()=>{});
-  tryPlay();
-  // 首次交互后再尝试播放，兼容部分移动浏览器策略
-  const oncePlay = () => { tryPlay(); window.removeEventListener("touchstart", oncePlay); window.removeEventListener("click", oncePlay); };
-  window.addEventListener("touchstart", oncePlay, { once:true, passive:true });
-  window.addEventListener("click", oncePlay, { once:true });
-  document.addEventListener("visibilitychange", () => { if(!document.hidden) tryPlay(); });
-}
-
-/* ========== 上传预览 ========== */
-function initUploadPreview(){
-  const upload = document.getElementById("image-upload");
-  const previewImg = document.getElementById("preview-image");
-  const previewBox = document.getElementById("preview-box");
-  const fileNameEl = document.getElementById("file-name");
-  if(!upload || !previewImg || !previewBox) return;
-
-  upload.addEventListener("change", e => {
-    const file = e.target.files?.[0];
-    if(!file){ if(fileNameEl) fileNameEl.textContent = "no file selected"; previewBox.style.display="none"; return; }
-    if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return; }
-    if(file.size > 10 * 1024 * 1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
-    if(fileNameEl) fileNameEl.textContent = file.name;
-    const reader = new FileReader();
-    reader.onload = ev => { previewImg.src = ev.target.result; previewBox.style.display="flex"; };
-    reader.readAsDataURL(file);
-  });
-}
-
-/* ========== 产品轮播 + 价格联动 ========== */
-async function initProducts(){
-  try{
-    const res = await fetch("config.json?v=" + Date.now(), { cache: "no-store" });
-    if(!res.ok) throw new Error("config load failed");
-    const data = await res.json();
-    if(Array.isArray(data?.products)) setupProducts(data.products);
-  }catch(e){ console.error(e); }
-}
-
-function setupProducts(products){
-  products.forEach(product => {
-    const card = document.querySelector(`.card[data-product="${product.id}"]`);
-    if(!card) return;
-
-    // 数据归一：images + price 数组
-    const images = Array.isArray(product.images) ? product.images : [];
-    const prices = Array.isArray(product.price) ? product.price : [];
-    const slidesData = images.map((img, i) => ({
-      image: img,
-      price: typeof prices[i] === "number" ? prices[i] : (typeof product.price === "number" ? product.price : null)
-    }));
-
-    const track = card.querySelector(".main-track");
-    const progress = card.querySelector(".progress .bar");
-    const priceEl = card.querySelector(".price");
-    const viewport = card.querySelector(".main-viewport");
-
-    // 注入 slides
-    track.innerHTML = "";
-    slidesData.forEach((s, i) => {
-      const slide = document.createElement("div");
-      slide.className = "slide";
-      const img = document.createElement("img");
-      img.src = s.image;
-      img.alt = `${product.name || product.id} ${i+1}`;
-      img.loading = "lazy";
-      slide.appendChild(img);
-      track.appendChild(slide);
+  // —— 圆点生成 —— 
+  for(let i=0;i<realCount;i++){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-label', `跳到第 ${i+1} 张`);
+    if(i===0) b.setAttribute('aria-selected','true');
+    b.addEventListener('click', ()=>{
+      stopAutoplay();
+      if (canAdvance()) goTo(realToTrack(i));
+      queueAutoplay();
     });
+    dotsC.appendChild(b);
+  }
 
-    // 箭头
-    const leftBtn  = document.createElement("button");
-    const rightBtn = document.createElement("button");
-    leftBtn.className = "nav-arrow left";
-    rightBtn.className = "nav-arrow right";
-    leftBtn.setAttribute("aria-label","Previous slide");
-    rightBtn.setAttribute("aria-label","Next slide");
-    leftBtn.textContent  = "‹";
-    rightBtn.textContent = "›";
-    viewport.appendChild(leftBtn);
-    viewport.appendChild(rightBtn);
+  // —— 自动播放与进度条 —— 
+  let timer = null, progressStart = 0, progressRAF = null, resumeTimer = null;
+  function startAutoplay(){
+    if (!cfg.autoplay || REDUCED) return;
+    stopAutoplay();
+    progressStart = performance.now();
+    progressLoop();
+    timer = setTimeout(()=> { moveTo(index+1); startAutoplay(); }, cfg.interval);
+  }
+  function stopAutoplay(){
+    if (timer){ clearTimeout(timer); timer=null; }
+    if (progressRAF){ cancelAnimationFrame(progressRAF); progressRAF=null; }
+    bar.style.width = '0%';
+  }
+  function progressLoop(){
+    progressRAF = requestAnimationFrame((t)=>{
+      const pct = Math.min(1,(t - progressStart)/cfg.interval);
+      bar.style.width = (pct*100)+'%';
+      if(pct<1){ progressLoop(); }
+    });
+  }
+  function queueAutoplay(){
+    if (!cfg.autoplay || REDUCED) return;
+    if (resumeTimer) clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(()=> startAutoplay(), cfg.resumeDelay);
+  }
 
-    let index = 0, interval;
-    const slides = track.children;
+  // —— 可见性/在视口内才播放 —— 
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.hidden) stopAutoplay(); else startAutoplay();
+  });
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=> e.isIntersecting ? startAutoplay() : stopAutoplay());
+  }, {threshold: .5});
+  io.observe(track);
 
-    function update(nextIndex){
-      if(!slides.length) return;
-      index = Math.max(0, Math.min(nextIndex, slides.length - 1));
-      track.style.transform = `translateX(-${index * 100}%)`;
-      if(progress) progress.style.width = ((index + 1) / slides.length) * 100 + "%";
+  // —— 悬停暂停（桌面） —— 
+  if (cfg.hoverPause){
+    track.addEventListener('mouseenter', stopAutoplay);
+    track.addEventListener('mouseleave', queueAutoplay);
+  }
 
-      // 精准价格（覆盖初始的 "from $"）
-      if(priceEl){
-        const p = slidesData[index]?.price;
-        priceEl.textContent = (typeof p === "number") ? `$${p}` : priceEl.textContent;
-      }
+  // —— 按钮与键盘 —— 
+  prev.addEventListener('click', ()=>{ stopAutoplay(); if (canAdvance()) moveTo(index-1); queueAutoplay(); });
+  next.addEventListener('click', ()=>{ stopAutoplay(); if (canAdvance()) moveTo(index+1); queueAutoplay(); });
 
-      // 首尾禁用
-      leftBtn.disabled  = (index === 0);
-      rightBtn.disabled = (index === slides.length - 1);
+  track.tabIndex = 0;
+  track.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight'){ e.preventDefault(); stopAutoplay(); if (canAdvance()) moveTo(index+1); queueAutoplay(); }
+    if(e.key==='ArrowLeft'){  e.preventDefault(); stopAutoplay(); if (canAdvance()) moveTo(index-1); queueAutoplay(); }
+  });
+
+  // —— 触摸/拖拽 —— 
+  let sx=0, sy=0, dx=0, dy=0, startT=0, dragging=false, baseX=0, currentX=0, intentLocked=false;
+  track.addEventListener('touchstart', onStart, {passive:true});
+  track.addEventListener('mousedown', onStart);
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchend', onEnd);
+  window.addEventListener('mouseup', onEnd);
+  window.addEventListener('resize', onResize);
+
+  function onStart(e){
+    const pt = 'touches' in e ? e.touches[0] : e;
+    sx = pt.clientX; sy = pt.clientY; dx = dy = 0;
+    dragging = true; startT = performance.now();
+    baseX = -index*width; intentLocked = false;
+    stopAutoplay(); cancelAnim();
+  }
+  function onMove(e){
+    if(!dragging) return;
+    const pt = 'touches' in e ? e.touches[0] : e;
+    dx = pt.clientX - sx; dy = pt.clientY - sy;
+
+    // 防误触：死区 + 水平意图
+    if (!intentLocked){
+      if (Math.abs(dx) < cfg.deadzone) return;
+      if (Math.abs(dx) < Math.abs(dy) * cfg.horizRatio) return;
+      intentLocked = true;
     }
+    if (intentLocked){
+      e.preventDefault();
+      currentX = baseX + dx;
+      translateX(currentX);
+    }
+  }
+  function onEnd(){
+    if(!dragging) return; dragging=false;
+    const dt = Math.max(1, performance.now()-startT);
+    const velocity = dx / dt; // px/ms
+    const travel = Math.abs(dx)/width;
+    let target = index;
 
-    // 点击切换
-    leftBtn.addEventListener("click", () => update(index - 1));
-    rightBtn.addEventListener("click", () => update(index + 1));
+    if (Math.abs(dx) < cfg.tapMax){
+      target = index; // 视为轻扫/点击
+    } else if (Math.abs(velocity) > cfg.flickVel || travel > cfg.swipeThresh || Math.abs(velocity) > cfg.swipeVel){
+      target = dx < 0 ? index+1 : index-1; // 甩动或明确位移
+    }
+    glideTo(target);
+    queueAutoplay();
+  }
 
-    // 自动轮播
-    function startAuto(){ interval = setInterval(() => update(index + 1), 3000); }
-    function stopAuto(){ clearInterval(interval); }
-    startAuto();
-    viewport.addEventListener("mouseenter", stopAuto);
-    viewport.addEventListener("mouseleave", startAuto);
+  // —— 动画与切换 —— 
+  let anim=null;
+  function glideTo(target){ moveTo(clampIndex(target), true); }
+  function clampIndex(i){ return cfg.loop ? i : Math.max(0, Math.min(slides.length-1, i)); }
+  function canAdvance(){ return (performance.now() - lastChangeAt) > cfg.dwell; }
 
-    // 触摸
-    let startX = 0, dragging = false;
-    viewport.addEventListener("touchstart", e => { dragging = true; startX = e.touches[0].clientX; stopAuto(); }, { passive:true });
-    viewport.addEventListener("touchend", e => {
-      if(!dragging) return; dragging = false;
-      const d = e.changedTouches[0].clientX - startX;
-      if(d > 50) update(index - 1);
-      else if(d < -50) update(index + 1);
-      startAuto();
-    });
+  function moveTo(target, smooth=true){
+    // 循环边界的“软限制”（动画完成后做无缝瞬移）
+    if(cfg.loop){
+      if(target<=0){ if(target===-1) target=0; }
+      if(target>=slides.length-1){ if(target===slides.length) target=slides.length-1; }
+    }else{
+      target = Math.max(0, Math.min(slides.length-1, target));
+    }
+    if (target !== index && !canAdvance()) return;
 
-    update(0);
-  });
-}
+    index = target;
+    setDots(trackToReal(index));
+    playIfVideo(index);
+    announce(); // 读屏播报当前页
+
+    if(smooth && !REDUCED){
+      cancelAnim();
+      const from = getTranslateX();
+      const to = -index*width;
+      anim = {x: from, to};
+      step();
+    }else{
+      instantTo(index);
+    }
+    lastChangeAt = performance.now();
+  }
+
+  function step(){
+    if(!anim) return;
+    anim.x += (anim.to - anim.x) * cfg.ease;
+    if(Math.abs(anim.to - anim.x) < .5){
+      anim.x = anim.to; cancelAnim();
+    }else{
+      raf = requestAnimationFrame(step);
+    }
+    translateX(anim.x);
+
+    // 无缝瞬移（到克隆端时）
+    if(cfg.loop){
+      if(index===slides.length-1 && Math.abs(anim.to - anim.x) < .6){
+        index = 1; instantTo(index);
+      }else if(index===0 && Math.abs(anim.to - anim.x) < .6){
+        index = slides.length-2; instantTo(index);
+      }
+    }
+  }
+
+  function cancelAnim(){ if(raf){ cancelAnimationFrame(raf); raf=null; } anim=null; }
+  function instantTo(i){ translateX(-i*width); setDots(trackToReal(i)); playIfVideo(i); }
+  function translateX(x){ track.style.transform = `translate3d(${x}px,0,0)`; }
+
+  function getTranslateX(){
+    const tf = getComputedStyle(track).transform;
+    if(!tf || tf === 'none') return 0;
+    try{ const m = new WebKitCSSMatrix(tf); return m.m41 || 0; }
+    catch{
+      const m = tf.match(/matrix(3d)?\((.+)\)/);
+      if(m){
+        const nums = m[2].split(',').map(parseFloat);
+        return m[1] ? nums[12] : nums[4];
+      }
+      return 0;
+    }
+  }
+
+  function setDots(realIdx){
+    const btns = dotsC.querySelectorAll('button');
+    btns.forEach((b,i)=> b.setAttribute('aria-selected', i===realIdx ? 'true':'false'));
+  }
+
+  // 仅当前页视频播放，其它暂停
+  function playIfVideo(i){
+    const allV = track.querySelectorAll('video');
+    allV.forEach(v=>{ try{ v.pause(); }catch{} });
+    const v = slides[i]?.querySelector?.('video');
+    if(v){ v.muted = true; v.playsInline = true; v.loop = true; v.play().catch(()=>{}); }
+  }
+
+  // 读屏播报当前页（A11y）
+  function announce(){
+    const real = trackToReal(index) + 1;
+    live.textContent = `第 ${real} 张，共 ${realCount} 张`;
+  }
+
+  function onResize(){
+    width = track.clientWidth;
+    instantTo(index);
+  }
+
+  // 工具
+  function realToTrack(real){ return cfg.loop ? real+1 : real; }
+  function trackToReal(trackIdx){
+    if(!cfg.loop) return trackIdx;
+    if(trackIdx===0) return realCount-1;
+    if(trackIdx===slides.length-1) return 0;
+    return trackIdx-1;
+  }
+  function readNum(v, d){ const n = Number(v); return Number.isFinite(n)? n : d; }
+  function readBool(v, d){ if(v===undefined) return d; return v === 'true' || v === true; }
+
+  // 初始化
+  instantTo(index);
+  if (cfg.autoplay) startAutoplay();
+
+})();
