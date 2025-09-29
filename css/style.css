@@ -10,31 +10,32 @@
   --fs-body:15.5px; --fs-nav:16px; --fs-h1:28px; --fs-h2:24px; --fs-card-title:18px;
 }
 
+/* 🌙 Dark mode 优化 */
 [data-theme="dark"] {
-  --bg:#0d0d0d;
-  --text:#f5f5f5;
-  --muted:#8c8c8c;
-  --line:rgba(255,255,255,.12);
-  --tone:#141414;
+  --bg:#0d0d0d;                 
+  --text:#f5f5f5;               
+  --muted:#9a9a9a;              
+  --line:rgba(255,255,255,.12); 
+  --tone:#141414;               
   --tone-rgb:20,20,20;
-  --brand:#4d8cff; /* 品牌蓝色 */
-  --shadow:0 2px 10px rgba(0,0,0,.6);
+  --brand:#4d8cff;              
+  --shadow:0 4px 14px rgba(0,0,0,.7);
 }
 
-/* 提升暗黑模式 hover 效果 */
+/* 链接 hover 光晕 */
 [data-theme="dark"] a:hover {
   color: var(--brand);
   text-shadow: 0 0 6px rgba(77,140,255,.6);
 }
 
-/* 暗黑模式下卡片背景 */
+/* 卡片样式 */
 [data-theme="dark"] .card {
   background: #141414;
   border-color: rgba(255,255,255,.12);
-  box-shadow: 0 4px 14px rgba(0,0,0,.6);
+  box-shadow: 0 4px 14px rgba(0,0,0,.7);
 }
 
-/* 暗黑模式下按钮 */
+/* 按钮优化 */
 [data-theme="dark"] .btn.alt {
   border-color: var(--brand);
   color: var(--brand);
@@ -45,9 +46,12 @@
   box-shadow: 0 0 10px rgba(77,140,255,.5);
 }
 
-/* ===================
-   以下保留你原始代码
-   =================== */
+/* Hero 区文字微调 */
+[data-theme="dark"] .hero-cta p {
+  color: var(--muted);
+  font-style: italic;
+}
+
 @media (min-width:768px){
   :root{ --fs-body:16px; --fs-nav:17px; --fs-h1:34px; --fs-h2:28px; --fs-card-title:19px; }
 }
@@ -106,15 +110,33 @@ h1,h2,h3,.title{font-family:var(--font-serif);}
 
 /* Hero */
 #hero{padding:16px 0 24px}
-.hero-frame{max-width:var(--max);margin:0 auto;position:relative;padding-top:56.25%;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;z-index:1;}
-.hero-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:var(--bg);}
+.hero-frame{
+  max-width:var(--max);
+  margin:0 auto;
+  position:relative;
+  padding-top:56.25%;
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  z-index:1;
+}
+.hero-media{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;background:var(--bg);
+}
 .hero-cta{text-align:center;padding:16px 20px}
 .hero-cta h1{font-size:var(--fs-h1)}
 .hero-cta p{color:var(--muted);font-size:14px;margin-top:6px;font-family:var(--font-serif);font-style:italic;}
 .nav{margin-top:10px;display:flex;justify-content:center;gap:12px;}
-.btn{border:1px solid var(--line); background:var(--bg); padding:10px 16px;border-radius:999px; font-weight:600; letter-spacing:.5px; transition:background .15s, color .15s; font-family:var(--font-serif); color:var(--text);}
+.btn{
+  border:1px solid var(--line); background:var(--bg); padding:10px 16px;
+  border-radius:999px; font-weight:600; letter-spacing:.5px; transition:background .15s, color .15s;
+  font-family:var(--font-serif);
+  color:var(--text);
+}
 .btn:hover{background:var(--tone);border-color:var(--brand);}
-.btn.alt{background:transparent; border:1px solid var(--brand); color:var(--brand);}
+.btn.alt{background:transparent;border:1px solid var(--brand);color:var(--brand);}
 .btn.alt:hover{background:var(--brand);color:#fff;}
 .btn.block{width:100%}
 
@@ -151,6 +173,9 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 /* Pause btn */
 .pause-btn{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.3);color:#fff;border:0;padding:6px 10px;border-radius:999px;cursor:pointer;font-size:14px;}
 .main-viewport.paused .pause-btn{background:rgba(0,0,0,.45);}
+
+/* Progress (隐藏) */
+.progress{display:none;}
 
 /* Card body */
 .card .body{text-align:center;padding:16px 14px}
