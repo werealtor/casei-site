@@ -1,70 +1,46 @@
 <!DOCTYPE html>
-<html lang="zh-CN" dir="ltr">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Case&i — 极简轮播（加强版）</title>
-  <meta name="description" content="自动播放、顺滑划动、防误触、无缝循环、视频优化、可配置数据属性、无依赖。" />
+  <title>Case&i — 极简轮播（自动播放 + 防误触）</title>
+  <meta name="description" content="Case&i 轮播组件：自动播放、顺滑划动、无缝循环、视频自动播放、进度条、圆点导航、防误触优化。" />
   <link rel="stylesheet" href="css/style.css" />
-  <meta name="theme-color" content="#ffffff" />
 </head>
 <body>
-  <main class="wrap">
-    <header class="site-head">
-      <h1 class="brand" aria-label="Case and i">Case&i</h1>
-      <p class="sub">Minimal · Premium · Personal</p>
-    </header>
+  <section class="wrap">
+    <h1 class="brand">Case&i</h1>
+    <p class="sub">Minimal · Premium · Personal</p>
 
-    <!-- data-* 支持在不改 JS 的情况下快速调参 -->
-    <section
-      class="carousel"
-      aria-roledescription="carousel"
-      aria-label="产品展示"
-      data-autoplay="true"
-      data-interval="3800"
-      data-loop="true"
-      data-dwell="1800"
-      data-resume-delay="2500"
-      data-deadzone="14"
-      data-horiz-ratio="1.2"
-      data-tap-max="24"
-      data-flick-vel="0.45"
-      data-hover-pause="true"
-    >
-      <div class="track" id="track" role="group" aria-live="polite">
-        <!-- 支持图片/视频混排 -->
+    <!-- 轮播开始 -->
+    <section class="carousel" aria-roledescription="carousel" aria-label="产品展示">
+      <div class="track" id="track">
         <article class="slide" aria-label="第 1 张">
-          <img src="images/hero-1.jpg" alt="极简手机壳·款一" loading="lazy" decoding="async">
+          <img src="assets/images/hero-1.jpg" alt="极简手机壳·款一" loading="lazy" decoding="async">
         </article>
         <article class="slide" aria-label="第 2 张">
-          <img src="images/hero-2.jpg" alt="极简手机壳·款二" loading="lazy" decoding="async">
+          <img src="assets/images/hero-2.jpg" alt="极简手机壳·款二" loading="lazy" decoding="async">
         </article>
-        <article class="slide" aria-label="第 3 张（视频）">
-          <video class="slide-video" playsinline muted loop preload="metadata" poster="images/video-cover.jpg">
-            <source src="videos/hero.mp4" type="video/mp4">
-          </video>
+        <article class="slide" aria-label="第 3 张">
+          <img src="assets/images/hero.jpg" alt="极简手机壳·款三" loading="lazy" decoding="async">
         </article>
       </div>
 
-      <!-- 箭头 -->
-      <button class="nav prev" aria-label="上一张" id="prev" type="button" tabindex="0">‹</button>
-      <button class="nav next" aria-label="下一张" id="next" type="button" tabindex="0">›</button>
+      <!-- 导航控件 -->
+      <button class="nav prev" aria-label="上一张" id="prev" type="button">‹</button>
+      <button class="nav next" aria-label="下一张" id="next" type="button">›</button>
 
       <!-- 进度条 -->
-      <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
 
       <!-- 圆点 -->
-      <div class="dots" id="dots" role="tablist" aria-label="分页导航"></div>
-
-      <!-- 辅助：读屏播报当前页 -->
-      <p class="sr-only" id="live" aria-live="polite"></p>
+      <div class="dots" id="dots" role="tablist" aria-label="轮播分页"></div>
     </section>
+    <!-- 轮播结束 -->
 
-    <footer class="site-foot">
-      <small>© AIXX Inc • Case&i</small>
-    </footer>
-  </main>
+    <footer class="site-foot"><small>© AIXX Inc • Case&i</small></footer>
+  </section>
 
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
