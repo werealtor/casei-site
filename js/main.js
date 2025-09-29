@@ -1,27 +1,27 @@
 async function init(){
-  try {
-    const res = await fetch("config.json?v=2", {cache:"no-store"});
-    if (!res.ok) throw new Error("config load failed");
+  try{
+    const res = await fetch("config.json?v=2",{cache:"no-store"});
+    if(!res.ok) throw new Error("config load failed");
     const data = await res.json();
     setupProducts(data.products);
-  } catch(e) { console.error(e); }
+  }catch(e){ console.error(e); }
 
+  // Hero video autoplay fix
   const v = document.querySelector(".hero-media");
-  if (v) {
+  if(v){
     v.muted = true;
     const tryPlay = () => v.play().catch(()=>{});
     tryPlay();
     document.addEventListener("visibilitychange", tryPlay, { once:true });
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches){
-      v.removeAttribute("autoplay");
-      v.pause();
+    if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches){
+      v.removeAttribute("autoplay"); v.pause();
     }
   }
 }
 
 function setupProducts(products){
   products.forEach(product=>{
-    const card=document.querySelector(`.card[data-product="${product.id}"]`);
+    const card = document.querySelector(`.card[data-product="${product.id}"]`);
     if(!card) return;
 
     const track=card.querySelector(".main-track");
@@ -31,22 +31,18 @@ function setupProducts(products){
 
     track.innerHTML="";
     product.images.forEach((src,i)=>{
-      const slide=document.createElement("div");
-      slide.className="slide";
-      const img=document.createElement("img");
-      img.src=src; img.alt=`${product.name} ${i+1}`; img.loading="lazy";
-      slide.appendChild(img);
-      track.appendChild(slide);
+      const slide=document.createElement("div"); slide.className="slide";
+      const img=document.createElement("img"); img.src=src; img.alt=`${product.name} ${i+1}`; img.loading="lazy";
+      slide.appendChild(img); track.appendChild(slide);
     });
 
     const leftBtn=document.createElement("button");
     const rightBtn=document.createElement("button");
-    leftBtn.className="nav-arrow left"; leftBtn.innerHTML="‹";
-    rightBtn.className="nav-arrow right"; rightBtn.innerHTML="›";
+    leftBtn.className="nav-arrow left"; leftBtn.innerHTML="‹"; leftBtn.setAttribute("aria-label","Previous slide");
+    rightBtn.className="nav-arrow right"; rightBtn.innerHTML="›"; rightBtn.setAttribute("aria-label","Next slide");
     viewport.appendChild(leftBtn); viewport.appendChild(rightBtn);
 
-    let index=0, interval;
-    const slides=track.children;
+    let index=0, interval; const slides=track.children;
     function update(n){
       if(!slides.length) return;
       index=Math.max(0,Math.min(n,slides.length-1));
@@ -64,15 +60,12 @@ function setupProducts(products){
 
     function startAuto(){ interval=setInterval(()=>update(index+1),3000); }
     function stopAuto(){ clearInterval(interval); }
-    startAuto();
-    viewport.addEventListener("mouseenter",stopAuto);
-    viewport.addEventListener("mouseleave",startAuto);
+    startAuto(); viewport.addEventListener("mouseenter",stopAuto); viewport.addEventListener("mouseleave",startAuto);
 
     let startX=0, dragging=false;
     viewport.addEventListener("touchstart",e=>{ startX=e.touches[0].clientX; dragging=true; stopAuto(); },{passive:true});
     viewport.addEventListener("touchend",e=>{
-      if(!dragging) return;
-      dragging=false;
+      if(!dragging) return; dragging=false;
       const d=e.changedTouches[0].clientX-startX;
       if(d>50) update(index-1); else if(d<-50) update(index+1);
       startAuto();
@@ -93,23 +86,12 @@ document.addEventListener("DOMContentLoaded",()=>{
   if(upload && previewImg && previewBox){
     upload.addEventListener("change",e=>{
       const file=e.target.files?.[0];
-      if(!file){
-        if(fileNameEl) fileNameEl.textContent="no file selected";
-        previewBox.style.display="none";
-        return;
-      }
-      if(!["image/png","image/jpeg"].includes(file.type)){
-        alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return;
-      }
-      if(file.size>10*1024*1024){
-        alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return;
-      }
+      if(!file){ if(fileNameEl) fileNameEl.textContent="no file selected"; previewBox.style.display="none"; return; }
+      if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return; }
+      if(file.size>10*1024*1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
       if(fileNameEl) fileNameEl.textContent=file.name;
       const reader=new FileReader();
-      reader.onload=ev=>{
-        previewImg.src=ev.target.result;
-        previewBox.style.display="flex";
-      };
+      reader.onload=ev=>{ previewImg.src=ev.target.result; previewBox.style.display="flex"; };
       reader.readAsDataURL(file);
     });
   }
@@ -129,11 +111,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   const menuBtn=document.querySelector(".menu-icon");
   const wrap=document.querySelector(".top-nav-wrap");
   const list=document.querySelector(".top-nav");
-  function closeMenu(){
-    wrap?.classList.remove("active");
-    document.body.classList.remove("menu-open");
-    menuBtn?.setAttribute("aria-expanded","false");
-  }
+  function closeMenu(){ wrap?.classList.remove("active"); document.body.classList.remove("menu-open"); menuBtn?.setAttribute("aria-expanded","false"); }
   if(menuBtn && wrap && list){
     menuBtn.addEventListener("click",()=>{
       const active=wrap.classList.toggle("active");
@@ -149,28 +127,12 @@ document.addEventListener("DOMContentLoaded",()=>{
     // smooth scroll
     document.querySelectorAll("a[href^='#']").forEach(a=>{
       a.addEventListener("click",ev=>{
-        const id=a.getAttribute("href");
-        if(!id||id==="#") return;
-        const target=document.querySelector(id);
-        if(!target) return;
+        const id=a.getAttribute("href"); if(!id||id==="#") return;
+        const target=document.querySelector(id); if(!target) return;
         ev.preventDefault();
         const y=target.getBoundingClientRect().top+window.scrollY-10;
         window.scrollTo({top:y,behavior:"smooth"});
       });
     });
-  }
-
-  // 如果检测到桌面模式在小屏设备上，强制移动视口
-  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  if (isMobileDevice && window.screen.width <= 768 && window.innerWidth > window.screen.width) {
-    const viewport = document.querySelector('meta[name="viewport"]');
-    if (viewport) {
-      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-      // Safari 重绘 hack：短暂切换 body 不透明度以强制应用新视口
-      document.body.style.opacity = '0.99';
-      setTimeout(() => {
-        document.body.style.opacity = '1';
-      }, 10);
-    }
   }
 });
