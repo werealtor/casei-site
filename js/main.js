@@ -257,4 +257,4 @@ function setupProducts(products){
 
     update(0);
   });
-} 
+}
