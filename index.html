@@ -14,15 +14,19 @@
 
     <!-- 轮播开始 -->
     <section class="carousel" aria-roledescription="carousel" aria-label="产品展示">
-      <div class="track" id="track">
+      <div class="track" id="track" role="group" aria-live="polite">
+        <!-- 图片 -->
         <article class="slide" aria-label="第 1 张">
           <img src="assets/images/hero-1.jpg" alt="极简手机壳·款一" loading="lazy" decoding="async">
         </article>
         <article class="slide" aria-label="第 2 张">
           <img src="assets/images/hero-2.jpg" alt="极简手机壳·款二" loading="lazy" decoding="async">
         </article>
-        <article class="slide" aria-label="第 3 张">
-          <img src="assets/images/hero.jpg" alt="极简手机壳·款三" loading="lazy" decoding="async">
+        <!-- 视频（带海报封面） -->
+        <article class="slide" aria-label="第 3 张（视频）">
+          <video class="slide-video" playsinline muted loop preload="metadata" poster="assets/images/og-cover.jpg">
+            <source src="assets/videos/hero.mp4" type="video/mp4">
+          </video>
         </article>
       </div>
 
@@ -31,16 +35,18 @@
       <button class="nav next" aria-label="下一张" id="next" type="button">›</button>
 
       <!-- 进度条 -->
-      <div class="progress"><div class="bar" id="bar"></div></div>
-
-      <!-- 圆点 -->
+      <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+      <!-- 圆点（由 JS 生成） -->
       <div class="dots" id="dots" role="tablist" aria-label="轮播分页"></div>
+
+      <!-- 读屏播报 -->
+      <p class="sr-only" id="live" aria-live="polite"></p>
     </section>
     <!-- 轮播结束 -->
 
     <footer class="site-foot"><small>© AIXX Inc • Case&i</small></footer>
   </section>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>
