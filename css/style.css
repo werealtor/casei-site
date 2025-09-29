@@ -93,11 +93,20 @@ h1,h2,h3,.title{
 .nav{margin-top:10px}
 .btn{
   border:1px solid var(--line); background:var(--bg); padding:10px 16px;
-  border-radius:999px; font-weight:600; letter-spacing:.5px; transition:filter .15s,border-color .15s
+  border-radius:999px; font-weight:600; letter-spacing:.5px; transition:filter .15s,border-color .15s;
+  font-family:var(--font-serif); /* 所有按钮用衬线字 */
 }
 .btn:hover{filter:brightness(.98)}
-.btn.alt{background:var(--brand);color:#fff;border-color:var(--brand);transition:filter .15s;}
-.btn.alt:hover{filter:brightness(.95);} /* 优化按钮 hover */
+.btn.alt{
+  background:transparent; /* 改为透明背景 */
+  border:1px solid var(--brand); /* 边框海军蓝 */
+  color:var(--brand); /* 文本海军蓝 */
+  transition:background .15s, color .15s;
+}
+.btn.alt:hover{
+  background:var(--brand); /* hover 填充背景 */
+  color:#fff; /* hover 文本白 */
+}
 .btn.block{width:100%}
 
 /* Sections */
@@ -172,26 +181,26 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
   color:var(--text);
 }
 
-/* Form inputs (新添加优化) */
+/* Form inputs */
 .input, .textarea {
   width: 100%;
-  padding: 12px 16px; /* 更大 padding 便于触摸 */
+  padding: 12px 16px;
   border: 1px solid var(--line);
-  border-radius: 8px; /* 圆角匹配极简 */
+  border-radius: 8px;
   background: var(--bg);
   font-size: var(--fs-body);
   color: var(--text);
   transition: border-color .2s, box-shadow .2s;
-  margin-bottom: 12px; /* 间距优化 */
+  margin-bottom: 12px;
 }
 .input:focus, .textarea:focus {
-  border-color: var(--brand); /* 焦点海军蓝 */
-  box-shadow: 0 0 0 2px rgba(0,31,63,.1); /* 浅蓝光环 */
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px rgba(0,31,63,.1);
   outline: none;
 }
 .textarea {
-  min-height: 120px; /* 优化 Message 高度，支持多行 */
-  resize: vertical; /* 允许垂直调整 */
+  min-height: 120px;
+  resize: vertical;
 }
 
 /* File input */
@@ -206,4 +215,4 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 
 /* Footer */
 footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a8a8a;font-size:13px}
-.helper { color: var(--muted); font-size: 14px; text-align: center; margin-top: 8px; } /* 优化 helper 文本 */
+.helper { color: var(--muted); font-size: 14px; text-align: center; margin-top: 8px; }
