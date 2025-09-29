@@ -10,12 +10,6 @@
   --fs-body:15.5px; --fs-nav:16px; --fs-h1:28px; --fs-h2:24px; --fs-card-title:18px;
 }
 
-[data-theme="dark"]{
-  --bg:#0b0b0b; --text:#ffffff; --muted:#a8a8a8; --line:rgba(255,255,255,.08);
-  --tone:#1a1a1a; --tone-rgb:26,26,26; --brand:#4d8cff; /* 稍亮品牌色以适应暗模式 */
-  --shadow:0 1px 6px rgba(255,255,255,.04);
-}
-
 @media (min-width:768px){
   :root{ --fs-body:16px; --fs-nav:17px; --fs-h1:34px; --fs-h2:28px; --fs-card-title:19px; }
 }
@@ -95,7 +89,7 @@ h1,h2,h3,.title{
 }
 .hero-cta{text-align:center;padding:16px 20px}
 .hero-cta h1{font-size:var(--fs-h1)}
-.hero-cta p{color:var(--muted);font-size:14px;margin-top:6px}
+.hero-cta p{color:var(--muted);font-size:14px;margin-top:6px;font-family:var(--font-serif);font-style:italic;} /* 优化为衬线 + 斜体 */
 .nav{margin-top:10px;display:flex;justify-content:center;gap:12px;}
 .btn{
   border:1px solid var(--line); background:var(--bg); padding:10px 16px;
@@ -220,13 +214,3 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 /* Footer */
 footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a8a8a;font-size:13px}
 .helper { color: var(--muted); font-size: 14px; text-align: center; margin-top: 8px; }
-
-/* Theme toggle button */
-#theme-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 20px;
-  color: var(--brand);
-  margin-left: 10px;
-} 
