@@ -138,3 +138,38 @@
   <script src="js/main.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- 调试脚本：在页面左下角显示设备与视频尺寸 -->
+  <script>
+    window.addEventListener('load', () => {
+      const v = document.querySelector('.hero-media');
+      const box = document.createElement('div');
+      box.style.cssText =
+        'position:fixed;left:8px;bottom:8px;padding:6px 8px;' +
+        'background:rgba(0,0,0,.6);color:#fff;font-size:12px;' +
+        'border-radius:6px;z-index:9999;font-family:monospace';
+      const info = () => {
+        const r = v?.getBoundingClientRect?.() || {};
+        box.textContent =
+          `vw:${window.innerWidth} vh:${window.innerHeight} DPR:${window.devicePixelRatio} | ` +
+          `video:${Math.round(r.width)}x${Math.round(r.height)}`;
+      };
+      info();
+      setInterval(info, 1000);
+      document.body.appendChild(box);
+    });
+  </script>
+</body>
+</html>
+
