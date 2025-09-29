@@ -90,23 +90,20 @@ h1,h2,h3,.title{
 .hero-cta{text-align:center;padding:16px 20px}
 .hero-cta h1{font-size:var(--fs-h1)}
 .hero-cta p{color:var(--muted);font-size:14px;margin-top:6px}
-.nav{margin-top:10px}
+.nav{margin-top:10px;display:flex;justify-content:center;gap:12px;} /* 优化按钮间距 */
 .btn{
   border:1px solid var(--line); background:var(--bg); padding:10px 16px;
-  border-radius:999px; font-weight:600; letter-spacing:.5px; transition:filter .15s,border-color .15s;
-  font-family:var(--font-serif); /* 所有按钮用衬线字 */
+  border-radius:999px; font-weight:600; letter-spacing:.5px; transition:background .15s, color .15s;
+  font-family:var(--font-serif); /* 统一衬线字体 */
+  color:var(--text);
 }
-.btn:hover{filter:brightness(.98)}
+.btn:hover{background:var(--tone);border-color:var(--brand);} /* hover 浅背景 + 品牌边框 */
 .btn.alt{
   background:transparent; /* 改为透明背景 */
-  border:1px solid var(--brand); /* 边框海军蓝 */
-  color:var(--brand); /* 文本海军蓝 */
-  transition:background .15s, color .15s;
+  border:1px solid var(--brand); /* 边框风格 */
+  color:var(--brand);
 }
-.btn.alt:hover{
-  background:var(--brand); /* hover 填充背景 */
-  color:#fff; /* hover 文本白 */
-}
+.btn.alt:hover{background:var(--brand);color:#fff;} /* hover 填充品牌色 */
 .btn.block{width:100%}
 
 /* Sections */
