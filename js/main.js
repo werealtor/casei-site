@@ -1,63 +1,247 @@
-(function(){
-  const track=document.getElementById('track');
-  const prev=document.getElementById('prev');
-  const next=document.getElementById('next');
-  const dotsC=document.getElementById('dots');
-  const bar=document.getElementById('bar');
-  const live=document.getElementById('live');
+/* main.js - 产品轮播 + 价格联动 + 移动端抽屉菜单 + Hero 视频适配 */
 
-  const AUTOPLAY_MS=3800, SWIPE_THRESH=0.18, SWIPE_VEL=0.25, EASE=0.12, LOOP=true;
-  const MIN_DEADZONE=14, HORIZ_RATIO=1.2, TAP_MAX=24, FLICK_VEL=0.45, MIN_DWELL=1800, RESUME_DELAY=2500;
-  const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.addEventListener("DOMContentLoaded", () => {
+  initMenu();
+  initVideo();
+  initUploadPreview();
+  initProducts();
+});
 
-  let slides=Array.from(track.children), index=0, width=track.clientWidth;
+/* ========== 顶部菜单（移动端抽屉） ========== */
+function initMenu(){
+  const menuBtn = document.querySelector(".menu-icon");
+  const wrap = document.querySelector(".top-nav-wrap");
+  const list = document.querySelector(".top-nav");
+  if(!menuBtn || !wrap || !list) return;
 
-  // fallback: 如果没图片，移除 slide
-  slides=slides.filter(s=>{
-    const img=s.querySelector('img'); return img && img.getAttribute('src');
+  const closeMenu = () => {
+    wrap.classList.remove("active");
+    document.body.classList.remove("menu-open");
+    menuBtn.setAttribute("aria-expanded","false");
+  };
+
+  menuBtn.addEventListener("click", () => {
+    const active = wrap.classList.toggle("active");
+    document.body.classList.toggle("menu-open", active);
+    menuBtn.setAttribute("aria-expanded", active ? "true" : "false");
   });
-  if(slides.length===0){track.innerHTML='<article class="slide"><img src="assets/images/og-cover.jpg"></article>';slides=Array.from(track.children);}
 
-  if(LOOP&&slides.length>1){
-    track.insertBefore(slides[slides.length-1].cloneNode(true),slides[0]);
-    track.appendChild(slides[0].cloneNode(true));
-    slides=Array.from(track.children); index=1; instant(index);
+  wrap.addEventListener("click", e => { if(e.target === wrap) closeMenu(); });
+  list.querySelectorAll("a[href^='#']").forEach(a => a.addEventListener("click", closeMenu));
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && wrap.classList.contains("active")) closeMenu(); });
+}
+
+/* ========== Hero 视频 ========== */
+function initVideo(){
+  const v = document.querySelector(".hero-media");
+  if(!v) return;
+  v.muted = true; v.playsInline = true; v.setAttribute("webkit-playsinline","true");
+  const tryPlay = () => v.play().catch(()=>{});
+  tryPlay();
+  // 首次交互后再尝试播放，兼容部分移动浏览器策略
+  const oncePlay = () => { tryPlay(); window.removeEventListener("touchstart", oncePlay); window.removeEventListener("click", oncePlay); };
+  window.addEventListener("touchstart", oncePlay, { once:true, passive:true });
+  window.addEventListener("click", oncePlay, { once:true });
+  document.addEventListener("visibilitychange", () => { if(!document.hidden) tryPlay(); });
+}
+
+/* ========== 上传预览 ========== */
+function initUploadPreview(){
+  const upload = document.getElementById("image-upload");
+  const previewImg = document.getElementById("preview-image");
+  const previewBox = document.getElementById("preview-box");
+  const fileNameEl = document.getElementById("file-name");
+  if(!upload || !previewImg || !previewBox) return;
+
+  upload.addEventListener("change", e => {
+    const file = e.target.files?.[0];
+    if(!file){ if(fileNameEl) fileNameEl.textContent = "no file selected"; previewBox.style.display="none"; return; }
+    if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return; }
+    if(file.size > 10 * 1024 * 1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
+    if(fileNameEl) fileNameEl.textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = ev => { previewImg.src = ev.target.result; previewBox.style.display="flex"; };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ========== 产品轮播 + 价格联动 ========== */
+async function initProducts(){
+  try{
+    const res = await fetch("config.json?v=" + Date.now(), { cache: "no-store" });
+    if(!res.ok) throw new Error("config load failed");
+    const data = await res.json();
+    if(Array.isArray(data?.products)) setupProducts(data.products);
+  }catch(e){ 
+    console.error(e);
+    document.querySelectorAll('.card').forEach(card => {
+      card.querySelector('.main-viewport').innerHTML += '<p style="text-align:center;color:red;">加载失败，请刷新重试</p>';
+    });
   }
-  const realCount=LOOP?slides.length-2:slides.length;
+}
 
-  for(let i=0;i<realCount;i++){let b=document.createElement('button');b.type="button";b.setAttribute('aria-label',`第${i+1}张`);if(i===0)b.setAttribute('aria-selected','true');b.onclick=()=>{stop(); if(canAdvance()) move(real2track(i)); resume();};dotsC.appendChild(b);}
-  function real2track(r){return LOOP?r+1:r}
-  function track2real(t){if(!LOOP)return t; if(t===0)return realCount-1;if(t===slides.length-1)return 0;return t-1;}
+function setupProducts(products){
+  products.forEach(product => {
+    const card = document.querySelector(`.card[data-product="${product.id}"]`);
+    if(!card) return;
 
-  let timer=null,progressRAF=null,lastChange=performance.now();
-  function start(){if(slides.length<2||REDUCED)return;stop();progressStart=performance.now();progress();timer=setTimeout(()=>{move(index+1);start();},AUTOPLAY_MS);}
-  function stop(){if(timer){clearTimeout(timer);timer=null;}if(progressRAF){cancelAnimationFrame(progressRAF);progressRAF=null;}bar.style.width="0%";}
-  function progress(){progressRAF=requestAnimationFrame(t=>{const pct=Math.min(1,(t-progressStart)/AUTOPLAY_MS);bar.style.width=(pct*100)+"%";if(pct<1)progress();});}
-  let resumeT=null;function resume(){if(resumeT)clearTimeout(resumeT);resumeT=setTimeout(()=>start(),RESUME_DELAY);}
-  document.addEventListener('visibilitychange',()=>{document.hidden?stop():start();});
+    // 数据归一：images + price 数组
+    const images = Array.isArray(product.images) ? product.images : [];
+    const prices = Array.isArray(product.price) ? product.price : [];
+    const slidesData = images.map((img, i) => ({
+      image: img,
+      price: typeof prices[i] === "number" ? prices[i] : (typeof product.price === "number" ? product.price : null)
+    }));
 
-  prev.onclick=()=>{stop();if(canAdvance())move(index-1);resume();}
-  next.onclick=()=>{stop();if(canAdvance())move(index+1);resume();}
+    const track = card.querySelector(".main-track");
+    const priceEl = card.querySelector(".price");
+    const viewport = card.querySelector(".main-viewport");
 
-  let sx=0,sy=0,dx=0,dy=0,startT=0,drag=false,baseX=0,intent=false;
-  track.addEventListener('touchstart',s,{passive:true});track.addEventListener('mousedown',s);
-  window.addEventListener('touchmove',m,{passive:false});window.addEventListener('mousemove',m);
-  window.addEventListener('touchend',e);window.addEventListener('mouseup',e);
-  window.addEventListener('resize',()=>{width=track.clientWidth;instant(index);});
-  function s(ev){const p='touches'in ev?ev.touches[0]:ev;sx=p.clientX;sy=p.clientY;dx=dy=0;drag=true;startT=performance.now();baseX=-index*width;intent=false;stop();}
-  function m(ev){if(!drag)return;const p='touches'in ev?ev.touches[0]:ev;dx=p.clientX-sx;dy=p.clientY-sy;if(!intent){if(Math.abs(dx)<MIN_DEADZONE)return;if(Math.abs(dx)<Math.abs(dy)*HORIZ_RATIO)return;intent=true;}ev.preventDefault();translate(baseX+dx);}
-  function e(){if(!drag)return;drag=false;const dt=Math.max(1,performance.now()-startT);const v=dx/dt;const travel=Math.abs(dx)/width;let target=index;if(Math.abs(dx)<TAP_MAX){target=index;}else if(Math.abs(v)>FLICK_VEL||travel>SWIPE_THRESH||Math.abs(v)>SWIPE_VEL){target=dx<0?index+1:index-1;}move(target);resume();}
+    viewport.setAttribute('role', 'region');
+    viewport.setAttribute('aria-label', 'Product carousel');
 
-  let anim=null,raf=null;
-  function move(t,smooth=true){if(LOOP){if(t<=0){if(t===-1)t=0;}if(t>=slides.length-1){if(t===slides.length)t=slides.length-1;}}else{t=Math.max(0,Math.min(slides.length-1,t));}if(t!==index&&!canAdvance())return;index=t;setDots(track2real(index));announce();if(smooth&&!REDUCED){cancel();const from=getX(),to=-index*width;anim={x:from,to};step();}else{instant(index);}lastChange=performance.now();}
-  function step(){if(!anim)return;anim.x+=(anim.to-anim.x)*EASE;if(Math.abs(anim.to-anim.x)<.5){anim.x=anim.to;cancel();}else{raf=requestAnimationFrame(step);}translate(anim.x);if(LOOP){if(index===slides.length-1&&Math.abs(anim.to-anim.x)<.6){index=1;instant(index);}else if(index===0&&Math.abs(anim.to-anim.x)<.6){index=slides.length-2;instant(index);}}}
-  function cancel(){if(raf){cancelAnimationFrame(raf);raf=null;}anim=null;}
-  function instant(i){translate(-i*width);setDots(track2real(i));}
-  function translate(x){track.style.transform=`translate3d(${x}px,0,0)`;}
-  function getX(){const tf=getComputedStyle(track).transform;if(!tf||tf==="none")return 0;const m=new WebKitCSSMatrix(tf);return m.m41||0;}
-  function setDots(r){dotsC.querySelectorAll('button').forEach((b,i)=>b.setAttribute('aria-selected',i===r?'true':'false'));}
-  function canAdvance(){return performance.now()-lastChange>MIN_DWELL;}
-  function announce(){if(live) live.textContent=`第 ${track2real(index)+1} 张，共 ${realCount} 张`;}
+    // 注入剩余 slides（第一个已静态）
+    for(let i = 1; i < slidesData.length; i++){
+      const slide = document.createElement("div");
+      slide.className = "slide";
+      const img = document.createElement("img");
+      img.src = slidesData[i].image;
+      img.alt = `${product.name || product.id} ${i+1}`;
+      img.loading = "lazy";
+      slide.appendChild(img);
+      track.appendChild(slide);
+    }
 
-  instant(index);start();
-})();
+    // ARIA live 区域
+    const liveRegion = document.createElement('div');
+    liveRegion.setAttribute('aria-live', 'polite');
+    liveRegion.style.position = 'absolute'; liveRegion.style.width = '1px'; liveRegion.style.height = '1px'; liveRegion.style.overflow = 'hidden';
+    viewport.appendChild(liveRegion);
+
+    // 箭头
+    const leftBtn  = document.createElement("button");
+    const rightBtn = document.createElement("button");
+    leftBtn.className = "nav-arrow left";
+    rightBtn.className = "nav-arrow right";
+    leftBtn.setAttribute("aria-label","Previous slide");
+    rightBtn.setAttribute("aria-label","Next slide");
+    leftBtn.textContent  = "‹";
+    rightBtn.textContent = "›";
+    viewport.appendChild(leftBtn);
+    viewport.appendChild(rightBtn);
+
+    // Dots
+    const dotsContainer = document.createElement("div");
+    dotsContainer.className = "dots";
+    slidesData.forEach((_, i) => {
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      dot.setAttribute("aria-label", `Slide ${i+1}`);
+      dot.addEventListener("click", () => update(i));
+      dotsContainer.appendChild(dot);
+    });
+    viewport.appendChild(dotsContainer);
+
+    // 暂停按钮
+    const pauseBtn = document.createElement("button");
+    pauseBtn.className = "pause-btn";
+    pauseBtn.textContent = "❚❚";
+    pauseBtn.setAttribute("aria-label","Pause autoplay");
+    viewport.appendChild(pauseBtn);
+
+    let index = 0, timer = null, paused = false;
+    const slides = track.children;
+    const totalSlides = slides.length;
+    const dots = dotsContainer.children;
+
+    if(totalSlides <= 1) return;
+
+    function update(nextIndex, announce = true){
+      index = (nextIndex + totalSlides) % totalSlides;
+      requestAnimationFrame(() => {
+        track.style.transform = `translateX(-${index * 100}%)`;
+      });
+      Array.from(dots).forEach((d, i) => d.classList.toggle("active", i === index));
+      if(priceEl){
+        const p = slidesData[index]?.price;
+        priceEl.textContent = (typeof p === "number") ? `$${p}` : priceEl.textContent;
+      }
+      // 预加载下一张
+      const nextImg = new Image();
+      nextImg.src = slidesData[(index + 1) % totalSlides].image;
+      if(announce) liveRegion.textContent = `Slide ${index + 1} of ${totalSlides}`;
+      pauseBtn.textContent = paused ? "▶" : "❚❚";
+      pauseBtn.setAttribute("aria-label", paused ? "Play autoplay" : "Pause autoplay");
+    }
+
+    function scheduleNext(delay = 3000){
+      if(timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        update(index + 1);
+        scheduleNext();
+      }, delay);
+    }
+
+    function startAuto(){
+      paused = false;
+      scheduleNext();
+      viewport.classList.remove("paused");
+    }
+
+    function stopAuto(){
+      paused = true;
+      if(timer) clearTimeout(timer);
+      viewport.classList.add("paused");
+    }
+
+    leftBtn.addEventListener("click", () => { update(index - 1); stopAuto(); startAuto(); });
+    rightBtn.addEventListener("click", () => { update(index + 1); stopAuto(); startAuto(); });
+
+    pauseBtn.addEventListener("click", () => {
+      if(paused) startAuto();
+      else stopAuto();
+      update(index, false);
+    });
+
+    viewport.addEventListener("mouseenter", stopAuto);
+    viewport.addEventListener("mouseleave", startAuto);
+
+    // 触摸拖拽
+    let startX = 0, currentX = 0, dragging = false;
+    viewport.addEventListener("touchstart", e => {
+      dragging = true; startX = e.touches[0].clientX; stopAuto(); track.style.transition = "none";
+    }, { passive: true });
+    viewport.addEventListener("touchmove", e => {
+      if(!dragging) return;
+      currentX = e.touches[0].clientX;
+      const offset = (currentX - startX) / viewport.offsetWidth * 100;
+      track.style.transform = `translateX(calc(-${index * 100}% + ${offset}%))`;
+    }, { passive: true });
+    viewport.addEventListener("touchend", () => {
+      if(!dragging) return;
+      dragging = false; track.style.transition = "transform .3s ease";
+      const d = currentX - startX;
+      if(d > 50) update(index - 1);
+      else if(d < -50) update(index + 1);
+      else update(index);
+      startAuto();
+    });
+
+    // 键盘
+    viewport.setAttribute("tabindex", "0");
+    viewport.addEventListener("keydown", e => {
+      if(e.key === "ArrowLeft"){ update(index - 1); }
+      else if(e.key === "ArrowRight"){ update(index + 1); }
+      stopAuto(); startAuto();
+    });
+
+    // Observer
+    const observer = new IntersectionObserver(entries => {
+      if(entries[0].isIntersecting) startAuto();
+      else stopAuto();
+    }, { threshold: 0.5 });
+    observer.observe(card);
+
+    update(0);
+  });
+}
