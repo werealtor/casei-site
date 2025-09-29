@@ -26,7 +26,6 @@
           <a href="#contact">Contact</a>
         </nav>
       </div>
-      <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button> <!-- 主题切换按钮 -->
     </div>
   </header>
 
@@ -118,4 +117,49 @@
   <section id="custom">
     <div class="container">
       <h2>Customize Your Case</h2>
-      <form id="custom
+      <form id="custom-form" class="section-narrow">
+        <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
+        <div class="file-field" style="margin-top:8px">
+          <label class="file-btn" for="image-upload">Choose File</label>
+          <span id="file-name" class="file-name">no file selected</span>
+          <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" />
+        </div>
+        <div class="preview-box" id="preview-box"><img id="preview-image" alt="Preview" /></div>
+        <button type="submit" class="btn alt block" style="margin-top:10px">Upload</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <h2>About Us</h2>
+      <p class="section-desc">
+        Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <h2>Contact Us</h2>
+      <form id="contact-form" class="section-narrow">
+        <input type="text" class="input" placeholder="Name" required />
+        <input type="email" class="input" placeholder="Email" required />
+        <textarea class="input textarea" placeholder="Message" required></textarea>
+        <button type="submit" class="btn alt block" style="margin-top:8px">Send</button>
+        <p class="helper">We usually reply within 24 hours.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="site-footer">
+    <p>United States</p>
+    <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
