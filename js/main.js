@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initVideo();
   initUploadPreview();
   initProducts();
-  initMenuAutoRetract();
+  initThemeToggle();
 });
 
 /* ========== 顶部菜单（移动端抽屉） ========== */
