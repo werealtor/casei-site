@@ -3,34 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Minimal, premium phone cases by Case&i." />
   <title>Case&i — Minimal · Premium · Personal</title>
   <link rel="stylesheet" href="css/style.css" />
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <!-- Header -->
   <header id="site-header">
-    <div class="top-nav-container">
+    <div class="top-nav-container container">
       <a href="#" class="logo">Case&i</a>
-      <button class="menu-icon">&#9776;</button>
-      <nav class="top-nav">
-        <a href="#products">Products</a>
-        <a href="#custom">Customize</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </nav>
+      <button class="menu-icon" aria-label="Toggle menu" aria-expanded="false">☰</button>
+      <div class="top-nav-wrap">
+        <nav class="top-nav">
+          <a href="#products">Products</a>
+          <a href="#custom">Customize</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
     </div>
-  </header>
 
-  <!-- Hero -->
-  <section id="hero">
-    <div class="hero-box">
-      <video class="hero-media" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
+    <!-- Hero Video -->
+    <div class="container">
+      <div class="hero-video">
+        <video id="heroVideo" autoplay loop muted playsinline src="assets/videos/hero.mp4"></video>
+      </div>
     </div>
-    <div class="container hero-cta">
+
+    <!-- Hero CTA -->
+    <div class="hero-cta">
       <h1>Minimal · Premium · Personal</h1>
       <p>Case&i by AIXX Inc</p>
       <nav class="nav">
@@ -38,14 +39,15 @@
         <a href="#custom" class="btn alt">Customize Now</a>
       </nav>
     </div>
-  </section>
+  </header>
 
   <!-- Products -->
   <section id="products">
     <div class="container">
       <h2 class="title">Our Products</h2>
       <div class="grid products-grid">
-        <!-- 产品卡片 -->
+
+        <!-- Classic -->
         <article class="card product u3" data-product="classic">
           <div class="main-viewport">
             <div class="main-track"></div>
@@ -54,10 +56,15 @@
           <div class="body">
             <h3>Classic</h3>
             <p class="sub">Slim & scratch-resistant</p>
-            <div class="pills"><span class="pill">Lightweight</span><span class="pill">Durable</span></div>
+            <div class="pills">
+              <span class="pill">Lightweight</span>
+              <span class="pill">Durable</span>
+            </div>
             <div class="price" data-id="classic">$--</div>
           </div>
         </article>
+
+        <!-- Fashion -->
         <article class="card product u3" data-product="fashion">
           <div class="main-viewport">
             <div class="main-track"></div>
@@ -66,10 +73,15 @@
           <div class="body">
             <h3>Fashion</h3>
             <p class="sub">Trendy design & anti-fingerprint</p>
-            <div class="pills"><span class="pill">Trendy</span><span class="pill">Easy to clean</span></div>
+            <div class="pills">
+              <span class="pill">Trendy</span>
+              <span class="pill">Easy to clean</span>
+            </div>
             <div class="price" data-id="fashion">$--</div>
           </div>
         </article>
+
+        <!-- Business -->
         <article class="card product u3" data-product="business">
           <div class="main-viewport">
             <div class="main-track"></div>
@@ -78,10 +90,14 @@
           <div class="body">
             <h3>Business</h3>
             <p class="sub">Premium touch & shockproof</p>
-            <div class="pills"><span class="pill">Professional</span><span class="pill">Shock resistant</span></div>
+            <div class="pills">
+              <span class="pill">Professional</span>
+              <span class="pill">Shock resistant</span>
+            </div>
             <div class="price" data-id="business">$--</div>
           </div>
         </article>
+
       </div>
     </div>
   </section>
@@ -90,11 +106,24 @@
   <section id="custom">
     <div class="container">
       <h2>Customize Your Case</h2>
-      <form id="custom-form">
+      <form id="custom-form" class="section-card">
         <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
-        <input type="file" id="image-upload" accept="image/png, image/jpeg" />
-        <div class="preview"><img id="preview-image" src="" alt="Preview" /></div>
-        <button type="submit" class="btn">Upload</button>
+
+        <div class="file-row" style="margin-top:8px;">
+          <label class="file-control" for="image-upload" aria-label="Choose file">
+            <span>📁 Choose File</span>
+            <span id="file-name" class="file-name">no file selected</span>
+          </label>
+          <input type="file" id="image-upload" accept="image/png, image/jpeg" style="display:none;" />
+        </div>
+
+        <div class="preview" style="margin-top:12px;">
+          <img id="preview-image" src="" alt="Preview" />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn alt block round">Upload</button>
+        </div>
       </form>
     </div>
   </section>
@@ -103,7 +132,9 @@
   <section id="about">
     <div class="container">
       <h2>About Us</h2>
-      <p>Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.</p>
+      <div class="section-card">
+        <p>Case&i is created by AIXX Inc. We believe in minimal design and strive for better quality and durability. Visit xxkit.com to learn more.</p>
+      </div>
     </div>
   </section>
 
@@ -111,13 +142,17 @@
   <section id="contact">
     <div class="container">
       <h2>Contact Us</h2>
-      <form id="contact-form">
-        <input type="text" placeholder="Name" required />
-        <input type="email" placeholder="Email" required />
-        <textarea placeholder="Message" required></textarea>
-        <button type="submit" class="btn">Send</button>
+      <form id="contact-form" class="section-card">
+        <div class="input-row">
+          <input type="text" id="name" placeholder="Name" required />
+          <input type="email" id="email" placeholder="Email" required />
+          <textarea id="message" placeholder="Message" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn alt block round">Send</button>
+        </div>
+        <p class="form-help">We usually reply within 24 hours.</p>
       </form>
-      <p class="note">We usually reply within 24 hours.</p>
     </div>
   </section>
 
@@ -126,8 +161,8 @@
     <p>&copy; 2025 AIXX Inc · All rights reserved · <a href="https://xxkit.com">xxkit.com</a></p>
   </footer>
 
-  <!-- Dark Mode Toggle -->
-  <button id="dark-mode-toggle"></button>
+  <!-- Dark Mode -->
+  <button id="dark-mode-toggle" aria-label="Toggle dark mode"></button>
 
   <script src="js/main.js"></script>
 </body>
