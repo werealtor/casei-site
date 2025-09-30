@@ -293,4 +293,4 @@ function initThemeToggle() {
     button.setAttribute("aria-label", currentTheme === "dark" ? "Switch to light mode" : "Switch to dark mode");
     setTimeout(() => html.classList.remove("theme-transition"), 300);
   });
-} 
+}
