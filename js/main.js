@@ -1,13 +1,19 @@
-document.addEventListener("DOMContentLoaded", () => {
+const BACKEND = window.__BACKEND_BASE__ || 'https://casei-backend.werealtor1.workers.dev';
+const CART_KEY = 'casei_cart';
+
+document.addEventListener('DOMContentLoaded', () => {
   initMenu();
   initVideo();
   initUploadPreview();
   initProducts();
   initThemeToggle();
-  updateCartDisplay();  // 初始化购物车
+  initContact();
+  initUpload();
+  initCheckout();
+  updateCartDisplay();
 });
 
-/* ========== 顶部菜单（移动端抽屉） ========== */
+/* ===== 菜单 ===== */
 function initMenu(){
   const menuBtn = document.querySelector(".menu-icon");
   const wrap = document.querySelector(".top-nav-wrap");
@@ -31,7 +37,7 @@ function initMenu(){
   document.addEventListener("keydown", e => { if(e.key === "Escape" && wrap.classList.contains("active")) closeMenu(); });
 }
 
-/* ========== Hero 视频 ========== */
+/* ===== Hero 视频 ===== */
 function initVideo(){
   const v = document.querySelector(".hero-media");
   if(!v) return;
@@ -44,7 +50,7 @@ function initVideo(){
   document.addEventListener("visibilitychange", () => { if(!document.hidden) tryPlay(); });
 }
 
-/* ========== 上传预览 ========== */
+/* ===== 上传预览 ===== */
 function initUploadPreview(){
   const upload = document.getElementById("image-upload");
   const previewImg = document.getElementById("preview-image");
@@ -54,9 +60,9 @@ function initUploadPreview(){
 
   upload.addEventListener("change", e => {
     const file = e.target.files?.[0];
-    if(!file){ if(fileNameEl) fileNameEl.textContent = "no file selected"; previewBox.style.display="none"; return; }
+    if(!file){ if(fileNameEl) fileNameEl.textContent="no file selected"; previewBox.style.display="none"; return; }
     if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return; }
-    if(file.size > 10 * 1024 * 1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
+    if(file.size > 10*1024*1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
     if(fileNameEl) fileNameEl.textContent = file.name;
     const reader = new FileReader();
     reader.onload = ev => { previewImg.src = ev.target.result; previewBox.style.display="flex"; };
@@ -64,315 +70,188 @@ function initUploadPreview(){
   });
 }
 
-/* ========== 产品轮播 + 价格联动 ========== */
+/* ===== 加载产品 & 轮播 & 加购 ===== */
 async function initProducts(){
   try{
-    const res = await fetch("config.json?v=" + Date.now(), { cache: "no-store" });
+    const res = await fetch("config.json?v="+Date.now(), { cache:"no-store" });
     if(!res.ok) throw new Error("config load failed");
     const data = await res.json();
     if(Array.isArray(data?.products)) setupProducts(data.products);
-  }catch(e){ 
+  }catch(e){
     console.error(e);
     document.querySelectorAll('.card').forEach(card => {
-      card.querySelector('.main-viewport').innerHTML += '<p style="text-align:center;color:red;">加载失败，请刷新重试</p>';
+      const el = document.createElement('p'); el.style.color='red'; el.style.textAlign='center'; el.textContent='Load failed, refresh please';
+      card.querySelector('.main-viewport').appendChild(el);
     });
   }
 }
 
 function setupProducts(products){
-  products.forEach(product => {
+  products.forEach(product=>{
     const card = document.querySelector(`.card[data-product="${product.id}"]`);
     if(!card) return;
 
-    // 数据归一：images + price 数组
     const images = Array.isArray(product.images) ? product.images : [];
     const prices = Array.isArray(product.price) ? product.price : [];
-    const slidesData = images.map((img, i) => ({
+    const slidesData = images.map((img,i)=>({
       image: img,
-      price: typeof prices[i] === "number" ? prices[i] : (typeof product.price === "number" ? product.price : null)
+      price: typeof prices[i]==='number' ? prices[i] : (typeof product.price==='number'?product.price:null)
     }));
 
     const track = card.querySelector(".main-track");
     const priceEl = card.querySelector(".price");
     const viewport = card.querySelector(".main-viewport");
+    viewport.setAttribute('role','region'); viewport.setAttribute('aria-label','Product carousel');
 
-    viewport.setAttribute('role', 'region');
-    viewport.setAttribute('aria-label', 'Product carousel');
-
-    // 注入剩余 slides（第一个已静态）
-    for(let i = 1; i < slidesData.length; i++){
-      const slide = document.createElement("div");
-      slide.className = "slide";
-      const img = document.createElement("img");
-      img.src = slidesData[i].image;
-      img.alt = `${product.name || product.id} ${i+1}`;
-      img.loading = "lazy";
-      slide.appendChild(img);
-      track.appendChild(slide);
+    for(let i=1;i<slidesData.length;i++){
+      const s=document.createElement('div'); s.className='slide';
+      const im=document.createElement('img'); im.src=slidesData[i].image; im.alt=`${product.name||product.id} ${i+1}`; im.loading='lazy';
+      s.appendChild(im); track.appendChild(s);
     }
 
-    // ARIA live 区域
-    const liveRegion = document.createElement('div');
-    liveRegion.setAttribute('aria-live', 'polite');
-    liveRegion.style.position = 'absolute'; liveRegion.style.width = '1px'; liveRegion.style.height = '1px'; liveRegion.style.overflow = 'hidden';
-    viewport.appendChild(liveRegion);
+    const live = document.createElement('div'); live.setAttribute('aria-live','polite'); Object.assign(live.style,{position:'absolute',width:'1px',height:'1px',overflow:'hidden'}); viewport.appendChild(live);
 
-    // 箭头
-    const leftBtn  = document.createElement("button");
-    const rightBtn = document.createElement("button");
-    leftBtn.className = "nav-arrow left";
-    rightBtn.className = "nav-arrow right";
-    leftBtn.setAttribute("aria-label","Previous slide");
-    rightBtn.setAttribute("aria-label","Next slide");
-    leftBtn.textContent  = "‹";
-    rightBtn.textContent = "›";
-    viewport.appendChild(leftBtn);
-    viewport.appendChild(rightBtn);
+    const left=document.createElement('button'); const right=document.createElement('button');
+    left.className='nav-arrow left'; right.className='nav-arrow right'; left.textContent='‹'; right.textContent='›';
+    viewport.appendChild(left); viewport.appendChild(right);
 
-    // Dots
-    const dotsContainer = document.createElement("div");
-    dotsContainer.className = "dots";
-    slidesData.forEach((_, i) => {
-      const dot = document.createElement("span");
-      dot.className = "dot";
-      dot.setAttribute("aria-label", `Slide ${i+1}`);
-      dot.addEventListener("click", () => {
-        update(i);
-        stopAuto();
-        setTimeout(startAuto, 5000);
-      });
-      dotsContainer.appendChild(dot);
+    const dotsWrap=document.createElement('div'); dotsWrap.className='dots';
+    slidesData.forEach((_,i)=>{ const d=document.createElement('span'); d.className='dot'; d.addEventListener('click',()=>{update(i); stopAuto(); setTimeout(startAuto,5000);}); dotsWrap.appendChild(d); });
+    viewport.appendChild(dotsWrap);
+
+    const pause=document.createElement('button'); pause.className='pause-btn'; pause.textContent='❚❚'; viewport.appendChild(pause);
+
+    let index=0,timer=null,paused=false; const total=track.children.length; const dots=dotsWrap.children;
+    if(total<=1) return;
+
+    function update(next,announce=true){
+      index=(next+total)%total;
+      requestAnimationFrame(()=>{track.style.transform=`translateX(-${index*100}%)`;});
+      Array.from(dots).forEach((d,i)=>d.classList.toggle('active',i===index));
+      if(priceEl){ const p=slidesData[index]?.price; if(typeof p==='number') priceEl.textContent=`$${p}`; }
+      live.textContent = announce ? `Slide ${index+1} of ${total}` : '';
+      pause.textContent = paused ? '▶':'❚❚';
+    }
+    function scheduleNext(ms=5000){ clearTimeout(timer); timer=setTimeout(()=>{update(index+1); scheduleNext();},ms); }
+    function startAuto(){ paused=false; scheduleNext(); viewport.classList.remove('paused'); }
+    function stopAuto(){ paused=true; clearTimeout(timer); viewport.classList.add('paused'); }
+
+    left.addEventListener('click',()=>{update(index-1); stopAuto(); setTimeout(startAuto,5000);});
+    right.addEventListener('click',()=>{update(index+1); stopAuto(); setTimeout(startAuto,5000);});
+    pause.addEventListener('click',()=>{paused?startAuto():stopAuto(); update(index,false);});
+    viewport.addEventListener('mouseenter',stopAuto); viewport.addEventListener('mouseleave',startAuto);
+
+    // touch
+    let sx=0,cx=0,drag=false;
+    viewport.addEventListener('touchstart',e=>{drag=true; sx=e.touches[0].clientX; stopAuto(); track.style.transition='none';},{passive:true});
+    viewport.addEventListener('touchmove',e=>{if(!drag) return; cx=e.touches[0].clientX; const off=(cx-sx)/viewport.offsetWidth*100; track.style.transform=`translateX(calc(-${index*100}% + ${off}%))`;},{passive:true});
+    viewport.addEventListener('touchend',()=>{if(!drag) return; drag=false; track.style.transition='transform .3s ease'; const d=cx-sx; if(d>50) update(index-1); else if(d<-50) update(index+1); else update(index); setTimeout(startAuto,5000);});
+
+    // 加购
+    const btn=card.querySelector('.add-to-cart');
+    btn.addEventListener('click',()=>{
+      const cart=getCart();
+      const item={ id:product.id, name:product.name, variant:index, image:slidesData[index].image, price:slidesData[index].price||0, quantity:1 };
+      const exist=cart.find(i=>i.id===item.id && i.variant===item.variant);
+      if(exist) exist.quantity++; else cart.push(item);
+      setCart(cart); updateCartDisplay(); alert('Added to cart!');
     });
-    viewport.appendChild(dotsContainer);
 
-    // 暂停按钮
-    const pauseBtn = document.createElement("button");
-    pauseBtn.className = "pause-btn";
-    pauseBtn.textContent = "❚❚";
-    pauseBtn.setAttribute("aria-label","Pause autoplay");
-    viewport.appendChild(pauseBtn);
+    // 启动
+    update(0); startAuto();
+  });
+}
 
-    let index = 0, timer = null, paused = false;
-    const slides = track.children;
-    const totalSlides = slides.length;
-    const dots = dotsContainer.children;
+/* ===== 主题 ===== */
+function initThemeToggle(){
+  const btn=document.getElementById('theme-toggle'); if(!btn) return;
+  const html=document.documentElement;
+  let theme=localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  html.setAttribute('data-theme',theme); btn.textContent= theme==='dark'?'☀️':'🌙';
+  btn.addEventListener('click',()=>{ theme=theme==='dark'?'light':'dark'; html.setAttribute('data-theme',theme); localStorage.setItem('theme',theme); btn.textContent= theme==='dark'?'☀️':'🌙'; });
+}
 
-    if(totalSlides <= 1) return;
+/* ===== 联系表单（可接后端 /contact，先占位成功） ===== */
+function initContact(){
+  const form=document.getElementById('contact-form'); if(!form) return;
+  form.addEventListener('submit', async e=>{
+    e.preventDefault();
+    try{
+      // 可改成真实端点： `${BACKEND}/contact`
+      alert('Sent!');
+      form.reset();
+    }catch(e){ alert('Failed.'); }
+  });
+}
 
-    function update(nextIndex, announce = true){
-      index = (nextIndex + totalSlides) % totalSlides;
-      requestAnimationFrame(() => {
-        track.style.transform = `translateX(-${index * 100}%)`;
-      });
-      Array.from(dots).forEach((d, i) => d.classList.toggle("active", i === index));
-      if(priceEl){
-        const p = slidesData[index]?.price;
-        priceEl.textContent = (typeof p === "number") ? `$${p}` : priceEl.textContent;
+/* ===== 上传逻辑 ===== */
+function initUpload(){
+  const form=document.getElementById('custom-form'); if(!form) return;
+  const fileInput=document.getElementById('image-upload');
+  const nameEl=document.getElementById('file-name');
+  const resultEl=document.getElementById('upload-result');
+
+  form.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const f=fileInput.files?.[0];
+    if(!f){ alert('Choose a file'); return; }
+    const fd=new FormData();
+    fd.append('file', f);
+    fd.append('filename', f.name);
+
+    try{
+      const res=await fetch(`${BACKEND}/upload`, { method:'POST', body:fd });
+      const data=await res.json();
+      if(res.ok && data.url){
+        resultEl.style.display='block';
+        resultEl.innerHTML = `Uploaded: <a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
+      }else{
+        console.error(data);
+        alert('Upload failed');
       }
-      const nextImg = new Image();
-      nextImg.src = slidesData[(index + 1) % totalSlides].image;
-      if(announce) liveRegion.textContent = `Slide ${index + 1} of ${totalSlides}`;
-      pauseBtn.textContent = paused ? "▶" : "❚❚";
-      pauseBtn.setAttribute("aria-label", paused ? "Play autoplay" : "Pause autoplay");
+    }catch(err){
+      console.error(err); alert('Network error');
     }
-
-    function scheduleNext(delay = 5000){
-      if(timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        update(index + 1);
-        scheduleNext();
-      }, delay);
-    }
-
-    function startAuto(){
-      paused = false;
-      scheduleNext();
-      viewport.classList.remove("paused");
-    }
-
-    function stopAuto(){
-      paused = true;
-      if(timer) clearTimeout(timer);
-      viewport.classList.add("paused");
-    }
-
-    leftBtn.addEventListener("click", () => { 
-      update(index - 1); 
-      stopAuto(); 
-      setTimeout(startAuto, 5000);
-    });
-    rightBtn.addEventListener("click", () => { 
-      update(index + 1); 
-      stopAuto(); 
-      setTimeout(startAuto, 5000);
-    });
-
-    pauseBtn.addEventListener("click", () => {
-      if(paused) startAuto();
-      else stopAuto();
-      update(index, false);
-    });
-
-    viewport.addEventListener("mouseenter", stopAuto);
-    viewport.addEventListener("mouseleave", startAuto);
-
-    // 触摸拖拽
-    let startX = 0, currentX = 0, dragging = false;
-    viewport.addEventListener("touchstart", e => {
-      dragging = true; startX = e.touches[0].clientX; stopAuto(); track.style.transition = "none";
-    }, { passive: true });
-    viewport.addEventListener("touchmove", e => {
-      if(!dragging) return;
-      currentX = e.touches[0].clientX;
-      const offset = (currentX - startX) / viewport.offsetWidth * 100;
-      track.style.transform = `translateX(calc(-${index * 100}% + ${offset}%))`;
-    }, { passive: true });
-    viewport.addEventListener("touchend", () => {
-      if(!dragging) return;
-      dragging = false; track.style.transition = "transform .3s ease";
-      const d = currentX - startX;
-      if(d > 50) update(index - 1);
-      else if(d < -50) update(index + 1);
-      else update(index);
-      setTimeout(startAuto, 5000);
-    });
-
-    // 键盘
-    viewport.setAttribute("tabindex", "0");
-    viewport.addEventListener("keydown", e => {
-      if(e.key === "ArrowLeft"){ update(index - 1); }
-      else if(e.key === "ArrowRight"){ update(index + 1); }
-      stopAuto(); 
-      setTimeout(startAuto, 5000);
-    });
-
-    // Observer
-    const observer = new IntersectionObserver(entries => {
-      if(entries[0].isIntersecting) startAuto();
-      else stopAuto();
-    }, { threshold: 0.5 });
-    observer.observe(card);
-
-    update(0);
-
-    // 添加到购物车
-    const addBtn = card.querySelector(".add-to-cart");
-    addBtn.addEventListener("click", () => {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const item = {
-        id: product.id,
-        name: product.name,
-        variant: index,
-        image: slidesData[index].image,
-        price: slidesData[index].price,
-        quantity: 1
-      };
-      const existing = cart.find(i => i.id === item.id && i.variant === item.variant);
-      if (existing) existing.quantity++;
-      else cart.push(item);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartDisplay();
-      alert("Added to cart!");
-    });
   });
 }
 
-/* ========== 主题切换 ========== */
-function initThemeToggle() {
-  const button = document.getElementById("theme-toggle");
-  if (!button) return;
-  const html = document.documentElement;
-  let currentTheme = localStorage.getItem("theme");
-  const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
-
-  if (!currentTheme) {
-    currentTheme = systemDark.matches ? "dark" : "light";
-  }
-  html.setAttribute("data-theme", currentTheme);
-  button.textContent = currentTheme === "dark" ? "☀️" : "🌙";
-  button.setAttribute("aria-label", currentTheme === "dark" ? "Switch to light mode" : "Switch to dark mode");
-
-  systemDark.addEventListener("change", (e) => {
-    if (!localStorage.getItem("theme")) {
-      const newTheme = e.matches ? "dark" : "light";
-      html.setAttribute("data-theme", newTheme);
-      button.textContent = newTheme === "dark" ? "☀️" : "🌙";
-      button.setAttribute("aria-label", newTheme === "dark" ? "Switch to light mode" : "Switch to dark mode");
-    }
-  });
-
-  button.addEventListener("click", () => {
-    html.classList.add("theme-transition");
-    currentTheme = currentTheme === "dark" ? "light" : "dark";
-    html.setAttribute("data-theme", currentTheme);
-    localStorage.setItem("theme", currentTheme);
-    button.textContent = currentTheme === "dark" ? "☀️" : "🌙";
-    button.setAttribute("aria-label", currentTheme === "dark" ? "Switch to light mode" : "Switch to dark mode");
-    setTimeout(() => html.classList.remove("theme-transition"), 300);
+/* ===== 结账 ===== */
+function initCheckout(){
+  const btn=document.getElementById('checkout-btn'); if(!btn) return;
+  btn.addEventListener('click', async ()=>{
+    const cart=getCart(); if(!cart.length){ alert('Cart empty'); return; }
+    try{
+      const res=await fetch(`${BACKEND}/checkout`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ items: cart })
+      });
+      const data=await res.json();
+      if(res.ok && data.url){ window.location.href=data.url; }
+      else{ console.error(data); alert('Checkout error'); }
+    }catch(e){ console.error(e); alert('Network error'); }
   });
 }
 
-/* ========== 购物车功能 ========== */
-function updateCartDisplay() {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  document.getElementById("cart-count").textContent = cart.reduce((sum, i) => sum + i.quantity, 0);
-  const itemsEl = document.getElementById("cart-items");
-  itemsEl.innerHTML = cart.map((item, idx) => `
+/* ===== 购物车 ===== */
+function getCart(){ return JSON.parse(localStorage.getItem(CART_KEY)||'[]'); }
+function setCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); }
+function updateCartDisplay(){
+  const cart=getCart();
+  document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.quantity,0);
+  const itemsEl=document.getElementById('cart-items'); if(!itemsEl) return;
+  itemsEl.innerHTML = cart.map((i,idx)=>`
     <div class="cart-item">
-      <img src="${item.image}" alt="${item.name}">
-      <div>${item.name} (Variant ${item.variant + 1}) - $${item.price} x ${item.quantity}</div>
-      <button class="remove-btn" data-index="${idx}">Remove</button>
+      <img src="${i.image}" alt="${i.name}">
+      <div>${i.name} (Variant ${i.variant+1}) - $${i.price} × ${i.quantity}</div>
+      <button class="remove-btn" data-index="${idx}" type="button">Remove</button>
     </div>
-  `).join("");
-  const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  document.querySelector(".total").textContent = `Total: $${total}`;
-  document.querySelectorAll(".remove-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      cart.splice(btn.dataset.index, 1);
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartDisplay();
+  `).join('');
+  const total=cart.reduce((s,i)=>s+i.price*i.quantity,0);
+  document.querySelector('.total').textContent = `Total: $${total}`;
+  itemsEl.querySelectorAll('.remove-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const c=getCart(); c.splice(Number(btn.dataset.index),1); setCart(c); updateCartDisplay();
     });
   });
 }
-
-// 联系表单提交到后端
-document.getElementById("contact-form").addEventListener("submit", async e => {
-  e.preventDefault();
-  const data = { 
-    name: e.target[0].value, 
-    email: e.target[1].value, 
-    message: e.target[2].value 
-  };
-  const res = await fetch('https://casei-backend.youraccount.workers.dev/contact', {  // 替换为您的Workers URL
-    method: 'POST', 
-    headers: { 'Content-Type': 'application/json' }, 
-    body: JSON.stringify(data)
-  });
-  if (res.ok) alert('Sent!');
-});
-
-// 自定义上传（表单已设置action，但添加JS预览后提交）
-document.getElementById("custom-form").addEventListener("submit", async e => {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const res = await fetch('https://casei-backend.youraccount.workers.dev/upload', {  // 替换URL
-    method: 'POST', 
-    body: formData
-  });
-  if (res.ok) alert('Uploaded!');
-});
-
-// 结账
-document.getElementById("checkout-btn").addEventListener("click", async () => {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  if (cart.length === 0) return alert("Cart empty");
-  const data = { cart, userId: 'anonymous' };  // 可添加用户ID
-  const res = await fetch('https://casei-backend.youraccount.workers.dev/checkout', { 
-    method: 'POST', 
-    headers: { 'Content-Type': 'application/json' }, 
-    body: JSON.stringify(data)
-  });
-  const { sessionId } = await res.json();
-  const stripe = Stripe('your-publishable-key');  // 替换Stripe公钥
-  stripe.redirectToCheckout({ sessionId });
-});
