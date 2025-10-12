@@ -186,31 +186,40 @@ function initContact(){
 
 /* ===== 上传逻辑 ===== */
 function initUpload(){
-  const form=document.getElementById('custom-form'); if(!form) return;
-  const fileInput=document.getElementById('image-upload');
-  const nameEl=document.getElementById('file-name');
-  const resultEl=document.getElementById('upload-result');
+  const form = document.getElementById('custom-form');
+  if(!form) return;
+
+  const fileInput = document.getElementById('image-upload');
+  const nameEl = document.getElementById('file-name');
+  const resultEl = document.getElementById('upload-result');
 
   form.addEventListener('submit', async e=>{
     e.preventDefault();
-    const f=fileInput.files?.[0];
+
+    const f = fileInput.files?.[0];
     if(!f){ alert('Choose a file'); return; }
-    const fd=new FormData();
-    fd.append('file', f);
+
+    const fd = new FormData();
+    fd.append('file', f);       // ✅ 字段名统一为 file
     fd.append('filename', f.name);
 
-    try{
-      const res=await fetch(`${BACKEND}/upload`, { method:'POST', body:fd });
-      const data=await res.json();
+    try {
+      const res = await fetch(`${BACKEND}/upload`, { method:'POST', body:fd });
+      const data = await res.json();
+
       if(res.ok && data.url){
-        resultEl.style.display='block';
-        resultEl.innerHTML = `Uploaded: <a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = `
+          ✅ Uploaded: 
+          ${data.url}
+        `;
       }else{
         console.error(data);
-        alert('Upload failed');
+        alert('Upload failed: ' + (data.error || 'Unknown error'));
       }
     }catch(err){
-      console.error(err); alert('Network error');
+      console.error(err);
+      alert('Network error — check backend or CORS.');
     }
   });
 }
