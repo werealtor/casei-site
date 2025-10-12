@@ -50,25 +50,101 @@ function initVideo(){
   document.addEventListener("visibilitychange", () => { if(!document.hidden) tryPlay(); });
 }
 
+/* ===== 配置：后端地址 ===== */
+const BACKEND = "https://casei-backend.werealtor1.workers.dev";
+
 /* ===== 上传预览 ===== */
-function initUploadPreview(){
+function initUploadPreview() {
   const upload = document.getElementById("image-upload");
   const previewImg = document.getElementById("preview-image");
   const previewBox = document.getElementById("preview-box");
   const fileNameEl = document.getElementById("file-name");
-  if(!upload || !previewImg || !previewBox) return;
+  if (!upload || !previewImg || !previewBox) return;
 
-  upload.addEventListener("change", e => {
+  upload.addEventListener("change", (e) => {
     const file = e.target.files?.[0];
-    if(!file){ if(fileNameEl) fileNameEl.textContent="no file selected"; previewBox.style.display="none"; return; }
-    if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return; }
-    if(file.size > 10*1024*1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
-    if(fileNameEl) fileNameEl.textContent = file.name;
+    if (!file) {
+      if (fileNameEl) fileNameEl.textContent = "no file selected";
+      previewBox.style.display = "none";
+      return;
+    }
+    if (!["image/png", "image/jpeg"].includes(file.type)) {
+      alert("Only PNG/JPEG allowed.");
+      upload.value = "";
+      previewBox.style.display = "none";
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Max 10MB.");
+      upload.value = "";
+      previewBox.style.display = "none";
+      return;
+    }
+    if (fileNameEl) fileNameEl.textContent = file.name;
+
     const reader = new FileReader();
-    reader.onload = ev => { previewImg.src = ev.target.result; previewBox.style.display="flex"; };
+    reader.onload = (ev) => {
+      previewImg.src = ev.target.result;
+      previewBox.style.display = "flex";
+    };
     reader.readAsDataURL(file);
   });
 }
+
+/* ===== 上传逻辑（POST multipart） ===== */
+function initUpload() {
+  const form = document.getElementById("custom-form");
+  if (!form) return;
+
+  const fileInput = document.getElementById("image-upload");
+  const resultEl = document.getElementById("upload-result");
+  const submitBtn = document.getElementById("upload-btn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = fileInput.files?.[0];
+    if (!f) {
+      alert("Choose a file");
+      return;
+    }
+
+    const fd = new FormData();
+    fd.append("file", f);
+    fd.append("filename", f.name);
+
+    try {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Uploading...";
+
+      const res = await fetch(`${BACKEND}/upload`, {
+        method: "POST",
+        body: fd,
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.url) {
+        resultEl.style.display = "block";
+        resultEl.innerHTML = `Uploaded: ${data.url}`;
+      } else {
+        console.error("Server response:", data);
+        alert(`Upload failed${data?.error ? `: ${data.error}` : ""}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Network error");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Upload";
+    }
+  });
+}
+
+/* ===== 启动 ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  initUploadPreview();
+  initUpload();
+});
 
 /* ===== 加载产品 & 轮播 & 加购 ===== */
 async function initProducts(){
@@ -184,36 +260,6 @@ function initContact(){
   });
 }
 
-/* ===== 上传逻辑 ===== */
-function initUpload(){
-  const form=document.getElementById('custom-form'); if(!form) return;
-  const fileInput=document.getElementById('image-upload');
-  const nameEl=document.getElementById('file-name');
-  const resultEl=document.getElementById('upload-result');
-
-  form.addEventListener('submit', async e=>{
-    e.preventDefault();
-    const f=fileInput.files?.[0];
-    if(!f){ alert('Choose a file'); return; }
-    const fd=new FormData();
-    fd.append('file', f);
-    fd.append('filename', f.name);
-
-    try{
-      const res=await fetch(`${BACKEND}/upload`, { method:'POST', body:fd });
-      const data=await res.json();
-      if(res.ok && data.url){
-        resultEl.style.display='block';
-        resultEl.innerHTML = `Uploaded: <a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
-      }else{
-        console.error(data);
-        alert('Upload failed');
-      }
-    }catch(err){
-      console.error(err); alert('Network error');
-    }
-  });
-}
 
 /* ===== 结账 ===== */
 function initCheckout(){
