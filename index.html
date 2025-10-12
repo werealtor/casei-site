@@ -16,7 +16,7 @@
   <!-- Header -->
   <header id="site-header">
     <div class="top-nav-container container">
-      <a href="#" class="logo">Case&i</a>
+      <a href="/" class="logo">Case&i</a>
       <button class="menu-icon" aria-label="Toggle menu" aria-expanded="false">⋯</button>
       <div class="top-nav-wrap">
         <nav class="top-nav" aria-label="Main">
@@ -34,15 +34,7 @@
   <section id="hero">
     <div class="container">
       <div class="hero-frame" aria-label="Brand video">
-        <video
-          class="hero-media"
-          src="assets/videos/hero.mp4"
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="metadata"
-        ></video>
+        <video class="hero-media" src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="metadata"></video>
       </div>
     </div>
     <div class="container hero-cta">
@@ -117,19 +109,20 @@
     </div>
   </section>
 
-  <!-- Customize -->
+  <!-- Customize (upload) -->
   <section id="custom">
     <div class="container">
       <h2>Customize Your Case</h2>
-      <form id="custom-form" class="section-narrow" action="/upload" method="POST" enctype="multipart/form-data">
+      <form id="custom-form" class="section-narrow">
         <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
         <div class="file-field" style="margin-top:8px">
           <label class="file-btn" for="image-upload">Choose File</label>
           <span id="file-name" class="file-name">no file selected</span>
-          <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" name="image-upload" />
+          <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" name="file" />
         </div>
         <div class="preview-box" id="preview-box"><img id="preview-image" alt="Preview" /></div>
         <button type="submit" class="btn alt block" style="margin-top:10px">Upload</button>
+        <p id="upload-result" class="helper"></p>
       </form>
     </div>
   </section>
@@ -138,9 +131,7 @@
   <section id="about">
     <div class="container">
       <h2>About Us</h2>
-      <p class="section-desc">
-        All In, Beyond Results.
-      </p>
+      <p class="section-desc">All In, Beyond Results.</p>
     </div>
   </section>
 
@@ -174,7 +165,7 @@
     <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
   </footer>
 
-  <!-- Theme toggle button -->
+  <!-- Theme toggle -->
   <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
 
   <script src="js/main.js"></script>
