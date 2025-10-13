@@ -200,8 +200,8 @@ function initUpload(){
     if(!f){ alert('Choose a file'); return; }
 
     const fd = new FormData();
-    fd.append('file', f);       // ✅ 字段名统一为 file
-    fd.append('filename', f.name);
+    fd.append('image-upload', f);  // ✅ 改为 image-upload
+fd.append('filename', f.name);
 
     try {
       const res = await fetch(`${BACKEND}/upload`, { method:'POST', body:fd });
