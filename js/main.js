@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProducts();
   initThemeToggle();
   initContact();
-  initUpload();
+  initUpload();       // ← 修正后的上传逻辑
   initCheckout();
   updateCartDisplay();
 });
@@ -50,7 +50,7 @@ function initVideo(){
   document.addEventListener("visibilitychange", () => { if(!document.hidden) tryPlay(); });
 }
 
-/* ===== 上传预览（可选微调） ===== */
+/* ===== 上传预览 ===== */
 function initUploadPreview(){
   const upload = document.getElementById("image-upload");
   const previewImg = document.getElementById("preview-image");
@@ -86,7 +86,10 @@ async function initProducts(){
   }catch(e){
     console.error(e);
     document.querySelectorAll('.card').forEach(card => {
-      const el = document.createElement('p'); el.style.color='red'; el.style.textAlign='center'; el.textContent='Load failed, refresh please';
+      const el = document.createElement('p');
+      el.style.color='red';
+      el.style.textAlign='center';
+      el.textContent='Load failed, refresh please';
       card.querySelector('.main-viewport').appendChild(el);
     });
   }
@@ -101,7 +104,8 @@ function setupProducts(products){
     const prices = Array.isArray(product.price) ? product.price : [];
     const slidesData = images.map((img,i)=>({
       image: img,
-      price: typeof prices[i]==='number' ? prices[i] : (typeof product.price==='number'?product.price:null)
+      price: typeof prices[i]==='number' ? prices[i] : (typeof product.price==='number'?product.price:null),
+      name: product.name || product.id
     }));
 
     const track = card.querySelector(".main-track");
@@ -177,26 +181,24 @@ function initThemeToggle(){
   btn.addEventListener('click',()=>{ theme=theme==='dark'?'light':'dark'; html.setAttribute('data-theme',theme); localStorage.setItem('theme',theme); btn.textContent= theme==='dark'?'☀️':'🌙'; });
 }
 
-/* ===== 联系表单（可接后端 /contact，先占位成功） ===== */
+/* ===== 联系表单（占位） ===== */
 function initContact(){
   const form=document.getElementById('contact-form'); if(!form) return;
   form.addEventListener('submit', async e=>{
     e.preventDefault();
     try{
-      // 可改成真实端点： `${BACKEND}/contact`
       alert('Sent!');
       form.reset();
     }catch(e){ alert('Failed.'); }
   });
 }
 
-/* ===== 上传逻辑（修正版） ===== */
+/* ===== 上传逻辑（修正版，字段名与后端一致：file） ===== */
 function initUpload(){
   const form = document.getElementById('custom-form');
   if(!form) return;
 
   const fileInput = document.getElementById('image-upload');
-  const nameEl = document.getElementById('file-name');
   const resultEl = document.getElementById('upload-result');
 
   form.addEventListener('submit', async e=>{
@@ -207,9 +209,8 @@ function initUpload(){
     if(!['image/png','image/jpeg'].includes(f.type)){ alert('Only PNG/JPEG allowed.'); return; }
     if(f.size > 10*1024*1024){ alert('Max 10MB.'); return; }
 
-    // ✅ 字段名必须是 file（与后端保持一致）
     const fd = new FormData();
-    fd.append('file', f);
+    fd.append('file', f);            // ★ 必须叫 file
     fd.append('filename', f.name);
 
     try {
@@ -220,11 +221,11 @@ function initUpload(){
       if(res.ok && data.url){
         resultEl.style.display = 'block';
         resultEl.innerHTML = `✅ Uploaded: <a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
-      } else {
+      }else{
         console.error('Upload failed:', res.status, data);
         alert(`Upload failed (${res.status}) ${data?.error ? '- ' + data.error : ''}`);
       }
-    } catch(err){
+    }catch(err){
       console.error(err);
       alert('Network error — check backend or CORS.');
     }
@@ -254,7 +255,8 @@ function getCart(){ return JSON.parse(localStorage.getItem(CART_KEY)||'[]'); }
 function setCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); }
 function updateCartDisplay(){
   const cart=getCart();
-  document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.quantity,0);
+  const countEl = document.getElementById('cart-count');
+  if(countEl) countEl.textContent = cart.reduce((s,i)=>s+i.quantity,0);
   const itemsEl=document.getElementById('cart-items'); if(!itemsEl) return;
   itemsEl.innerHTML = cart.map((i,idx)=>`
     <div class="cart-item">
@@ -264,7 +266,8 @@ function updateCartDisplay(){
     </div>
   `).join('');
   const total=cart.reduce((s,i)=>s+i.price*i.quantity,0);
-  document.querySelector('.total').textContent = `Total: $${total}`;
+  const totalEl = document.querySelector('.total');
+  if(totalEl) totalEl.textContent = `Total: $${total.toFixed(2)}`;
   itemsEl.querySelectorAll('.remove-btn').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const c=getCart(); c.splice(Number(btn.dataset.index),1); setCart(c); updateCartDisplay();
