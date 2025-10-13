@@ -1,4 +1,5 @@
-const BACKEND = window.__BACKEND_BASE__ || 'https://xxkit.com';
+// ====== 全局常量 ======
+const BACKEND = window.__BACKEND_BASE__ || 'https://casei-backend.werealtor1.workers.dev';
 const CART_KEY = 'casei_cart';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProducts();
   initThemeToggle();
   initContact();
-  initUpload();       // ← 修正后的上传逻辑
+  initUpload();        // ✅ 修复后的上传逻辑
   initCheckout();
   updateCartDisplay();
 });
@@ -61,14 +62,12 @@ function initUploadPreview(){
   upload.addEventListener("change", e => {
     const file = e.target.files?.[0];
     if(!file){
-      if(fileNameEl) fileNameEl.textContent = "no file selected";
-      previewBox.style.display = "none";
-      previewImg.removeAttribute('src');
+      if(fileNameEl) fileNameEl.textContent="no file selected";
+      previewBox.style.display="none";
       return;
     }
     if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return; }
     if(file.size > 10*1024*1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
-
     if(fileNameEl) fileNameEl.textContent = file.name;
     const reader = new FileReader();
     reader.onload = ev => { previewImg.src = ev.target.result; previewBox.style.display="flex"; };
@@ -86,10 +85,7 @@ async function initProducts(){
   }catch(e){
     console.error(e);
     document.querySelectorAll('.card').forEach(card => {
-      const el = document.createElement('p');
-      el.style.color='red';
-      el.style.textAlign='center';
-      el.textContent='Load failed, refresh please';
+      const el = document.createElement('p'); el.style.color='red'; el.style.textAlign='center'; el.textContent='Load failed, refresh please';
       card.querySelector('.main-viewport').appendChild(el);
     });
   }
@@ -104,8 +100,7 @@ function setupProducts(products){
     const prices = Array.isArray(product.price) ? product.price : [];
     const slidesData = images.map((img,i)=>({
       image: img,
-      price: typeof prices[i]==='number' ? prices[i] : (typeof product.price==='number'?product.price:null),
-      name: product.name || product.id
+      price: typeof prices[i]==='number' ? prices[i] : (typeof product.price==='number'?product.price:null)
     }));
 
     const track = card.querySelector(".main-track");
@@ -181,19 +176,20 @@ function initThemeToggle(){
   btn.addEventListener('click',()=>{ theme=theme==='dark'?'light':'dark'; html.setAttribute('data-theme',theme); localStorage.setItem('theme',theme); btn.textContent= theme==='dark'?'☀️':'🌙'; });
 }
 
-/* ===== 联系表单（占位） ===== */
+/* ===== 联系表单（占位成功） ===== */
 function initContact(){
   const form=document.getElementById('contact-form'); if(!form) return;
   form.addEventListener('submit', async e=>{
     e.preventDefault();
     try{
+      // 可替换为真实端点： `${BACKEND}/contact`
       alert('Sent!');
       form.reset();
     }catch(e){ alert('Failed.'); }
   });
 }
 
-/* ===== 上传逻辑（修正版，字段名与后端一致：file） ===== */
+/* ===== 上传逻辑（修正版） ===== */
 function initUpload(){
   const form = document.getElementById('custom-form');
   if(!form) return;
@@ -209,32 +205,28 @@ function initUpload(){
     if(!['image/png','image/jpeg'].includes(f.type)){ alert('Only PNG/JPEG allowed.'); return; }
     if(f.size > 10*1024*1024){ alert('Max 10MB.'); return; }
 
-   const fd = new FormData();
-fd.append('file', f);
-fd.append('filename', f.name);
-await fetch('/upload', { method:'POST', body: fd });
+    const fd = new FormData();
+    fd.append('file', f);             // ✅ 与后端一致
+    fd.append('filename', f.name);    // 可选，便于保留原名
 
     try {
-      const res = await fetch(`${BACKEND}/upload`, {
-  method: 'POST',
-  body: fd,
-  mode: 'cors',  // 强制 CORS 模式
-  credentials: 'same-origin'  // 如果需要 cookie
-});
-      
-    
-      let data = {};
-      try { data = await res.json(); } catch(_) {}
+      // ✅ 只发一条真正的请求到后端（不要再额外 fetch('/upload')）
+      const res = await fetch(`${BACKEND}/upload`, { method:'POST', body: fd });
+
+      // 为了看清楚后端返回（哪怕不是 JSON），先按文本取，再尝试 JSON 解析
+      const text = await res.text();
+      let data; try { data = JSON.parse(text); } catch { data = { raw: text }; }
+
+      console.log('Upload -> status:', res.status, 'data:', data);
 
       if(res.ok && data.url){
         resultEl.style.display = 'block';
-        resultEl.innerHTML = `✅ Uploaded: <a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
+        resultEl.innerHTML = `✅ Uploaded:<br><a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
       }else{
-        console.error('Upload failed:', res.status, data);
-        alert(`Upload failed (${res.status}) ${data?.error ? '- ' + data.error : ''}`);
+        alert(`Upload failed (${res.status})`);
       }
     }catch(err){
-      console.error(err);
+      console.error('Upload network error:', err);
       alert('Network error — check backend or CORS.');
     }
   });
@@ -264,7 +256,8 @@ function setCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); }
 function updateCartDisplay(){
   const cart=getCart();
   const countEl = document.getElementById('cart-count');
-  if(countEl) countEl.textContent = cart.reduce((s,i)=>s+i.quantity,0);
+  if (countEl) countEl.textContent = cart.reduce((s,i)=>s+i.quantity,0);
+
   const itemsEl=document.getElementById('cart-items'); if(!itemsEl) return;
   itemsEl.innerHTML = cart.map((i,idx)=>`
     <div class="cart-item">
@@ -275,7 +268,8 @@ function updateCartDisplay(){
   `).join('');
   const total=cart.reduce((s,i)=>s+i.price*i.quantity,0);
   const totalEl = document.querySelector('.total');
-  if(totalEl) totalEl.textContent = `Total: $${total.toFixed(2)}`;
+  if (totalEl) totalEl.textContent = `Total: $${total}`;
+
   itemsEl.querySelectorAll('.remove-btn').forEach(btn=>{
     btn.addEventListener('click',()=>{
       const c=getCart(); c.splice(Number(btn.dataset.index),1); setCart(c); updateCartDisplay();
