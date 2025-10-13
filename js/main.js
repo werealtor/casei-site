@@ -50,7 +50,7 @@ function initVideo(){
   document.addEventListener("visibilitychange", () => { if(!document.hidden) tryPlay(); });
 }
 
-/* ===== 上传预览 ===== */
+/* ===== 上传预览（可选微调） ===== */
 function initUploadPreview(){
   const upload = document.getElementById("image-upload");
   const previewImg = document.getElementById("preview-image");
@@ -60,9 +60,15 @@ function initUploadPreview(){
 
   upload.addEventListener("change", e => {
     const file = e.target.files?.[0];
-    if(!file){ if(fileNameEl) fileNameEl.textContent="no file selected"; previewBox.style.display="none"; return; }
+    if(!file){
+      if(fileNameEl) fileNameEl.textContent = "no file selected";
+      previewBox.style.display = "none";
+      previewImg.removeAttribute('src');
+      return;
+    }
     if(!["image/png","image/jpeg"].includes(file.type)){ alert("Only PNG/JPEG allowed."); upload.value=""; previewBox.style.display="none"; return; }
     if(file.size > 10*1024*1024){ alert("Max 10MB."); upload.value=""; previewBox.style.display="none"; return; }
+
     if(fileNameEl) fileNameEl.textContent = file.name;
     const reader = new FileReader();
     reader.onload = ev => { previewImg.src = ev.target.result; previewBox.style.display="flex"; };
