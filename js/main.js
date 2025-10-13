@@ -218,8 +218,11 @@ await fetch('/upload', { method:'POST', body: fd });
       const res = await fetch(`${BACKEND}/upload`, {
   method: 'POST',
   body: fd,
-  mode: 'cors',  // 添加以强制 CORS 模式
+  mode: 'cors',  // 强制 CORS 模式
+  credentials: 'same-origin'  // 如果需要 cookie
 });
+      
+    
       let data = {};
       try { data = await res.json(); } catch(_) {}
 
