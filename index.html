@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#001f3f" />
   <title>Case&i — Minimal · Premium · Personal</title>
 
   <!-- Fonts -->
@@ -66,7 +67,7 @@
             <p class="sub">Delicate & timeless</p>
             <div class="pills"><span class="pill">Handcrafted</span><span class="pill">Premium</span></div>
             <div class="price" data-id="jewelry">from $22</div>
-            <button class="btn add-to-cart">Add to Cart</button>
+            <button class="btn add-to-cart" type="button">Add to Cart</button>
           </div>
         </article>
 
@@ -84,7 +85,7 @@
             <p class="sub">Trendy & practical</p>
             <div class="pills"><span class="pill">Lightweight</span><span class="pill">Stylish</span></div>
             <div class="price" data-id="bag">from $35</div>
-            <button class="btn add-to-cart">Add to Cart</button>
+            <button class="btn add-to-cart" type="button">Add to Cart</button>
           </div>
         </article>
 
@@ -102,7 +103,7 @@
             <p class="sub">Durable & premium</p>
             <div class="pills"><span class="pill">Classic</span><span class="pill">Long-lasting</span></div>
             <div class="price" data-id="leather">from $60</div>
-            <button class="btn add-to-cart">Add to Cart</button>
+            <button class="btn add-to-cart" type="button">Add to Cart</button>
           </div>
         </article>
       </div>
@@ -155,7 +156,7 @@
       <h2>Your Cart</h2>
       <div id="cart-items" class="grid"></div>
       <div class="total">Total: $0</div>
-      <button class="btn" id="checkout-btn">Checkout</button>
+      <button class="btn" id="checkout-btn" type="button">Checkout</button>
     </div>
   </section>
 
@@ -168,6 +169,11 @@
   <!-- Theme toggle -->
   <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
 
+  <script>
+    /* 可在部署时通过 <script> 提前注入你的后端域名：
+       window.__BACKEND_BASE__ = 'https://casei-backend.werealtor1.workers.dev'
+    */
+  </script>
   <script src="js/main.js"></script>
 </body>
 </html>
