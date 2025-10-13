@@ -215,7 +215,11 @@ fd.append('filename', f.name);
 await fetch('/upload', { method:'POST', body: fd });
 
     try {
-      const res = await fetch(`${BACKEND}/upload`, { method:'POST', body:fd });
+      const res = await fetch(`${BACKEND}/upload`, {
+  method: 'POST',
+  body: fd,
+  mode: 'cors',  // 添加以强制 CORS 模式
+});
       let data = {};
       try { data = await res.json(); } catch(_) {}
 
