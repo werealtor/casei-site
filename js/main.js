@@ -1,5 +1,5 @@
 // ====== 全局常量 ======
-const BACKEND = window.__BACKEND_BASE__ || 'https://casei-backend.werealtor1.workers.dev';
+const BACKEND = 'https://casei-backend.werealtor1.workers.dev';
 const CART_KEY = 'casei_cart';
 
 document.addEventListener('DOMContentLoaded', () => {
