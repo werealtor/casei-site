@@ -184,7 +184,7 @@ function initContact(){
   });
 }
 
-/* ===== 上传逻辑 ===== */
+/* ===== 上传逻辑（修正版） ===== */
 function initUpload(){
   const form = document.getElementById('custom-form');
   if(!form) return;
@@ -198,26 +198,27 @@ function initUpload(){
 
     const f = fileInput.files?.[0];
     if(!f){ alert('Choose a file'); return; }
+    if(!['image/png','image/jpeg'].includes(f.type)){ alert('Only PNG/JPEG allowed.'); return; }
+    if(f.size > 10*1024*1024){ alert('Max 10MB.'); return; }
 
+    // ✅ 字段名必须是 file（与后端保持一致）
     const fd = new FormData();
-    fd.append('image-upload', f);  // ✅ 改为 image-upload
-fd.append('filename', f.name);
+    fd.append('file', f);
+    fd.append('filename', f.name);
 
     try {
       const res = await fetch(`${BACKEND}/upload`, { method:'POST', body:fd });
-      const data = await res.json();
+      let data = {};
+      try { data = await res.json(); } catch(_) {}
 
       if(res.ok && data.url){
         resultEl.style.display = 'block';
-        resultEl.innerHTML = `
-          ✅ Uploaded: 
-          ${data.url}
-        `;
-      }else{
-        console.error(data);
-        alert('Upload failed: ' + (data.error || 'Unknown error'));
+        resultEl.innerHTML = `✅ Uploaded: <a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
+      } else {
+        console.error('Upload failed:', res.status, data);
+        alert(`Upload failed (${res.status}) ${data?.error ? '- ' + data.error : ''}`);
       }
-    }catch(err){
+    } catch(err){
       console.error(err);
       alert('Network error — check backend or CORS.');
     }
