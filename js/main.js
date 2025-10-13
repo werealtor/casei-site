@@ -209,9 +209,10 @@ function initUpload(){
     if(!['image/png','image/jpeg'].includes(f.type)){ alert('Only PNG/JPEG allowed.'); return; }
     if(f.size > 10*1024*1024){ alert('Max 10MB.'); return; }
 
-    const fd = new FormData();
-    fd.append('file', f);            // ★ 必须叫 file
-    fd.append('filename', f.name);
+   const fd = new FormData();
+fd.append('file', f);
+fd.append('filename', f.name);
+await fetch('/upload', { method:'POST', body: fd });
 
     try {
       const res = await fetch(`${BACKEND}/upload`, { method:'POST', body:fd });
