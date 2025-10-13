@@ -1,4 +1,4 @@
-const BACKEND = window.__BACKEND_BASE__ || 'https://casei-backend.werealtor1.workers.dev';
+const BACKEND = window.__BACKEND_BASE__ || 'https://xxkit.com';
 const CART_KEY = 'casei_cart';
 
 document.addEventListener('DOMContentLoaded', () => {
