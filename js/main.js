@@ -260,7 +260,10 @@ function initContact(){
 
     try{
       // 你的后端联系端点
-      const res = await fetch(`${BACKEND}/contact`, {
+      
+        // ✅ 优化：将来你的 contact 路由也应该版本化
+const res = await fetch(`${BACKEND}/api/v1/contact`, {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
