@@ -4,6 +4,8 @@
     {
       "id": "jewelry",
       "name": "Jewelry",
+      "description": "Delicate & timeless",
+      "tags": ["Handcrafted", "Premium"],
       "images": [
         "assets/images/jewelry/1.jpg",
         "assets/images/jewelry/2.jpg",
@@ -19,9 +21,11 @@
     {
       "id": "bag",
       "name": "Bag",
+      "description": "Trendy & practical",
+      "tags": ["Lightweight", "Stylish"],
       "images": [
         "assets/images/bag/1.jpg",
-        "assets/images/bag/2.jpg",
+        "assets"images/bag/2.jpg",
         "assets/images/bag/3.jpg",
         "assets/images/bag/4.jpg",
         "assets/images/bag/5.jpg",
@@ -34,6 +38,8 @@
     {
       "id": "leather",
       "name": "Leather Goods",
+      "description": "Durable & premium",
+      "tags": ["Classic", "Long-lasting"],
       "images": [
         "assets/images/leather/1.jpg",
         "assets/images/leather/2.jpg",
