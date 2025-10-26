@@ -317,7 +317,10 @@ function initUpload(){
     resultEl.textContent = '';
 
     try {
-      const res = await fetch(`${BACKEND}/upload`, { method:'POST', body: fd });
+      
+      // ✅ 优化：使用 /api/v1/upload 路径
+const res = await fetch(`${BACKEND}/api/v1/upload`, { method:'POST', body: fd });
+
       const data = await res.json();
 
       if(res.ok && data.url){
