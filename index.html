@@ -6,7 +6,6 @@
   <meta name="theme-color" content="#001f3f" />
   <title>Case&i — Minimal · Premium · Personal</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,7 +13,6 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <!-- Header -->
   <header id="site-header">
     <div class="top-nav-container container">
       <a href="/" class="logo">Case&i</a>
@@ -31,7 +29,6 @@
     </div>
   </header>
 
-  <!-- Hero -->
   <section id="hero">
     <div class="container">
       <div class="hero-frame" aria-label="Brand video">
@@ -48,69 +45,14 @@
     </div>
   </section>
 
-  <!-- Products -->
   <section id="products">
     <div class="container">
       <h2 class="title">Our Products</h2>
-      <div class="grid products-grid">
-        <!-- Jewelry -->
-        <article class="card product u3" data-product="jewelry">
-          <div class="main-viewport">
-            <div class="main-track">
-              <div class="slide">
-                <img src="assets/images/jewelry/1.jpg" alt="Jewelry 1" loading="lazy">
-              </div>
-            </div>
-          </div>
-          <div class="body">
-            <h3>Jewelry</h3>
-            <p class="sub">Delicate & timeless</p>
-            <div class="pills"><span class="pill">Handcrafted</span><span class="pill">Premium</span></div>
-            <div class="price" data-id="jewelry">from $22</div>
-            <button class="btn add-to-cart" type="button">Add to Cart</button>
-          </div>
-        </article>
-
-        <!-- Bag -->
-        <article class="card product u3" data-product="bag">
-          <div class="main-viewport">
-            <div class="main-track">
-              <div class="slide">
-                <img src="assets/images/bag/1.jpg" alt="Bag 1" loading="lazy">
-              </div>
-            </div>
-          </div>
-          <div class="body">
-            <h3>Bag</h3>
-            <p class="sub">Trendy & practical</p>
-            <div class="pills"><span class="pill">Lightweight</span><span class="pill">Stylish</span></div>
-            <div class="price" data-id="bag">from $35</div>
-            <button class="btn add-to-cart" type="button">Add to Cart</button>
-          </div>
-        </article>
-
-        <!-- Leather Goods -->
-        <article class="card product u3" data-product="leather">
-          <div class="main-viewport">
-            <div class="main-track">
-              <div class="slide">
-                <img src="assets/images/leather/1.jpg" alt="Leather Goods 1" loading="lazy">
-              </div>
-            </div>
-          </div>
-          <div class="body">
-            <h3>Leather Goods</h3>
-            <p class="sub">Durable & premium</p>
-            <div class="pills"><span class="pill">Classic</span><span class="pill">Long-lasting</span></div>
-            <div class="price" data-id="leather">from $60</div>
-            <button class="btn add-to-cart" type="button">Add to Cart</button>
-          </div>
-        </article>
-      </div>
+      <div class="grid products-grid" id="products-grid-container">
+        </div>
     </div>
   </section>
 
-  <!-- Customize (upload) -->
   <section id="custom">
     <div class="container">
       <h2>Customize Your Case</h2>
@@ -122,13 +64,12 @@
           <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" name="file" />
         </div>
         <div class="preview-box" id="preview-box"><img id="preview-image" alt="Preview" /></div>
-        <button type="submit" class="btn alt block" style="margin-top:10px">Upload</button>
+        <button type="submit" class="btn alt block" style="margin-top:10px">Upload and Add to Cart</button>
         <p id="upload-result" class="helper"></p>
       </form>
     </div>
   </section>
 
-  <!-- About -->
   <section id="about">
     <div class="container">
       <h2>About Us</h2>
@@ -136,21 +77,19 @@
     </div>
   </section>
 
-  <!-- Contact -->
   <section id="contact">
     <div class="container">
       <h2>Contact Us</h2>
       <form id="contact-form" class="section-narrow">
-        <input type="text" class="input" placeholder="Name" required />
-        <input type="email" class="input" placeholder="Email" required />
-        <textarea class="input textarea" placeholder="Message" required></textarea>
+        <input type="text" name="name" class="input" placeholder="Name" required />
+        <input type="email" name="email" class="input" placeholder="Email" required />
+        <textarea name="message" class="input textarea" placeholder="Message" required></textarea>
         <button type="submit" class="btn alt block" style="margin-top:8px">Send</button>
         <p class="helper">We usually reply within 24 hours.</p>
       </form>
     </div>
   </section>
 
-  <!-- Cart -->
   <section id="cart">
     <div class="container">
       <h2>Your Cart</h2>
@@ -160,18 +99,17 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <footer id="site-footer">
     <p>United States</p>
     <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
   </footer>
 
-  <!-- Theme toggle -->
   <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
 
   <script>
-    /* 可在部署时通过 <script> 提前注入你的后端域名：
-       window.__BACKEND_BASE__ = 'https://casei-backend.werealtor1.workers.dev'
+    /* ✅ 优化：
+      现在 JS 会自动使用这个变量。
+      部署时注入: window.__BACKEND_BASE__ = 'https://your-production-url.com'
     */
   </script>
   <script src="js/main.js"></script>
