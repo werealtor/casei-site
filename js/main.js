@@ -1,15 +1,16 @@
 // ====== 全局常量 ======
-const BACKEND = 'https://casei-backend.werealtor1.workers.dev';
+// ✅ 优化：优先使用注入的 URL，否则回退到开发 URL
+const BACKEND = window.__BACKEND_BASE__ || 'https://casei-backend.werealtor1.workers.dev';
 const CART_KEY = 'casei_cart';
 
 document.addEventListener('DOMContentLoaded', () => {
   initMenu();
   initVideo();
   initUploadPreview();
-  initProducts();
+  initProducts();      // ✅ 优化：动态加载产品
   initThemeToggle();
-  initContact();
-  initUpload();        // ✅ 修复后的上传逻辑
+  initContact();       // ✅ 优化：功能补全
+  initUpload();        // ✅ 优化：功能补全
   initCheckout();
   updateCartDisplay();
 });
@@ -75,96 +76,148 @@ function initUploadPreview(){
   });
 }
 
-/* ===== 加载产品 & 轮播 & 加购 ===== */
+/* ===== ✅ 优化：动态加载产品 & 轮播 & 加购 ===== */
 async function initProducts(){
+  const gridContainer = document.getElementById('products-grid-container');
+  if (!gridContainer) return;
+
   try{
     const res = await fetch("config.json?v="+Date.now(), { cache:"no-store" });
     if(!res.ok) throw new Error("config load failed");
+    
     const data = await res.json();
-    if(Array.isArray(data?.products)) setupProducts(data.products);
+    if(!Array.isArray(data?.products)) throw new Error("Invalid config data");
+
+    // 清空加载占位符 (如果有的话)
+    gridContainer.innerHTML = '';
+
+    // 遍历 JSON 中的每个产品并创建卡片
+    data.products.forEach(product => {
+      const card = createProductCard(product); // 辅助函数：创建 HTML
+      gridContainer.appendChild(card);
+      // 辅助函数：为这张新卡片初始化轮播和加购事件
+      setupCarouselAndCart(card, product); 
+    });
+
   }catch(e){
     console.error(e);
-    document.querySelectorAll('.card').forEach(card => {
-      const el = document.createElement('p'); el.style.color='red'; el.style.textAlign='center'; el.textContent='Load failed, refresh please';
-      card.querySelector('.main-viewport').appendChild(el);
-    });
+    gridContainer.innerHTML = `<p style="color:red; text-align:center; grid-column: 1 / -1;">Failed to load products. Please refresh the page.</p>`;
   }
 }
 
-function setupProducts(products){
-  products.forEach(product=>{
-    const card = document.querySelector(`.card[data-product="${product.id}"]`);
-    if(!card) return;
+// 辅助函数：创建卡片的 HTML 结构
+function createProductCard(product) {
+  const card = document.createElement('article');
+  card.className = 'card product';
+  card.setAttribute('data-product', product.id);
+  
+  const defaultImage = product.images?.[0] || 'assets/images/placeholder.jpg';
+  const defaultPrice = product.price?.[0] || product.price || 0;
+  const description = product.description || '';
+  const tags = Array.isArray(product.tags) ? product.tags : [];
+  
+  card.innerHTML = `
+    <div class="main-viewport" role="region" aria-label="${product.name || 'Product'} carousel">
+      <div class="main-track">
+        <div class="slide">
+          <img src="${defaultImage}" alt="${product.name || product.id} 1" loading="lazy">
+        </div>
+      </div>
+    </div>
+    <div class="body">
+      <h3>${product.name || 'Product'}</h3>
+      <p class="sub">${description}</p>
+      <div class="pills">
+        ${tags.map(tag => `<span class="pill">${tag}</span>`).join('')}
+      </div>
+      <div class="price" data-id="${product.id}">$${defaultPrice}</div>
+      <button class="btn add-to-cart" type="button">Add to Cart</button>
+    </div>
+  `;
+  return card;
+}
 
-    const images = Array.isArray(product.images) ? product.images : [];
-    const prices = Array.isArray(product.price) ? product.price : [];
-    const slidesData = images.map((img,i)=>({
-      image: img,
-      price: typeof prices[i]==='number' ? prices[i] : (typeof product.price==='number'?product.price:null)
-    }));
+// 辅助函数：设置轮播和加购 (即原来 setupProducts 的逻辑)
+function setupCarouselAndCart(card, product) {
+  const images = Array.isArray(product.images) ? product.images : [];
+  const prices = Array.isArray(product.price) ? product.price : [];
+  const slidesData = images.map((img,i)=>({
+    image: img,
+    price: typeof prices[i]==='number' ? prices[i] : (typeof product.price==='number'?product.price:null)
+  }));
 
-    const track = card.querySelector(".main-track");
-    const priceEl = card.querySelector(".price");
-    const viewport = card.querySelector(".main-viewport");
-    viewport.setAttribute('role','region'); viewport.setAttribute('aria-label','Product carousel');
+  // 使用 card.querySelector 确保只在当前卡片内查找
+  const track = card.querySelector(".main-track");
+  const priceEl = card.querySelector(".price");
+  const viewport = card.querySelector(".main-viewport");
 
-    for(let i=1;i<slidesData.length;i++){
-      const s=document.createElement('div'); s.className='slide';
-      const im=document.createElement('img'); im.src=slidesData[i].image; im.alt=`${product.name||product.id} ${i+1}`; im.loading='lazy';
-      s.appendChild(im); track.appendChild(s);
-    }
+  // 动态创建幻灯片 (第一张已在 createProductCard 中创建)
+  for(let i=1;i<slidesData.length;i++){
+    const s=document.createElement('div'); s.className='slide';
+    const im=document.createElement('img'); im.src=slidesData[i].image; im.alt=`${product.name||product.id} ${i+1}`; im.loading='lazy';
+    s.appendChild(im); track.appendChild(s);
+  }
 
-    const live = document.createElement('div'); live.setAttribute('aria-live','polite'); Object.assign(live.style,{position:'absolute',width:'1px',height:'1px',overflow:'hidden'}); viewport.appendChild(live);
+  const live = document.createElement('div'); live.setAttribute('aria-live','polite'); Object.assign(live.style,{position:'absolute',width:'1px',height:'1px',overflow:'hidden'}); viewport.appendChild(live);
 
-    const left=document.createElement('button'); const right=document.createElement('button');
-    left.className='nav-arrow left'; right.className='nav-arrow right'; left.textContent='‹'; right.textContent='›';
-    viewport.appendChild(left); viewport.appendChild(right);
+  const left=document.createElement('button'); const right=document.createElement('button');
+  left.className='nav-arrow left'; right.className='nav-arrow right'; left.textContent='‹'; right.textContent='›';
+  left.setAttribute('aria-label', 'Previous Slide'); // ✅ A11y
+  right.setAttribute('aria-label', 'Next Slide'); // ✅ A11y
+  viewport.appendChild(left); viewport.appendChild(right);
 
-    const dotsWrap=document.createElement('div'); dotsWrap.className='dots';
-    slidesData.forEach((_,i)=>{ const d=document.createElement('span'); d.className='dot'; d.addEventListener('click',()=>{update(i); stopAuto(); setTimeout(startAuto,5000);}); dotsWrap.appendChild(d); });
-    viewport.appendChild(dotsWrap);
+  const dotsWrap=document.createElement('div'); dotsWrap.className='dots';
+  slidesData.forEach((_,i)=>{ const d=document.createElement('span'); d.className='dot'; d.addEventListener('click',()=>{update(i); stopAuto(); setTimeout(startAuto,5000);}); dotsWrap.appendChild(d); });
+  viewport.appendChild(dotsWrap);
 
-    const pause=document.createElement('button'); pause.className='pause-btn'; pause.textContent='❚❚'; viewport.appendChild(pause);
+  const pause=document.createElement('button'); pause.className='pause-btn'; pause.textContent='❚❚'; viewport.appendChild(pause);
 
-    let index=0,timer=null,paused=false; const total=track.children.length; const dots=dotsWrap.children;
-    if(total<=1) return;
+  let index=0,timer=null,paused=false; const total=track.children.length; const dots=dotsWrap.children;
+  if(total<=1) {
+    // 如果只有一张图，隐藏所有控件
+    left.style.display = 'none';
+    right.style.display = 'none';
+    dotsWrap.style.display = 'none';
+    pause.style.display = 'none';
+    return; // 停止执行轮播
+  }
 
-    function update(next,announce=true){
-      index=(next+total)%total;
-      requestAnimationFrame(()=>{track.style.transform=`translateX(-${index*100}%)`;});
-      Array.from(dots).forEach((d,i)=>d.classList.toggle('active',i===index));
-      if(priceEl){ const p=slidesData[index]?.price; if(typeof p==='number') priceEl.textContent=`$${p}`; }
-      live.textContent = announce ? `Slide ${index+1} of ${total}` : '';
-      pause.textContent = paused ? '▶':'❚❚';
-    }
-    function scheduleNext(ms=5000){ clearTimeout(timer); timer=setTimeout(()=>{update(index+1); scheduleNext();},ms); }
-    function startAuto(){ paused=false; scheduleNext(); viewport.classList.remove('paused'); }
-    function stopAuto(){ paused=true; clearTimeout(timer); viewport.classList.add('paused'); }
+  function update(next,announce=true){
+    index=(next+total)%total;
+    requestAnimationFrame(()=>{track.style.transform=`translateX(-${index*100}%)`;});
+    Array.from(dots).forEach((d,i)=>d.classList.toggle('active',i===index));
+    if(priceEl){ const p=slidesData[index]?.price; if(typeof p==='number') priceEl.textContent=`$${p}`; }
+    live.textContent = announce ? `Slide ${index+1} of ${total}` : '';
+    pause.textContent = paused ? '▶':'❚❚';
+  }
+  function scheduleNext(ms=5000){ clearTimeout(timer); timer=setTimeout(()=>{update(index+1); scheduleNext();},ms); }
+  function startAuto(){ paused=false; scheduleNext(); viewport.classList.remove('paused'); }
+  function stopAuto(){ paused=true; clearTimeout(timer); viewport.classList.add('paused'); }
 
-    left.addEventListener('click',()=>{update(index-1); stopAuto(); setTimeout(startAuto,5000);});
-    right.addEventListener('click',()=>{update(index+1); stopAuto(); setTimeout(startAuto,5000);});
-    pause.addEventListener('click',()=>{paused?startAuto():stopAuto(); update(index,false);});
-    viewport.addEventListener('mouseenter',stopAuto); viewport.addEventListener('mouseleave',startAuto);
+  left.addEventListener('click',()=>{update(index-1); stopAuto(); setTimeout(startAuto,5000);});
+  right.addEventListener('click',()=>{update(index+1); stopAuto(); setTimeout(startAuto,5000);});
+  pause.addEventListener('click',()=>{paused?startAuto():stopAuto(); update(index,false);});
+  viewport.addEventListener('mouseenter',stopAuto); viewport.addEventListener('mouseleave',startAuto);
 
-    // touch
-    let sx=0,cx=0,drag=false;
-    viewport.addEventListener('touchstart',e=>{drag=true; sx=e.touches[0].clientX; stopAuto(); track.style.transition='none';},{passive:true});
-    viewport.addEventListener('touchmove',e=>{if(!drag) return; cx=e.touches[0].clientX; const off=(cx-sx)/viewport.offsetWidth*100; track.style.transform=`translateX(calc(-${index*100}% + ${off}%))`;},{passive:true});
-    viewport.addEventListener('touchend',()=>{if(!drag) return; drag=false; track.style.transition='transform .3s ease'; const d=cx-sx; if(d>50) update(index-1); else if(d<-50) update(index+1); else update(index); setTimeout(startAuto,5000);});
+  // touch
+  let sx=0,cx=0,drag=false;
+  viewport.addEventListener('touchstart',e=>{drag=true; sx=e.touches[0].clientX; stopAuto(); track.style.transition='none';},{passive:true});
+  viewport.addEventListener('touchmove',e=>{if(!drag) return; cx=e.touches[0].clientX; const off=(cx-sx)/viewport.offsetWidth*100; track.style.transform=`translateX(calc(-${index*100}% + ${off}%))`;},{passive:true});
+  viewport.addEventListener('touchend',()=>{if(!drag) return; drag=false; track.style.transition='transform .3s ease'; const d=cx-sx; if(d>50) update(index-1); else if(d<-50) update(index+1); else update(index); setTimeout(startAuto,5000);});
 
-    // 加购
-    const btn=card.querySelector('.add-to-cart');
-    btn.addEventListener('click',()=>{
-      const cart=getCart();
-      const item={ id:product.id, name:product.name, variant:index, image:slidesData[index].image, price:slidesData[index].price||0, quantity:1 };
-      const exist=cart.find(i=>i.id===item.id && i.variant===item.variant);
-      if(exist) exist.quantity++; else cart.push(item);
-      setCart(cart); updateCartDisplay(); alert('Added to cart!');
-    });
-
-    // 启动
-    update(0); startAuto();
+  // 加购
+  const btn=card.querySelector('.add-to-cart');
+  btn.addEventListener('click',()=>{
+    const cart=getCart();
+    // ✅ 关键：使用闭包中的 `index` 变量来获取正确的变体
+    const item={ id:product.id, name:product.name, variant:index, image:slidesData[index].image, price:slidesData[index].price||0, quantity:1 };
+    const exist=cart.find(i=>i.id===item.id && i.variant===item.variant);
+    if(exist) exist.quantity++; else cart.push(item);
+    setCart(cart); updateCartDisplay(); alert('Added to cart!');
   });
+
+  // 启动
+  update(0); startAuto();
 }
 
 /* ===== 主题 ===== */
@@ -176,58 +229,133 @@ function initThemeToggle(){
   btn.addEventListener('click',()=>{ theme=theme==='dark'?'light':'dark'; html.setAttribute('data-theme',theme); localStorage.setItem('theme',theme); btn.textContent= theme==='dark'?'☀️':'🌙'; });
 }
 
-/* ===== 联系表单（占位成功） ===== */
+/* ===== ✅ 优化：联系表单 (功能补全) ===== */
 function initContact(){
-  const form=document.getElementById('contact-form'); if(!form) return;
+  const form = document.getElementById('contact-form'); 
+  if(!form) return;
+
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const helperEl = form.querySelector('.helper'); // 获取提示元素
+
   form.addEventListener('submit', async e=>{
     e.preventDefault();
+    
+    // 提取表单数据
+    const formData = new FormData(form);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      message: formData.get('message')
+    };
+
+    if (!data.name || !data.email || !data.message) {
+      alert('Please fill out all fields.');
+      return;
+    }
+    
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    helperEl.textContent = '...';
+
     try{
-      // 可替换为真实端点： `${BACKEND}/contact`
-      alert('Sent!');
-      form.reset();
-    }catch(e){ alert('Failed.'); }
+      // 你的后端联系端点
+      const res = await fetch(`${BACKEND}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        alert('Message sent successfully!');
+        form.reset();
+        helperEl.textContent = 'We usually reply within 24 hours.';
+      } else {
+        const err = await res.json().catch(() => ({ message: 'Server error' }));
+        alert(`Failed to send: ${err.message || 'Unknown error'}`);
+        helperEl.textContent = 'An error occurred. Please try again.';
+      }
+
+    } catch(e) { 
+      console.error(e);
+      alert('Network error.');
+      helperEl.textContent = 'A network error occurred. Please try again.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
+    }
   });
 }
 
-/* ===== 上传逻辑（修正版） ===== */
+
+/* ===== ✅ 优化：上传逻辑 (功能补全) ===== */
 function initUpload(){
   const form = document.getElementById('custom-form');
   if(!form) return;
 
   const fileInput = document.getElementById('image-upload');
   const resultEl = document.getElementById('upload-result');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const fileNameEl = document.getElementById('file-name');
+  const previewBox = document.getElementById('preview-box');
 
   form.addEventListener('submit', async e=>{
     e.preventDefault();
 
     const f = fileInput.files?.[0];
-    if(!f){ alert('Choose a file'); return; }
+    if(!f){ alert('Please choose a file'); return; }
     if(!['image/png','image/jpeg'].includes(f.type)){ alert('Only PNG/JPEG allowed.'); return; }
     if(f.size > 10*1024*1024){ alert('Max 10MB.'); return; }
 
     const fd = new FormData();
-    fd.append('file', f);             // ✅ 与后端一致
-    fd.append('filename', f.name);    // 可选，便于保留原名
+    fd.append('file', f);
+    fd.append('filename', f.name);
+    
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Uploading...';
+    resultEl.textContent = '';
 
     try {
-      // ✅ 只发一条真正的请求到后端（不要再额外 fetch('/upload')）
       const res = await fetch(`${BACKEND}/upload`, { method:'POST', body: fd });
-
-      // 为了看清楚后端返回（哪怕不是 JSON），先按文本取，再尝试 JSON 解析
-      const text = await res.text();
-      let data; try { data = JSON.parse(text); } catch { data = { raw: text }; }
-
-      console.log('Upload -> status:', res.status, 'data:', data);
+      const data = await res.json();
 
       if(res.ok && data.url){
-        resultEl.style.display = 'block';
-        resultEl.innerHTML = `✅ Uploaded:<br><a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
-      }else{
-        alert(`Upload failed (${res.status})`);
+        // 1. 上传成功 - 将其添加到购物车
+        const cart = getCart();
+        const customItem = { 
+          id: `custom_${Date.now()}`, // 使用唯一 ID
+          name: 'My Custom Design',
+          variant: 0,
+          image: data.url, // ✅ 使用用户上传的图片 URL
+          price: 45, // ✅ 定制价格 (你可以在此硬编码或从配置中读取)
+          quantity: 1 
+        };
+        
+        cart.push(customItem);
+        setCart(cart); 
+        updateCartDisplay();
+        
+        // 2. 提示用户，并重置表单
+        alert('Custom item added to cart!');
+        form.reset();
+        fileNameEl.textContent = 'no file selected';
+        previewBox.style.display = 'none';
+        resultEl.textContent = '';
+
+      } else {
+        const error = data.error || data.message || 'Upload failed';
+        alert(`Upload failed: ${error}`);
+        resultEl.textContent = `Upload failed: ${error}`;
       }
     }catch(err){
       console.error('Upload network error:', err);
       alert('Network error — check backend or CORS.');
+      resultEl.textContent = 'Network error. Please try again.';
+    } finally {
+      // 3. 恢复按钮
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
     }
   });
 }
@@ -262,7 +390,7 @@ function updateCartDisplay(){
   itemsEl.innerHTML = cart.map((i,idx)=>`
     <div class="cart-item">
       <img src="${i.image}" alt="${i.name}">
-      <div>${i.name} (Variant ${i.variant+1}) - $${i.price} × ${i.quantity}</div>
+      <div>${i.name} ${i.id.startsWith('custom_') ? '' : `(Variant ${i.variant+1})`} - $${i.price} × ${i.quantity}</div>
       <button class="remove-btn" data-index="${idx}" type="button">Remove</button>
     </div>
   `).join('');
