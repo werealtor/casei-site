@@ -51,6 +51,8 @@ h1,h2,h3,.title{font-family:var(--font-serif)}
 .btn.alt{background:transparent;border:1px solid var(--brand);color:var(--brand)}
 .btn.alt:hover{background:var(--brand);color:#fff}
 .btn.block{width:100%}
+/* 按钮禁用状态 */
+.btn:disabled{opacity:0.6;cursor:not-allowed;pointer-events:none;background:var(--tone)}
 
 /* Sections */
 section{padding:38px 0}
@@ -105,8 +107,22 @@ h2.title,#custom h2,#about h2,#contact h2{font-size:var(--fs-h2);text-align:cent
 .file-name{color:var(--muted);font-size:13px}
 
 /* Preview */
-.preview-box{margin-top:10px;border:1px solid var(--line);border-radius:12px;height:160px;display:none;align-items:center;justify-content:center;overflow:hidden}
-.preview-box img{width:100%;height:100%;object-fit:cover}
+.preview-box{
+  margin-top:10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  height:160px;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background-color: var(--tone); /* ✅ 优化: 添加背景色 */
+}
+.preview-box img{
+  width:100%;
+  height:100%;
+  object-fit: contain; /* ✅ 优化: contain 防止图片裁剪 */
+}
 
 /* Footer */
 footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a8a8a;font-size:13px}
@@ -124,7 +140,6 @@ footer{border-top:1px solid var(--line);padding:20px;text-align:center;color:#8a
 .cart-icon{font-size:20px;position:relative}
 #cart-count{position:absolute;top:-8px;right:-8px;background:var(--brand);color:#fff;border-radius:50%;padding:2px 6px;font-size:12px}
 
-/* 防止装饰层遮挡点击 */
-.send-progress,.contact-deco,.progress-bar{pointer-events:none}
+/* ✅ 优化：移除了末尾未使用的 CSS 规则 */
 /* 确保结账按钮可点 */
 #checkout-btn{position:relative;z-index:5}
