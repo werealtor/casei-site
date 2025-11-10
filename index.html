@@ -1,117 +1,102 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#001f3f" />
-  <title>Case&i — Minimal · Premium · Personal</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="css/style.css" />
+  <title>Case&amp;i™ by XXKIT — Minimal · Premium · Personal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Case&i™ by XXKIT Inc. Minimal, premium, personal protection and accessories. From $25 for iPhone 17 series." />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="icon" href="/assets/images/logo-xxkit.svg" type="image/svg+xml" />
 </head>
 <body>
-  <header id="site-header">
-    <div class="top-nav-container container">
-      <a href="/" class="logo">Case&i</a>
-      <button class="menu-icon" aria-label="Toggle menu" aria-expanded="false">⋯</button>
-      <div class="top-nav-wrap">
-        <nav class="top-nav" aria-label="Main">
-          <a href="#products">Products</a>
-          <a href="#custom">Customize</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-          <a href="#cart" class="cart-icon">🛒 <span id="cart-count">0</span></a>
-        </nav>
+<header class="nav nav-soft">
+  <div class="brand-lockup">
+    <span class="brand-main">Case&amp;i</span>
+    <span class="brand-sub">by XXKIT Inc</span>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/shop.html">Shop</a>
+    <a href="/#story">About</a>
+    <a href="/#support">Support</a>
+  </nav>
+</header>
+
+<main>
+  <!-- Hero Card -->
+  <section class="hero hero-centered">
+    <div class="hero-card">
+      <div class="hero-media-top">
+        <!-- 用你的视频封面或主图，比例接近 16:9，圆角大一点 -->
+        <img src="/assets/images/hero-1.jpg"
+             alt="Case&i lifestyle visual"
+             loading="lazy">
+      </div>
+      <div class="hero-content">
+        <p class="hero-kicker">Minimal · Premium · Personal</p>
+        <h1>Case&amp;i™</h1>
+        <p class="hero-sub">
+          Clean, modern pieces for phones and everyday style.
+          Designed by XXKIT Inc.
+        </p>
+        <div class="hero-actions center">
+          <a href="/shop.html" class="btn pill outline">Shop Products</a>
+          <a href="/shop.html" class="btn pill primary-blue">Customize Now</a>
+        </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <section id="hero">
-    <div class="container">
-      <div class="hero-frame" aria-label="Brand video">
-        <video class="hero-media" src="assets/videos/hero.mp4" autoplay muted loop playsinline preload="metadata"></video>
-      </div>
-    </div>
-    <div class="container hero-cta">
-      <h1>Minimal · Premium · Personal</h1>
-      <p>Designed by Aixx in California</p>
-      <nav class="nav">
-        <a href="#products" class="btn">Shop Products</a>
-        <a href="#custom" class="btn alt">Customize Now</a>
-      </nav>
+  <!-- Our Products -->
+  <section class="section section-narrow" id="featured">
+    <h2 class="section-title">Our Products</h2>
+    <p class="section-sub">
+      From clear protection for iPhone 17 series—from $25—to future jewelry &amp; accessories collections,
+      Case&amp;i keeps it delicate, timeless, and personal.
+    </p>
+    <div class="grid" id="featured-list">
+      <!-- Filled by main.js -->
     </div>
   </section>
 
-  <section id="products">
-    <div class="container">
-      <h2 class="title">Our Products</h2>
-      <div class="grid products-grid" id="products-grid-container">
-        </div>
-    </div>
+  <!-- Brand Story -->
+  <section class="section section-narrow" id="story">
+    <h2 class="section-title">About Case&amp;i</h2>
+    <p class="text-lg center">
+      Case&amp;i™ is an XXKIT Inc brand born in California, inspired by minimal jewelry, soft light,
+      and everyday details. We design clear cases and curated pieces that feel refined, not loud.
+    </p>
+    <p class="text-md center">
+      Honest materials, considered curves, and quiet branding — so the focus stays on you.
+    </p>
   </section>
 
-  <section id="custom">
-    <div class="container">
-      <h2>Customize Your Case</h2>
-      <form id="custom-form" class="section-narrow">
-        <label for="image-upload">Choose Image (PNG/JPEG &lt; 10MB)</label>
-        <div class="file-field" style="margin-top:8px">
-          <label class="file-btn" for="image-upload">Choose File</label>
-          <span id="file-name" class="file-name">no file selected</span>
-          <input id="image-upload" class="input-file" type="file" accept="image/png, image/jpeg" name="file" />
-        </div>
-        <div class="preview-box" id="preview-box"><img id="preview-image" alt="Preview" /></div>
-        <button type="submit" class="btn alt block" style="margin-top:10px">Upload and Add to Cart</button>
-        <p id="upload-result" class="helper"></p>
-      </form>
-    </div>
+  <!-- Support -->
+  <section class="section section-narrow" id="support">
+    <h2 class="section-title">Support</h2>
+    <p class="text-md center">
+      For orders, customization, or collaboration:
+      <a href="mailto:support@xxkit.com">support@xxkit.com</a>
+    </p>
+    <p class="text-md center">
+      For delivery, returns, and warranty, see our
+      <a href="/shipping-returns.html" class="link-inline">Shipping &amp; Returns Policy</a>.
+    </p>
   </section>
+</main>
 
-  <section id="about">
-    <div class="container">
-      <h2>About Us</h2>
-      <p class="section-desc">All In, Beyond Results.</p>
-    </div>
-  </section>
+<footer class="footer">
+  <div class="footer-links">
+    <a href="/terms.html">Terms</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/shipping-returns.html">Shipping &amp; Returns</a>
+  </div>
+  <p>© <span id="year"></span> XXKIT Inc. All rights reserved. Case&amp;i™ is a trademark of XXKIT Inc.</p>
+</footer>
 
-  <section id="contact">
-    <div class="container">
-      <h2>Contact Us</h2>
-      <form id="contact-form" class="section-narrow">
-        <input type="text" name="name" class="input" placeholder="Name" required />
-        <input type="email" name="email" class="input" placeholder="Email" required />
-        <textarea name="message" class="input textarea" placeholder="Message" required></textarea>
-        <button type="submit" class="btn alt block" style="margin-top:8px">Send</button>
-        <p class="helper">We usually reply within 24 hours.</p>
-      </form>
-    </div>
-  </section>
-
-  <section id="cart">
-    <div class="container">
-      <h2>Your Cart</h2>
-      <div id="cart-items" class="grid"></div>
-      <div class="total">Total: $0</div>
-      <button class="btn" id="checkout-btn" type="button">Checkout</button>
-    </div>
-  </section>
-
-  <footer id="site-footer">
-    <p>United States</p>
-    <p>Copyright © 2025 AIXX Inc. All rights reserved.</p>
-  </footer>
-
-  <button id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
-
-  <script>
-    /* ✅ 优化：
-      现在 JS 会自动使用这个变量。
-      部署时注入: window.__BACKEND_BASE__ = 'https://your-production-url.com'
-    */
-  </script>
-  <script src="js/main.js"></script>
+<script src="/assets/js/main.js"></script>
 </body>
 </html>
