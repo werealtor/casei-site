@@ -1,1 +1,67 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shop Case&amp;i™ · XXKIT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shop official Case&i™ clear cases for iPhone 17, 17 Pro, and 17 Pro Max. From $25. Minimal, durable, everyday ready." />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="icon" href="/assets/images/logo-xxkit.svg" type="image/svg+xml" />
+</head>
+<body>
+<header class="nav nav-soft">
+  <div class="brand-lockup">
+    <span class="brand-main">Case&amp;i</span>
+    <span class="brand-sub">by XXKIT Inc</span>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/shop.html" class="active">Shop</a>
+    <a href="/#story">About</a>
+    <a href="/#support">Support</a>
+  </nav>
+</header>
+
+<main>
+  <section class="section section-narrow">
+    <h1 class="section-title">Shop Case&amp;i™</h1>
+    <p class="section-sub">
+      Official clear cases for iPhone 17 series.
+      Choose your model, then tap “Order via Email” to place your order directly with our team.
+    </p>
+
+    <div class="filters">
+      <select id="filter-model">
+        <option value="">All models</option>
+        <option value="iPhone 17">iPhone 17</option>
+        <option value="iPhone 17 Pro">iPhone 17 Pro</option>
+        <option value="iPhone 17 Pro Max">iPhone 17 Pro Max</option>
+      </select>
+      <select id="filter-color">
+        <option value="">All finishes</option>
+        <option value="Clear">Clear</option>
+      </select>
+    </div>
+
+    <div class="grid" id="product-list">
+      <!-- Filled by main.js -->
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="/terms.html">Terms</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/shipping-returns.html">Shipping &amp; Returns</a>
+  </div>
+  <p>© <span id="year"></span> XXKIT Inc. All rights reserved.</p>
+</footer>
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>
